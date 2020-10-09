@@ -1,0 +1,6 @@
+sample_seq_id	dedup_mapped_bases	avg_fragment_size	overlap_clipped_bases
+JekyllIs_1068_1_lane9_pe	4543651	407.268835	4482596
+JekyllIs_1072_2_lane9_pe	3695336	421.326697	3651333
+JekyllIs_1073_3_lane9_pe	4116072	351.378621	4006672
+JekyllIs_1074_4_lane9_pe	3287001	391.928933	3247379
+JekyllIs_1034_5_lane1_pe	3588796	479.818540	3544435

@@ -1,0 +1,5 @@
+/workdir/physalia-lcwgs/day_1/bam/JekyllIs_1068_1_lane9_pe_bt2_mme_physalia_testdata_chr24_minq20_sorted.bam
+/workdir/physalia-lcwgs/day_1/bam/JekyllIs_1072_2_lane9_pe_bt2_mme_physalia_testdata_chr24_minq20_sorted.bam
+/workdir/physalia-lcwgs/day_1/bam/JekyllIs_1073_3_lane9_pe_bt2_mme_physalia_testdata_chr24_minq20_sorted.bam
+/workdir/physalia-lcwgs/day_1/bam/JekyllIs_1074_4_lane9_pe_bt2_mme_physalia_testdata_chr24_minq20_sorted.bam
+/workdir/physalia-lcwgs/day_1/bam/JekyllIs_1034_5_lane1_pe_bt2_mme_physalia_testdata_chr24_minq20_sorted.bam
