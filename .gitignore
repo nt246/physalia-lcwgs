@@ -3,3 +3,7 @@
 .RData
 .Ruserdata
 day_1/data_preparation/bam
+day_1/adapter_clipped/
+day_1/bam/
+day_1/fastqc/
+day_1/data_preparation/
