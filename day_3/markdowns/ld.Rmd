@@ -1,0 +1,66 @@
+---
+title: "LD estimation"
+output: 
+  github_document:
+    toc: true
+    toc_depth: 4
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data preparation
+
+## Estimate LD
+
+```{bash eval=F}
+BASEDIR=/workdir/physalia-lcwgs/day_3/
+NGSLD=/workdir/programs/ngsLD/
+## Prepare a position file
+zcat $BASEDIR/angsd/MME_ANGSD_PCA.mafs.gz | cut -f 1,2 | tail -n +2 | gzip > $BASEDIR/ngsld/MME_ANGSD_PCA.pos.gz
+## Run ngsLD
+$NGSLD/ngsLD \
+--geno $BASEDIR/angsd/MME_ANGSD_PCA.beagle.gz \
+--pos $BASEDIR/ngsld/MME_ANGSD_PCA.pos.gz \
+--n_ind 60 \
+--n_sites 865 \
+--out $BASEDIR/ngsld/MME_ANGSD_PCA.ld \
+--probs \
+--rnd_sample 1 \
+--seed 1 \
+--n_threads 10
+```
+
+## Visualize LD estimation result
+
+```{bash eval=F}
+BASEDIR=/workdir/physalia-lcwgs/day_3/
+NGSLD=/workdir/programs/ngsLD/
+cat $BASEDIR/ngsld/MME_ANGSD_PCA.ld | bash $NGSLD/scripts/LD_blocks.sh Mme_chr24 2558408 2564908
+```
+
+![](../ngsld/LD_blocks.r2.pdf)
+
+## Estimate LD decay
+
+```{bash eval=F}
+Rscript --vanilla --slave $NGSLD/scripts/fit_LDdecay.R --ld_files ld_files.list --out plot.pdf
+```
+
+```{r eval=F}
+library(tidyverse)
+ld <- read_tsv("../ngsld/MME_ANGSD_PCA.ld", col_names = F)
+ld %>% 
+  ggplot(aes(x=X3, y=X7)) +
+  geom_point() +
+  geom_smooth()
+```
+
+## LD pruning
+
+```{bash eval=F}
+BASEDIR=/workdir/physalia-lcwgs/day_3/
+NGSLD=/workdir/programs/ngsLD/
+perl $NGSLD/scripts/prune_graph.pl --in_file $BASEDIR/ngsld/MME_ANGSD_PCA.ld --max_kb_dist 5 --min_weight 0.5 --out $BASEDIR/ngsld/MME_ANGSD_PCA_unlinked.id
+```
