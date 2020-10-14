@@ -2,7 +2,11 @@ Tutorial 1: data processing
 ================
 
   - [Initial preparations](#initial-preparations)
+      - [Get familiarized with some basic shell
+        scripting](#get-familiarized-with-some-basic-shell-scripting)
       - [Create a project directory](#create-a-project-directory)
+      - [Move data to appropriate
+        directories](#move-data-to-appropriate-directories)
       - [Create a sample list](#create-a-sample-list)
       - [Prepare a sample table](#prepare-a-sample-table)
   - [Data processing pipeline](#data-processing-pipeline)
@@ -11,6 +15,7 @@ Tutorial 1: data processing
       - [Build reference index files](#build-reference-index-files)
       - [Map to reference, sort, and quality
         filter](#map-to-reference-sort-and-quality-filter)
+      - [Examine the bam files](#examine-the-bam-files)
       - [Merge samples that were sequenced multiple times and generate a
         merged sample table and bam
         list](#merge-samples-that-were-sequenced-multiple-times-and-generate-a-merged-sample-table-and-bam-list)
@@ -28,10 +33,19 @@ procedures, and will map the short sequences to a reference genome.
 
 ## Initial preparations
 
+#### Get familiarized with some basic shell scripting
+
+If you have not used shell scripting before or are getting rusty on it,
+it may be helpful to have a look at a cheat sheet before proceeding to
+the next step.
+
+Example cheat sheets:
+
 #### Create a project directory
 
 As a first step, you should create a project directory (referred to as
-`BASEDIR` in certain scripts), with the following subdirectories:
+`BASEDIR` in certain scripts), which you can name `day_1`, with the
+following subdirectories:
 
   - `raw_fastq` raw fastq files
 
@@ -46,14 +60,37 @@ As a first step, you should create a project directory (referred to as
 
   - `markdowns` RMarkdown and Markdown files
 
+> Hint: New directories can be created using the `mkdir` command in Unix
+> shell.
+
+#### Move data to appropriate directories
+
+  - Move raw fastq files to the `raw_fastq` folder.
+
+  - Move the fasta file of the reference genome
+    (`mme_physalia_testdata_chr24.fa`) and the Nextera adapter file
+    (`NexteraPE_NT.fa`) to the `reference` folder
+
 #### Create a sample list
 
 A sample list is a list of the prefixes of raw fastq files. These should
 be unique for each fastq file, and the rest of the names have to be the
 same for all raw fastq files. No header should be included in this list.
 
-Here is an example of a sample list:
-<https://github.com/therkildsen-lab/greenland-cod/blob/master/sample_lists/sample_list_pe_1.tsv>
+For this excercise, the sample list looks like the following.
+
+    11665X131
+    11665X134
+    11665X135
+    11665X136
+    11665X50
+
+You can save this list to a file named `sample_list.txt` under the
+`sample_lists` directory.
+
+> Hint: You can use the `nano` command to edit text files in Unix shell.
+> You can also use the `echo` command to directly write content to a
+> file.
 
 #### Prepare a sample table
 
@@ -61,8 +98,8 @@ A sample table is a **tab deliminated** table that includes relevant
 information for all fastq files. It should include the following six
 columns, strictly in this order:
 
-  - `prefix` prefix of raw fastq files; it should be the union of all
-    your sample lists
+  - `prefix` prefix of raw fastq files; these should match the entries
+    in the sample list
 
   - `lane_number` lane number; each sequencing lane should be assigned a
     different number
@@ -82,8 +119,17 @@ columns, strictly in this order:
 It is important to make sure that the combination of lane\_number,
 seq\_id, and sample\_id has to be unique for each fastq file.
 
-An example of a sample table:
-<https://github.com/therkildsen-lab/greenland-cod/blob/master/sample_lists/sample_table.tsv>
+For this excercise, the sample table looks like the following.
+
+    prefix  lane_number seq_id  sample_id   population  data_type
+    11665X131   lane9   1   JekyllIs_1068   JekyllIs    pe
+    11665X134   lane9   2   JekyllIs_1072   JekyllIs    pe
+    11665X135   lane9   3   JekyllIs_1073   JekyllIs    pe
+    11665X136   lane9   4   JekyllIs_1074   JekyllIs    pe
+    11665X50    lane1   5   JekyllIs_1034   JekyllIs    pe
+
+You can save this table to a file named `sample_table.tsv` under the
+`sample_lists` directory.
 
 ## Data processing pipeline
 
@@ -91,9 +137,29 @@ An example of a sample table:
 
 ###### fastq file structure
 
+A FASTQ file normally uses four lines per sequence.
+
+  - Line 1 contains the sequence identifier, with information on the
+    sequencing run and the cluster. The exact content of this line
+    varies depending on how fastq files are generated from the
+    sequencer.
+  - Line 2 is the raw sequence.
+  - Line 3 often consists of a single `+` symbol.
+  - Line 4 encodes the quality of each base in the sequence in Line 2
+    (i.e. the probability of sequencing error in log scale). For most
+    sequencers, these base qualities are encoded in the [Phred33
+    format](https://drive5.com/usearch/manual/quality_score.html).
+
+Now read the code below, guess what it does, and run it on your own.
+Does it do what you expect it to do? Inspect the output and try to
+identify the group of four lines for each read.
+
+> Hint: make sure that you change the `BASEDIR` path to your own base
+> directory.
+
 ``` bash
-BASEDIR=/workdir/physalia-lcwgs/day_1/
-SAMPLELIST=$BASEDIR/sample_lists/sample_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
+BASEDIR=/workdir/physalia-lcwgs/day_1/ # Path to the base directory / project directory.
+SAMPLELIST=$BASEDIR/sample_lists/sample_list.txt # Path to the sample list.
 RAWFASTQSUFFIX1=_Paired_NoCont_1.fastq.gz # Suffix to raw fastq files. Use forward reads with paired-end data.
 for SAMPLE in `cat $SAMPLELIST`; do
   echo $SAMPLE
@@ -104,9 +170,12 @@ done
 
 ###### FastQC report
 
+Run the FastQC program on your fastq files to check the quality of these
+files.
+
 ``` bash
-FASTQC=/programs/bin/fastqc/fastqc
 BASEDIR=/workdir/physalia-lcwgs/day_1/
+FASTQC=/programs/bin/fastqc/fastqc
 SAMPLELIST=$BASEDIR/sample_lists/sample_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
 RAWFASTQSUFFIX1=_Paired_NoCont_1.fastq.gz # Suffix to raw fastq files. Use forward reads with paired-end data.
 RAWFASTQSUFFIX2=_Paired_NoCont_2.fastq.gz # Suffix to raw fastq files. Use reverse reads with paired-end data.
@@ -119,9 +188,21 @@ done
 
 #### Adapter clipping
 
+When the insert length of a library fragment is shorter than the read
+length, the adapters would be incorporated into the sequencing reads (as
+shown below), which may lead to lower alignment performance and even
+biases in the result if not removed.
+
+![](https://www.ecseq.com/support/ngs/img/fragmentsize.png)
+
+Here, we use Trimmomatic to clip the adapter sequences. This step
+require us to input the known adapter sequences that we used when
+preparing the libraries (`ADAPTERS`). In this exercise, the libraries
+were prepared using the Nextera kit (NexteraPE\_NT.fa).
+
 ``` bash
-TRIMMOMATIC=/programs/trimmomatic/trimmomatic-0.39.jar
 BASEDIR=/workdir/physalia-lcwgs/day_1/
+TRIMMOMATIC=/programs/trimmomatic/trimmomatic-0.39.jar
 SAMPLELIST=$BASEDIR/sample_lists/sample_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
 SAMPLETABLE=$BASEDIR/sample_lists/sample_table.tsv # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. The 6th column should be data type, which is either pe or se. 
 RAWFASTQDIR=$BASEDIR/raw_fastq/ # Path to raw fastq files. 
@@ -160,6 +241,9 @@ done
 
 #### Build reference index files
 
+Prior to sequence alignment, we will first build the reference index
+files that are required by the alignment software `bowtie2`.
+
 ``` bash
 PICARD=/programs/picard-tools-2.19.2/picard.jar
 SAMTOOLS=/programs/bin/samtools/samtools
@@ -173,6 +257,12 @@ $BOWTIEBUILD $REFERENCE $REFBASENAME
 ```
 
 #### Map to reference, sort, and quality filter
+
+In this step, we align each fastq file to the reference genome using
+`bowtie2`. The resulting alignment file, in `sam` format, will be
+converted to a binary format `bam` for more efficient storage. We will
+then filter out the reads with a mapping quality lower than 20, and sort
+the filtered alignment file for easier computation in the next step.
 
 ``` bash
 BOWTIE=/programs/bin/bowtie2/bowtie2
@@ -232,15 +322,31 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
 done
 ```
 
+#### Examine the bam files
+
+SAM stands for Sequence Alignment/Map format. It is a TAB-delimited text
+format consisting of a header section, which is optional, and an
+alignment section. If present, the header must be prior to the
+alignments. Header lines start with ‘@’, while alignment lines do not.
+Each alignment line has 11 mandatory fields for essential alignment
+information such as mapping position, and variable number of optional
+fields for flexible or aligner specific information. BAM is the binary
+version of the SAM format. You can use commands in the format of
+`$SAMTOOLS view
+$SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'_minq20_sorted.bam' | head -n 1`
+to inspect the first alignment of a bam file. Write a loop on your own
+to print the first alignment of all five sorted bam files that you have
+generated in the last step.
+
 #### Merge samples that were sequenced multiple times and generate a merged sample table and bam list
 
 We need a new sample table, because prior to merging, each row represent
 a fastq file, but after merging, each row represent a unique sample. The
-merged sample table has a slightly different formatting.
+merged sample table also has a slightly different formatting.
 
 In this example, we don’t have any samples that were sequenced multiple
 times, but we still need to generate a new sample table with different
-formatting.
+formatting. We will do this in R.
 
 ``` r
 library(tidyverse)
@@ -265,6 +371,13 @@ write_lines(bam_list_realigned, paste0("../sample_lists/bam_list_realigned.txt")
 ```
 
 #### Deduplicate (all samples) and clip overlapping read pairs (pair-end reads only)
+
+Here, we remove the PCR duplicates and trim the overlapping part of each
+read pair in pair-end data. It is important to deduplicate after
+merging, because PCR duplicates for the same sample may exist in
+different lanes.
+
+![](https://i.stack.imgur.com/7dkOV.png)
 
 ``` bash
 PICARD=/programs/picard-tools-2.19.2/picard.jar
@@ -296,6 +409,11 @@ done
 ```
 
 #### In-del relignment
+
+It is difficult to distinguish in-dels from SNPs at the end of reads if
+each read is considered separately. Therefore, in this step, we take all
+the aligned sequences from all samples in to account to validate the
+in-dels discovered from the mapping process.
 
 ``` bash
 ## Use an older version of Java
