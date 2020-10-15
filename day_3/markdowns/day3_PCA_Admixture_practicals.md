@@ -1,4 +1,4 @@
-**Populaiton structure analysis**
+# Populaiton structure analysis
 
 In this session you will learn how to do:
 
@@ -43,27 +43,61 @@ In general it is good practice to perform LD pruning or at least thinning to red
 For the PCA method you should use only inferred variant sites (SNPs). SNPs can be inferred based on genotype likelihoods (see SNP_calling day 2) at the same time as inferring the covariance matrix (`-doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1`) by providing the `-SNP_pval` option. SNPs should be restricted to more common variants with minor allele frequencies of at least 5% using the `-minMAF 0.05` option. However, this way, you will focus on all SNPs and not only an LD-pruned subset.
 
 ```
-$NGS/angsd/angsd -b ALL_bams.txt -anc $REF -out Results/MME_ANGSD_PCA \
-	-minMapQ 20 -minQ 20 -doMaf 1 -minMaf 0.05 -SNP_pval 2e-6 \
-	-GL 1 -doGlf 2 -doMajorMinor 1 -doPost 1 \
-	-doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1 -P 4
+# $NGS/angsd/angsd -b ALL_bams.txt -anc $REF -out Results/MME_ANGSD_PCA \
+#	-minMapQ 20 -minQ 20 -doMaf 1 -minMaf 0.05 -SNP_pval 2e-6 \
+#	-GL 1 -doGlf 2 -doMajorMinor 1 -doPost 1 \
+#	-doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1 -P 4
 ```
 
-
 Alternatively, you can provide a list of variant sites using the `-sites` options. Here we will use a list of LD-pruned variant sites created earlier today. 
-
-
-At the same time, we will also output genotype likelihoods in a beagle likelihood file (*.beagle.gz), which is used as input for PCAngsd. 
-
 
 
 
 ### PCA with LD-pruned SNP dataset
 
+Using the list of LD-pruned variant sites and the code shown above, we can estimate a covariance matrix using single-read sampling for LD-pruned SNPs using ANGSD. 
 
+```
+$NGS/angsd/angsd -b ALL_bams.txt -anc $REF -out Results/MME_ANGSD_PCA_LDpruned \
+	-minMapQ 20 -minQ 20 -doMaf 1 -minMaf 0.05 -SNP_pval 2e-6 \
+	-GL 1 -doGlf 2 -doMajorMinor 1 -doPost 1 \
+	-doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1 -sites LDpruned_snps.list
+```
 
+At the same time, we will also output the genotype likelihoods for these variant sites in beagle likelihood file format (beagle.gz), which will be used as input for estimating the covariance matrix using PCAngsd (below) 
 
+```
+library(tidyverse) #load the tidyverse package for formatting and plotting
 
+#Load the covariance matrix
+cov <- as.matrix(read.table("/workdir/arne/physalia_lcwgs_data/data_practicals/Results/MME_ANGSD_PCA_LDpruned.covMat", header = F))
+
+#We will also add a column with population assingments
+pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA"
+         ,"PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY"
+         ,"MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS"
+         ,"MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU")
+
+mme.pca <- eigen(cov) #perform the pca using the eigen function. 
+
+eigenvectors <- (mme.pca$vectors) #extract eigenvectors 
+pca.vectors <- as_tibble(cbind(pop, eigenvectors)) #combine with our population assignments
+df = type_convert(pca.vectors) #check all columns and convert if necessary (automatic)
+
+#plot PC1 vs PC2 using ggplot
+pca = ggplot(data = df, aes(x=V2, y=V3, fill = pop, colour = pop)) +
+  geom_point(size = 5, shape = 21) +
+  xlab("Principal component 1") +
+  ylab("Principal component 2")
+
+#Save plot as pdf
+ggsave(filename = "/workdir/arne/physalia_lcwgs_data/data_practicals/Results/pca_plot.pdf", plot = pca)
+
+```
+You can run the Rscript containing this code to plot your results:
+```
+Rscript ./plotPCA.R  
+```
 
 
 ### Optional: PCA with all SNPs
