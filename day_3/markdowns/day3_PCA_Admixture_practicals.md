@@ -1,3 +1,5 @@
+**Populaiton structure analysis**
+
 In this session you will learn how to do:
 
 * Principal Components Analysis
@@ -5,17 +7,13 @@ In this session you will learn how to do:
 
 using low-coverage whole genome data.
 
+We have low-coverage NGS data for 60 Atlantic silversides from four populations, spanning a 2Mb region on chromosome 24. These populations have been previously studied in [Therkildsen et al. 2019](https://science.sciencemag.org/content/365/6452/487) and [Wilder et al. 2020](https://onlinelibrary.wiley.com/doi/10.1002/evl3.189) using a trancsriptome as reference, and cover the entire distribution range of Atlantic silverside. 
+The interesting aspect about chromosome 24 is that it harbours a large polymorphic inversion, and our test dataset spans one breakpoint of this inversion. 
 
-We will be using [ANGSD](http://popgen.dk/wiki/index.php/ANGSD) (Analysis of Next Generation Sequencing Data), [ngsAdmix](http://www.popgen.dk/software/index.php/NgsAdmix) and [PCAngsd](http://www.popgen.dk/software/index.php/PCAngsd).
+First, can we determine the neutral population structure of Atlantic silverside along its distribution range. 
+Second, can use principal components analysis and ancestry analyses to determine which populations contain the alternative inversion karyotype? And are there potentially any heterozygous individuals for the inversion?
 
-
-
-
-
-
-*Description of the data and rationale*
-
-
+For this practical, we will be using [ANGSD](http://popgen.dk/wiki/index.php/ANGSD) (Analysis of Next Generation Sequencing Data), [ngsAdmix](http://www.popgen.dk/software/index.php/NgsAdmix) and [PCAngsd](http://www.popgen.dk/software/index.php/PCAngsd).
 
 
 Please make sure to follow these preparatory instructions below before running these examples. 
@@ -37,11 +35,24 @@ mkdir Data
 
 ## Principal components analysis (PCA)
 
-Principal components analyses are based on a covariance matrix, which can be estimated from low-depth NGS in different ways.
+To perform PCA with low-coverage NGS data, we have to infer the genetic covariance matrix, which can be estimated in different ways.
 Here we will estimate the covariance matrix using single-read sampling in [ANGSD](http://www.popgen.dk/angsd/index.php/PCA_MDS) but will also discuss the algorithm implemented in [PCAngsd](http://www.popgen.dk/software/index.php/PCAngsd)
 
-For the PCA method you should use called SNP sites. SNPs can be called based on genotype likelihoods (see SNP_calling) or you can give the variable sites you want analysis using the `-sites` options.
-Here, we will estimate variant sites as part of the covariance estimation, although for larger datasets it might be advisable to first create a sites file for all variable sites and use this for consistency, so that always the same sites are compared across populations. 
+In general it is good practice to perform LD pruning or at least thinning to reduce the impact of large LD clusters (e.g. inversions) on the inferred population structure. In this practical, we will perform the population structure analysis using an LD-pruned SNP dataset that you prepared earlier today and also the full SNP dataset. The full SNP dataset will help us to understand how the inversion karyotype is distributed in our dataset and will highlight the impact of large LD clusters on the inferred structure. 
+
+For the PCA method you should use only inferred variant sites (SNPs). SNPs can be inferred based on genotype likelihoods (see SNP_calling day 2) at the same time as inferring the covariance matrix (`-doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1`) by providing the `-SNP_pval` option. SNPs should be restricted to more common variants with minor allele frequencies of at least 5% using the `-minMAF 0.05` option. However, this way, you will focus on all SNPs and not only an LD-pruned subset.
+
+```
+$NGS/angsd/angsd -b ALL_bams.txt -anc $REF -out Results/MME_ANGSD_PCA \
+	-minMapQ 20 -minQ 20 -doMaf 1 -minMaf 0.05 -SNP_pval 2e-6 \
+	-GL 1 -doGlf 2 -doMajorMinor 1 -doPost 1 \
+	-doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1 -P 4
+```
+
+
+Alternatively, you can provide a list of variant sites using the `-sites` options. Here we will use a list of LD-pruned variant sites created earlier today. 
+
+
 At the same time, we will also output genotype likelihoods in a beagle likelihood file (*.beagle.gz), which is used as input for PCAngsd. 
 
 
