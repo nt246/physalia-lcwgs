@@ -236,44 +236,67 @@ Q: How do population relationships differ between the on LD-pruned PCA and the f
 
 ## Admixture analysis
 
-In some cases we also want to infer admixture proportions. Similar to PCA, there are different ways of inferring admixture proportions from genotype likelihoods.
-We will go in more detail through [ngsAdmix](http://www.popgen.dk/software/index.php/NgsAdmix) and will present a way of inferring admixture proportions with PCAngsd.  
+In some cases we also want to infer genome-wide admixture proportions for each individuals. Similar to PCA, there are different ways of inferring admixture proportions from genotype likelihoods. Here, we will use [ngsAdmix](http://www.popgen.dk/software/index.php/NgsAdmix) and will also present a way of inferring admixture proportions with PCAngsd.  
 
-1. ngsAdmix
+### ngsAdmix
 
-A genotype likelihood file in beagle format (same as for PCAngsd) is specified as input using the `-likes` option. 
-In addition, there are a range of parameters that can be adjusted. Here we only set the number of ancestry clusters using the `-K` option.
-In reality, it is advisable to compare different numbers of ancestry clusters by changing the `-K` option. 
+ngsAdmix uses a genotype likelihood file in beagle format (same as for PCAngsd) as input, which is specified using the `-likes` option. 
+In addition, there are a range of parameters that can be adjusted. Here we only set the number of ancestry clusters using the `-K` option to K=2.
+In reality, it is advisable to compare different numbers of ancestry clusters by iterating over different values of K. 
 
-Also, if the analysis is not converging, one might want to increase the maximum number of EM iterations using the `-maxiter` option. 
-
-Here we will run ngsAdmix with one value of K. 
 ```
 /programs/NGSadmix/NGSadmix -likes Results/MME_ANGSD_PCA.beagle.gz -K 2 -o Results/MME_ngsAdmix_K2_out
 ```
 
-Plot admixture proportions in R e.g. following this Rscript:
+In case the analysis is not converging, one can also increase the maximum number of EM iterations using the `-maxiter` option. 
 
+ngsAdmix produces three different outputs files:
+
+* A run log containing the log likelihood of the admixture estimates: .log file
+* A file containing the allele frequencies of all ancestral populations (in this case two ancestral clusters): .fopt file
+* A file containing the admixture proportions for each individual: .qopt file
+
+We are mostly interested in the admixture proportions and the log likelihood of the estimates. The log likelihoods can be compared between runs with different values of K to select the most likely number of ancestral clusters. 
+
+You can plot admixture proportions in R e.g. following this Rscript:
 ```
 Rscript plot_ngsAdmix.R
 ```
+Description of the script:
+```
+library(tidyverse) #load the tidyverse package for formatting and plotting
 
+#Load the covariance matrix
+cov = read_table("/workdir/arne/physalia_lcwgs_data/data_practicals/Results/MME_ngsAdmix_K2_out.qopt", col_names = F)
 
-If you want to, you can try changing the value for `-K` and compare the infferred likelihoods and results. 
+#We will also add a column with population assingments
+pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA"
+         ,"PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY"
+         ,"MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS"
+         ,"MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU")
+
+cov.id = as.data.frame(cbind(pop, cov))
+names(cov.id) = c("pop","q1","q2")
+barplot(t(as.matrix(subset(cov.id, select=q1:q2))), col=c("firebrick","royalblue"), border=NA)
+
+#Save plot as pdf
+ggsave(filename = "/workdir/arne/physalia_lcwgs_data/data_practicals/Results/pca_pcangsd_plot.pdf", plot = pca)
+```
+
+If you want, you can try changing the value for `-K` and compare the infferred log ikelihoods and admixture proportions. Which value of K has the stronger support?
 ```
 /programs/NGSadmix/NGSadmix -likes Results/MME_ANGSD_PCA.beagle.gz -K 3 -o Results/MME_ngsAdmix_K3_out
 ```
 
 
-2. PCAngsd
+### Alternative approach: PCAngsd
 
-In addition to ngsAdmix, PCAngsd can also infer admixture proportions. 
+In addition to ngsAdmix, PCAngsd can also be used to infer admixture proportions. 
 The command is similar to the one used for the PCA with the addition of to a `-admix` option. 
 The input file for ngsAdmix and PCAngsd is the same, making comparisons relatively easy. 
 
 Other than ngsAdmix, PCAngsd can automatically infer the most likely number of ancestry cluster.
 However, one can also set the number of clusters using the `-admix_K` option. 
-
 
 ```
 python3 /programs/pcangsd-0.98/pcangsd.py -beagle Results/MME_ANGSD_PCA.beagle.gz -admix -admix_K 2 -o Results/MME_PCAngsd_K2_out
