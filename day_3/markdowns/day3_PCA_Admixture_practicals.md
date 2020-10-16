@@ -55,6 +55,9 @@ Alternatively, you can provide a list of variant sites using the `-sites` option
 
 ### PCA with LD-pruned SNP dataset
 
+
+**1. Estimating the covariance matrix using a single read sampling approach:**
+
 Using the list of LD-pruned variant sites and the code shown above, we can estimate a covariance matrix using single-read sampling for LD-pruned SNPs using ANGSD. 
 
 ```
@@ -86,8 +89,8 @@ mme.pca <- eigen(cov) #perform the pca using the eigen function.
 
 We can then extract the eigenvectors from the pca object and format them into a dataframe for plotting, e.g. using `ggplot()`.
 ```
-eigenvectors <- (mme.pca$vectors) #extract eigenvectors 
-pca.vectors <- as_tibble(cbind(pop, eigenvectors)) #combine with our population assignments
+eigenvectors = mme.pca$vectors #extract eigenvectors 
+pca.vectors = as_tibble(cbind(pop, eigenvectors)) #combine with our population assignments
 df = type_convert(pca.vectors) #check all columns and convert if necessary (automatic)
 
 #plot PC1 vs PC2 using ggplot
@@ -100,18 +103,24 @@ pca = ggplot(data = df, aes(x=V2, y=V3, fill = pop, colour = pop)) +
 ggsave(filename = "/workdir/arne/physalia_lcwgs_data/data_practicals/Results/pca_plot.pdf", plot = pca)
 ```
 
-Additionally, we can extract the eigenvalues for each eigenvector from the pca object 
+Additionally, we can extract the eigenvalues for each eigenvector, and can then estimate the variance explained for each eigenvector (e.g. here for PC1 to PC4): 
+```
+pca.eigenval.sum = sum(mme.pca$values) #sum of eigenvalues
+varPC1 <- (mme.pca$values[1]/pca.eigenval.sum)*100 #Variance explained by PC1
+varPC2 <- (mme.pca$values[2]/pca.eigenval.sum)*100 #Variance explained by PC2
+varPC3 <- (mme.pca$values[3]/pca.eigenval.sum)*100 #Variance explained by PC3
+varPC4 <- (mme.pca$values[4]/pca.eigenval.sum)*100 #Variance explained by PC4
+```
 
-
-You can run the Rscript containing this code to plot your results:
+You can run this Rscript to estimate and plot the principal components:
 ```
 Rscript ./plotPCA.R  
 ```
 
 
-**2. Alternative: Covariance matrix estimation with PCAngsd (based on all SNPs)**
+**2. Alternative approach: Covariance matrix estimation with PCAngsd (based on all SNPs)**
 
-A covariance matrix can also be inferred from genotype likelihoods using PCAangsd. PCAngsd takes as input genotype likelihoods in beagle format, which we generated in the step before using the `-doGLF 2` option.
+The covariance matrix can also be inferred from genotype likelihoods using PCAangsd. PCAngsd takes as input genotype likelihoods in beagle format, which we generated in the step before using the `-doGLF 2` option.
 
 PCAngsd provides a multitude of different settings, described [here](http://www.popgen.dk/software/index.php/PCAngsd). We won't change any of the settings here and only use the default settings, which are sufficient in most cases. 
 
@@ -121,10 +130,9 @@ We provide the path to the input file using the `-beagle` option, which also tel
 python3 /programs/pcangsd-0.98/pcangsd.py -beagle Results/MME_ANGSD_PCA.beagle.gz -o Results/covmatrix
 ```
 
-From PCAngsd 0.98, the output is saved in numpy format but this can easily loaded into R using the 'RcppCNPy::npyLoad' R function (see script below).
+From PCAngsd 0.98, the output is saved in numpy format but this can easily loaded into R using the `RcppCNPy::npyLoad` R function (see script below).
 
-
-The principla We can perform the principal components analysis and plot PC1 vs PC2 the same way we did before.
+We can perform the principal components analysis and plot PC1 vs PC2 the same way we did before, except that the function for importing the covariance matrix has to be adjusted.
 
 ```
 library(tidyverse) #load the tidyverse package for formatting and plotting
@@ -150,6 +158,12 @@ pca = ggplot(data = df, aes(x=V2, y=V3, fill = pop, colour = pop)) +
   xlab("Principal component 1") +
   ylab("Principal component 2")
 
+pca.eigenval.sum = sum(mme.pca$values) #sum of eigenvalues
+varPC1 <- (mme.pca$values[1]/pca.eigenval.sum)*100 #Variance explained by PC1
+varPC2 <- (mme.pca$values[2]/pca.eigenval.sum)*100 #Variance explained by PC2
+varPC3 <- (mme.pca$values[3]/pca.eigenval.sum)*100 #Variance explained by PC3
+varPC4 <- (mme.pca$values[4]/pca.eigenval.sum)*100 #Variance explained by PC4
+
 #Save plot as pdf
 ggsave(filename = "/workdir/arne/physalia_lcwgs_data/data_practicals/Results/pca_pcangsd_plot.pdf", plot = pca)
 ```
@@ -162,25 +176,14 @@ Rscript ./plot_pca_pcangsd.R
 
 
 
+### Optional: Compare the results to a PCA based on all SNPs
 
+While it is best practice to perform a PCA based on an LD-pruned SNP dataset, PCAs are often performed based on full SNP datasets. 
+If you are interested and have time, you could compare the PCA for LD-pruned SNPs to one that was performed for all SNPs in the dataset without LD-pruning.
 
+Q: What is the difference in the PCA pattern? 
 
-
-
-
-
-
-
-
-
-
-### Optional: PCA with all SNPs
-
-If you are interested, you can compare the PCA with LD-pruned SNPs to one that was performed for all SNPs without LD-pruning.
-
-What is the difference in the PCA pattern? 
-
-1. Covariance matrix and PCA with ANGSD 
+For this, we will only estimate the covariance matrix using single read sampling in ANGSD:
 
 ```
 $NGS/angsd/angsd -b ALL_bams.txt -anc $REF -out Results/MME_ANGSD_PCA \
@@ -189,8 +192,7 @@ $NGS/angsd/angsd -b ALL_bams.txt -anc $REF -out Results/MME_ANGSD_PCA \
 	-doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1 -P 4
 ```
 
-Now we can use the covariance matrix to perform a principal components analysis using the `eigen` function in R:
-
+Again, we perform the principal components analysis using the `eigen` function in R:
 ```
 library(tidyverse) #load the tidyverse package for formatting and plotting
 
@@ -219,64 +221,15 @@ pca = ggplot(data = df, aes(x=V2, y=V3, fill = pop, colour = pop)) +
 ggsave(filename = "/workdir/arne/physalia_lcwgs_data/data_practicals/Results/pca_plot.pdf", plot = pca)
 
 ```
-You can run the Rscript containing this code to plot your results:
+You can run the plot your results using this script:
 ```
 Rscript ./plotPCA.R  
 ```
 
-Comparing the PCA to the expected pattern based on the whole genome (see lecture) we see that these patterns differ drastically.
-The difference in population structure can be explained by the low number of SNPs we have in our test dataset. 
+Q: How do population relationships differ between the on LD-pruned PCA and the full-dataset PCA?  
 
 
-2. Optional: Covariance matrix estimation with PCAngsd (based on all SNPs)
 
-A covariance matrix can also be inferred from genotype likelihoods using PCAangsd. 
-PCAngsd takes as input genotype likelihoods in beagle format. 
-We have already created the beagle input file in the previous step using the `-doGLF 2` option while we created the covariance matrix using the read re-sampling.  
-
-
-GO THROUGH POTENTIAL SETTINGS:
-
-```
-python3 /programs/pcangsd-0.98/pcangsd.py -beagle Results/MME_ANGSD_PCA.beagle.gz -o Results/covmatrix
-```
-
-From PCAngsd 0.98 the output is saved in numpy format but this can easily loaded into R (see script below).
-We can perform the principal components analysis and plot PC1 vs PC2 the same way we did before.
-
-```
-library(tidyverse) #load the tidyverse package for formatting and plotting
-
-#Load the covariance matrix
-cov = as.matrix(RcppCNPy::npyLoad("/Users/arnejacobs/Dropbox/covmatrix.cov.npy"))
-
-#We will also add a column with population assingments
-pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA"
-         ,"PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY"
-         ,"MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS"
-         ,"MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU")
-
-mme.pca <- eigen(cov) #perform the pca using the eigen function. 
-
-eigenvectors <- (mme.pca$vectors) #extract eigenvectors 
-pca.vectors <- as_tibble(cbind(pop, eigenvectors)) #combine with our population assignments
-df = type_convert(pca.vectors) #check all columns and convert if necessary (automatic)
-
-#plot PC1 vs PC2 using ggplot
-pca = ggplot(data = df, aes(x=V2, y=V3, fill = pop, colour = pop)) +
-  geom_point(size = 5, shape = 21) +
-  xlab("Principal component 1") +
-  ylab("Principal component 2")
-
-#Save plot as pdf
-ggsave(filename = "/workdir/arne/physalia_lcwgs_data/data_practicals/Results/pca_pcangsd_plot.pdf", plot = pca)
-```
-
-You can run the Rscript containing this code to plot your results:
-```
-Rscript ./plot_pca_pcangsd.R  
-
-```
 
 
 --------------------------------------------------
