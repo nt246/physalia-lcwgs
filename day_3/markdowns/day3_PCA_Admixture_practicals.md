@@ -61,16 +61,76 @@ Using the list of LD-pruned variant sites and the code shown above, we can estim
 $NGS/angsd/angsd -b ALL_bams.txt -anc $REF -out Results/MME_ANGSD_PCA_LDpruned \
 	-minMapQ 20 -minQ 20 -doMaf 1 -minMaf 0.05 -SNP_pval 2e-6 \
 	-GL 1 -doGlf 2 -doMajorMinor 1 -doPost 1 \
-	-doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1 -sites LDpruned_snps.list
+	-doCounts 1 -doCov 1 -sites LDpruned_snps.list
 ```
 
 At the same time, we will also output the genotype likelihoods for these variant sites in beagle likelihood file format (beagle.gz), which will be used as input for estimating the covariance matrix using PCAngsd (below) 
+
+
+The actual principal components analysis is then performed in R using the `eigen` function. For that, we have to load the covariance matrix into R, then we can optionally provide population assignments for each individual (rows in same order as input bam file list `-b ALL_bams.txt`).
 
 ```
 library(tidyverse) #load the tidyverse package for formatting and plotting
 
 #Load the covariance matrix
 cov <- as.matrix(read.table("/workdir/arne/physalia_lcwgs_data/data_practicals/Results/MME_ANGSD_PCA_LDpruned.covMat", header = F))
+
+#We will also add a column with population assingments
+pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA"
+         ,"PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY"
+         ,"MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS"
+         ,"MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU")
+
+mme.pca <- eigen(cov) #perform the pca using the eigen function. 
+```
+
+We can then extract the eigenvectors from the pca object and format them into a dataframe for plotting, e.g. using `ggplot()`.
+```
+eigenvectors <- (mme.pca$vectors) #extract eigenvectors 
+pca.vectors <- as_tibble(cbind(pop, eigenvectors)) #combine with our population assignments
+df = type_convert(pca.vectors) #check all columns and convert if necessary (automatic)
+
+#plot PC1 vs PC2 using ggplot
+pca = ggplot(data = df, aes(x=V2, y=V3, fill = pop, colour = pop)) +
+  geom_point(size = 5, shape = 21) +
+  xlab("Principal component 1") +
+  ylab("Principal component 2")
+
+#Save plot as pdf
+ggsave(filename = "/workdir/arne/physalia_lcwgs_data/data_practicals/Results/pca_plot.pdf", plot = pca)
+```
+
+Additionally, we can extract the eigenvalues for each eigenvector from the pca object 
+
+
+You can run the Rscript containing this code to plot your results:
+```
+Rscript ./plotPCA.R  
+```
+
+
+**2. Alternative: Covariance matrix estimation with PCAngsd (based on all SNPs)**
+
+A covariance matrix can also be inferred from genotype likelihoods using PCAangsd. PCAngsd takes as input genotype likelihoods in beagle format, which we generated in the step before using the `-doGLF 2` option.
+
+PCAngsd provides a multitude of different settings, described [here](http://www.popgen.dk/software/index.php/PCAngsd). We won't change any of the settings here and only use the default settings, which are sufficient in most cases. 
+
+We provide the path to the input file using the `-beagle` option, which also tells PCAngsd that we are working with a beagle file. The output path and output name is provided using the `-o` option. 
+
+```
+python3 /programs/pcangsd-0.98/pcangsd.py -beagle Results/MME_ANGSD_PCA.beagle.gz -o Results/covmatrix
+```
+
+From PCAngsd 0.98, the output is saved in numpy format but this can easily loaded into R using the 'RcppCNPy::npyLoad' R function (see script below).
+
+
+The principla We can perform the principal components analysis and plot PC1 vs PC2 the same way we did before.
+
+```
+library(tidyverse) #load the tidyverse package for formatting and plotting
+
+#Load the covariance matrix
+cov = as.matrix(RcppCNPy::npyLoad("/Users/arnejacobs/Dropbox/covmatrix.cov.npy"))
 
 #We will also add a column with population assingments
 pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA"
@@ -91,13 +151,27 @@ pca = ggplot(data = df, aes(x=V2, y=V3, fill = pop, colour = pop)) +
   ylab("Principal component 2")
 
 #Save plot as pdf
-ggsave(filename = "/workdir/arne/physalia_lcwgs_data/data_practicals/Results/pca_plot.pdf", plot = pca)
-
+ggsave(filename = "/workdir/arne/physalia_lcwgs_data/data_practicals/Results/pca_pcangsd_plot.pdf", plot = pca)
 ```
+
 You can run the Rscript containing this code to plot your results:
 ```
-Rscript ./plotPCA.R  
+Rscript ./plot_pca_pcangsd.R  
+
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ### Optional: PCA with all SNPs
