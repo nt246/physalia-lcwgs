@@ -8,7 +8,7 @@ We will also calculate genotypes probabilities to each site for each individual.
 
 In ANGSD, the option to call genotypes is `-doGeno`:
 ```
-$NGS/angsd/angsd -doGeno
+angsd -doGeno
 ...
 -doGeno 0
         1: write major and minor
@@ -34,7 +34,7 @@ If we want to print the major and minor alleles as well then we set `-doGeno 3`.
 
 To calculate the posterior probability of genotypes we need to define a model.
 ```
-$NGS/angsd/angsd -doPost
+angsd -doPost
 ...
 -doPost 0       (Calculate posterior prob 3xgprob)
         1: Using frequency as prior
@@ -47,7 +47,7 @@ $NGS/angsd/angsd -doPost
 
 Furthermore, this calculation requires the specification of how to assign the major and minor alleles (if biallelic).
 ```
-$NGS/angsd/angsd -doMajorMinor
+angsd -doMajorMinor
 ...
         -doMajorMinor   0
         1: Infer major and minor from GL
@@ -61,13 +61,13 @@ $NGS/angsd/angsd -doMajorMinor
 
 A typical command for genotype calling is (assuming we analyse our PANY samples):
 ```
-$NGS/angsd/angsd -b $DIR/PANY_bams.txt -ref $REF -out Results/PANY \
+angsd -b $DIR/PANY_bams.txt -ref $REF -out Results/PANY \
 	-uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
     -minMapQ 20 -minQ 20 -minInd 5 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
-	-GL 2 -doGlf 1 -r Mme_chr24
+	-GL 2 -doGlf 1
 
-$NGS/angsd/angsd -glf Results/PANY.glf.gz -fai $REF.fai -nInd 10 -out Results/PANY \
-	-doMajorMinor 1 -doGeno 3 -doPost 2 -doMaf 1 -r Mme_chr24
+angsd -glf Results/PANY.glf.gz -fai $REF.fai -nInd 15 -out Results/PANY \
+	-doMajorMinor 1 -doGeno 3 -doPost 2 -doMaf 1
 ```
 Let's ignore the `-doMaf` option now. We will discuss it later.
 
@@ -87,7 +87,7 @@ Why is that?
 You can control how to set missing genotype when their confidence is low with `-postCutoff`.
 For instance, we can set as missing genotypes when their (highest) genotype posterior probability is below 0.95:
 ```
-$NGS/angsd/angsd -glf Results/PANY.glf.gz -fai $REF.fai -nInd 5 -out Results/PANY \
+angsd -glf Results/PANY.glf.gz -fai $REF.fai -nInd 15 -out Results/PANY \
         -doMajorMinor 1 -doGeno 3 -doPost 2 -doMaf 1 -postCutoff 0.95
 ```
 
@@ -101,6 +101,7 @@ zcat Results/PANY.geno.gz | grep -1 - | wc -l
 Why are there some many sites with missing genotypes?
 
 The mean depth per sample is around 1-2X, therefore genotypes cannot be assigned with very high confidence.
+Sites where all genotypes are missing are skipped in the output file.
 
 Setting this threshold depends on the mean sequencing depth of your data, as well as your application.
 For some analyses you need to work only with high quality genotypes (e.g. measure of proportion of shared SNPs for gene flow estimate), while for others you can be more relaxed (e.g. estimate of overall nucleotide diversity).
@@ -115,7 +116,7 @@ We will show later how to accurately estimate summary statistics with low-depth 
 If we assume HWE, then we can use this information as prior probability to calculate genotype posterior probabilities.
 The command line would be:
 ```
-$NGS/angsd/angsd -glf Results/PANY.glf.gz -fai $REF.fai -nInd 5 -out Results/PANY \
+angsd -glf Results/PANY.glf.gz -fai $REF.fai -nInd 15 -out Results/PANY \
         -doMajorMinor 1 -doGeno 3 -doPost 1 -doMaf 1
 ```
 using the option `-doPost 1`.
@@ -127,25 +128,28 @@ echo Mme_chr24 4000001 > Data/snp.txt
 ```
 We need to index this file in order for ANGSD to process it.
 ```
-$NGS/angsd/angsd sites index Data/snp.txt
+angsd sites index Data/snp.txt
 ```
 
 We are interested in calculating the derived allele frequencies, so are using the ancestral sequence to polarise the alleles.
 We also want to compute the allele frequencies for each population separately.
 We need to use a different file for each population, with a different list of BAM files, as provided:
 ```
-ls $DIR/*_bams.txt
+ls -d -1 $DIR/*_bams.txt
 ```
 ```
-/workdir/arne/physalia_lcwgs_data/data_practicals//ALL_bams.txt   /workdir/arne/physalia_lcwgs_data/data_practicals//MBNS_bams.txt
-/workdir/arne/physalia_lcwgs_data/data_practicals//JIGA_bams.txt  /workdir/arne/physalia_lcwgs_data/data_practicals//PANY_bams.txt
-/workdir/arne/physalia_lcwgs_data/data_practicals//MAQU_bams.txt
+/home/ubuntu/Share/data/ALL_bams.txt
+/home/ubuntu/Share/data/JIGA_bams.txt
+/home/ubuntu/Share/data/MAQU_bams.txt
+/home/ubuntu/Share/data/MBNS_bams.txt
+/home/ubuntu/Share/data/PANY_bams.txt
 ```
 We retain only these populations: Jekyll Island (JIGA), Patchogue (PANY), Minas Basin (MBNS), Magdalen Island (MBNS).
 
-Finally we will calculate the **derived** allele frequencies based on assigned genotypes.
+We are calculating the **derived** allele frequencies based on assigned genotypes.
 Note that we are interested in calculating the **derived** allele frequency, so we need to specify a putative ancestral sequence.
-Let's assume that our reference sequence represents the ancestral sequence too.
+This is specififed by the variable `$ANC`.
+Alternatively, for this exercise, you can assume that our reference sequence represents the ancestral sequence too.
 Please finally note that we want to relax out filtering to make sure to have results.
 
 Write the code that performs the following genotype calling for our variants of interest in all populations.
@@ -155,7 +159,7 @@ As an indication, you can follow these guidelines:
 - calculate genotype posterior probabilities using a HWE-based prior
 - filter out bases with a quality score less than 20
 - filter our reads with a mapping quality score less than 20
-- use ony sites where you have at least one sample with data (-mindInd)
+- use ony sites where you have at least five samples with data (-mindInd)
 - do not set any filtering based on min and max depth
 - use -doMajorMinor 1 and -doMaf 1 options
 - set genotypes as missing if the highest genotype probability is less than 0.50

@@ -7,7 +7,7 @@ We now wish to calculate the ***genotype likelihoods*** for each site at each in
 
 To do so you need to specify which genotype likelihood model to use.
 ```
-$NGS/angsd/angsd -GL
+angsd -GL
 ...
 -GL=0: 
 	1: SAMtools
@@ -36,7 +36,7 @@ For most applications and data, GATK and SAMtools models should give similar res
 Let's assume to work with PANY samples only.
 A possible command line to estimate allele frequencies might be:
 ```
-$NGS/angsd/angsd -b $DIR/PANY_bams.txt -ref $REF -out Results/PANY \
+angsd -b $DIR/PANY_bams.txt -ref $REF -out Results/PANY \
         -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
         -minMapQ 20 -minQ 20 -minInd 5 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
         -GL 2 -doGlf 4

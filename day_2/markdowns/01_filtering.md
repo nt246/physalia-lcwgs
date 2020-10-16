@@ -7,7 +7,7 @@ First, we will learn **how to build a command line in ANGSD**.
 
 To see a full list of options in ANGSD type:
 ```
-$NGS/angsd/angsd
+angsd
 ```
 and you should see something like
 ```
@@ -70,7 +70,7 @@ ls $DIR/*_bams.txt
 
 If the input file is in BAM format, the possible options are:
 ```
-$NGS/angsd/angsd -bam
+angsd -bam
 ...
 parseArgs_bambi.cpp: bam reader:
 	-bam/-b		(null)	(list of BAM/CRAM files)
@@ -107,7 +107,7 @@ Examples for region specification:
 
 First we need to define input and output files (please note that here we do not run these intermediate steps, as you can see thare is a ```#``` in the front):
 ```
-# $NGS/angsd/angsd -b ALL.bams -ref $REF -out Results/ALL \
+# angsd -b ALL.bams -ref $REF -out Results/ALL \
 ...
 ```
 with
@@ -118,7 +118,7 @@ with
 Next we need to define some basic filtering options.
 First we define filters based on reads quality.
 ```
-# $NGS/angsd/angsd -b ALL.bams -ref $REF -out Results/ALL \
+# angsd -b ALL.bams -ref $REF -out Results/ALL \
 #        -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
 ...
 ```
@@ -135,7 +135,7 @@ This is achieved by the ```-minInd``` option.
 A possible command line would contain the following filtering:
 ```
 ...
-# $NGS/angsd/angsd -b ALL.bams -ref $REF -out Results/ALL \
+# angsd -b ALL.bams -ref $REF -out Results/ALL \
 #        -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
 #        -minMapQ 20 -minQ 20 -minInd 5 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
 ...

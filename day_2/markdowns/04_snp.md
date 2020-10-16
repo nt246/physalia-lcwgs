@@ -9,7 +9,7 @@ However with low depth data direct counting of individually assigned genotypes c
 
 ANGSD has an option to estimate **allele frequencies** taking into account data uncertainty from genotype likelihoods:
 ```
-$NGS/angsd/angsd -doMaf
+angsd -doMaf
 ...
 -doMaf  0 (Calculate persite frequencies '.mafs.gz')
         1: Frequency (fixed major and minor)
@@ -38,7 +38,7 @@ NB These frequency estimators requires major/minor -doMajorMinor
 
 Therefore, the estimation of allele frequencies requires the specification of how to assign the major and minor alleles (if biallelic).
 ```
-$NGS/angsd/angsd -doMajorMinor
+angsd -doMajorMinor
 ...
         -doMajorMinor   0
         1: Infer major and minor from GL
@@ -52,10 +52,10 @@ $NGS/angsd/angsd -doMajorMinor
 
 A possible command line to estimate allele frequencies might be (this may take 1 min to run):
 ```
-$NGS/angsd/angsd -b $DIR/PANY_bams.txt -ref $REF -out Results/PANY \
+angsd -b $DIR/PANY_bams.txt -ref $REF -out Results/PANY \
         -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
         -minMapQ 20 -minQ 20 -minInd 5 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
-        -GL 1 -doGlf 1 -doMajorMinor 1 -doMaf 1 -r Mme_chr24
+        -GL 1 -doGlf 1 -doMajorMinor 1 -doMaf 1
 ```
 where we specify:
 * -doMajorMinor 1: both alleles are inferred from genotype likelihoods
@@ -76,15 +76,15 @@ zcat Results/PANY.mafs.gz | head
 and you may see something like
 ```
 chromo	position	major	minor	ref	knownEM	nInd
-Mme_chr24	2558447	T	C	N	0.140292	7
-Mme_chr24	2558454	G	A	N	0.000008	7
-Mme_chr24	2558456	A	C	N	0.000008	7
-Mme_chr24	2558458	C	A	N	0.000008	7
-Mme_chr24	2558459	G	A	N	0.000008	7
-Mme_chr24	2558460	T	A	N	0.116388	7
-Mme_chr24	2558461	C	T	N	0.452090	7
-Mme_chr24	2558463	T	A	N	0.000003	6
-Mme_chr24	2558464	T	A	N	0.118874	7
+Mme_chr24:2558528-4558528	27	A	C	A	0.000004	5
+Mme_chr24:2558528-4558528	28	T	A	T	0.000004	5
+Mme_chr24:2558528-4558528	29	T	A	T	0.000004	5
+Mme_chr24:2558528-4558528	30	T	A	T	0.000004	5
+Mme_chr24:2558528-4558528	31	A	C	A	0.000004	5
+Mme_chr24:2558528-4558528	32	T	A	T	0.000004	5
+Mme_chr24:2558528-4558528	35	C	A	C	0.000004	5
+Mme_chr24:2558528-4558528	38	A	C	A	0.000004	5
+Mme_chr24:2558528-4558528	39	T	A	T	0.000004	6
 ```
 
 where `knownEM` specifies the algorithm used to estimate the allele frequency which is given under that column.
@@ -136,7 +136,7 @@ Use the previously calculated genotype likelihoods as input file (use ```-glf ? 
 for PV in 0.05 1e-2 1e-4 1e-6
 do
         if [ $PV == 0.05 ]; then echo SNP_pval NR_SNPs; fi
-        $NGS/angsd/angsd -glf Results/PANY.glf.gz -nInd 10 -fai $REF.fai -out Results/PANY.$PV \
+        angsd -glf Results/PANY.glf.gz -nInd 15 -fai $REF.fai -out Results/PANY.$PV \
                 -doMajorMinor 1 -doMaf 1 -skipTriallelic 1 \
                 -SNP_pval $PV &> /dev/null
         echo $PV `zcat Results/PANY.$PV.mafs.gz | tail -n+2 | wc -l`
@@ -146,10 +146,10 @@ done
 A possible output is (your numbers may be different):
 ```
 SNP_pval NR_SNPs
-0.05 1228
-1e-2 1107
-1e-4 937
-1e-6 761
+0.05 23052
+1e-2 16630
+1e-4 9198
+1e-6 6348
 ```
 
 Which sites differ from 0.05 and 0.01? What is their frequency?
@@ -157,9 +157,12 @@ This script will also print out the first 20 discordant sites (pK.EM is the p-va
 ```
 Rscript -e 'mafs1 <- read.table(gzfile("Results/PANY.1e-2.mafs.gz"), he=T, row.names=NULL, strings=F); mafs5 <- read.table(gzfile("Results/PANY.0.05.mafs.gz"), header=T, row.names=NULL, stringsAsFact=F); mafs5[!(mafs5[,2] %in% mafs1[,2]),][1:20,]; pdf(file="Results/diffSnpCall.pdf"); par(mfrow=c(1,2)); hist(as.numeric(mafs5[!(mafs5[,2] %in% mafs1[,2]),][,6]), main="Discordant SNPs", xlab="MAF", xlim=c(0,0.5)); hist(as.numeric(mafs5[(mafs5[,2] %in% mafs1[,2]),][,6]), main="Concordant SNPs", xlab="MAF", xlim=c(0,0.5)); dev.off();'
 ```
+
+You can scp the pdf file to your local machine (from your local machine: scp -i XYZ.pem userX@IP:~/day2/Results/diffSnpCall.pdf .) and visualise it with
 ```
 evince Results/diffSnpCall.pdf
 ```
+
 What can you conclude from these results?
 Which frequencies are more difficult to estimate and therefore affect SNP calling?
 
@@ -173,9 +176,6 @@ What is the difference compared to what previously estimated?
 ----------------------------------
 
 You are now able to calculate genotype likelihoods and allele frequencies and perform genotype and SNP calling with ANGSD.
-
-
-
 
 
 
