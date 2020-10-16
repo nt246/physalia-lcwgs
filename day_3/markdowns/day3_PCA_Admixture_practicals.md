@@ -7,11 +7,11 @@ In this session you will learn how to do:
 
 using low-coverage whole genome data.
 
-We have low-coverage NGS data for 60 Atlantic silversides from four populations, spanning a 2Mb region on chromosome 24. These populations have been previously studied in [Therkildsen et al. 2019](https://science.sciencemag.org/content/365/6452/487) and [Wilder et al. 2020](https://onlinelibrary.wiley.com/doi/10.1002/evl3.189) using a trancsriptome as reference, and cover the entire distribution range of Atlantic silverside. 
-The interesting aspect about chromosome 24 is that it harbours a large polymorphic inversion, and our test dataset spans one breakpoint of this inversion. 
+We have low-coverage NGS data for 60 Atlantic silversides from four populations, spanning a 2Mb region on chromosome 24. These populations have been previously studied in [Therkildsen et al. 2019](https://science.sciencemag.org/content/365/6452/487) and [Wilder et al. 2020](https://onlinelibrary.wiley.com/doi/10.1002/evl3.189), and cover the entire distribution range of Atlantic silverside. 
+The interesting aspect about chromosome 24 is that it harbours a large polymorphic inversion that differs in its frequency across populations, and our test dataset spans one breakpoint of this inversion (1Mb up and downstream). Therefore, we might expect that differ parts of our dataset contain different evolutionary signals.
 
-First, can we determine the neutral population structure of Atlantic silverside along its distribution range. 
-Second, can use principal components analysis and ancestry analyses to determine which populations contain the alternative inversion karyotype? And are there potentially any heterozygous individuals for the inversion?
+In this tutorial, can want to use these data to determine the neutral population structure of Atlantic silverside along its distribution range. 
+Second, we can use principal components analysis and ancestry analyses to determine which populations contain the alternative inversion karyotype? And are there potentially any heterozygous individuals for the inversion?
 
 For this practical, we will be using [ANGSD](http://popgen.dk/wiki/index.php/ANGSD) (Analysis of Next Generation Sequencing Data), [ngsAdmix](http://www.popgen.dk/software/index.php/NgsAdmix) and [PCAngsd](http://www.popgen.dk/software/index.php/PCAngsd).
 
@@ -38,7 +38,7 @@ mkdir Data
 To perform PCA with low-coverage NGS data, we have to infer the genetic covariance matrix, which can be estimated in different ways.
 Here we will estimate the covariance matrix using single-read sampling in [ANGSD](http://www.popgen.dk/angsd/index.php/PCA_MDS) but will also discuss the algorithm implemented in [PCAngsd](http://www.popgen.dk/software/index.php/PCAngsd)
 
-In general it is good practice to perform LD pruning or at least thinning to reduce the impact of large LD clusters (e.g. inversions) on the inferred population structure. In this practical, we will perform the population structure analysis using an LD-pruned SNP dataset that you prepared earlier today and also the full SNP dataset. The full SNP dataset will help us to understand how the inversion karyotype is distributed in our dataset and will highlight the impact of large LD clusters on the inferred structure. 
+In general it is good practice to perform LD pruning or at least thinning to reduce the impact of non-independent SNP clusters, e.g. large LD clusters in inversions, on the inferred population structure. In this practical, we will perform the population structure analysis using an LD-pruned SNP dataset that you prepared earlier today and also the full SNP dataset. The full SNP dataset will help us to understand how the inversion karyotype is distributed in our dataset and will highlight the impact of large LD clusters on the inferred structure. 
 
 For the PCA method you should use only inferred variant sites (SNPs). SNPs can be inferred based on genotype likelihoods (see SNP_calling day 2) at the same time as inferring the covariance matrix (`-doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1`) by providing the `-SNP_pval` option. SNPs should be restricted to more common variants with minor allele frequencies of at least 5% using the `-minMAF 0.05` option. However, this way, you will focus on all SNPs and not only an LD-pruned subset.
 
@@ -118,7 +118,7 @@ Rscript ./plotPCA.R
 ```
 
 
-**2. Alternative approach: Covariance matrix estimation with PCAngsd (based on all SNPs)**
+**2. Alternative approach: Covariance matrix estimation with PCAngsd**
 
 The covariance matrix can also be inferred from genotype likelihoods using PCAangsd. PCAngsd takes as input genotype likelihoods in beagle format, which we generated in the step before using the `-doGLF 2` option.
 
@@ -226,7 +226,7 @@ You can run the plot your results using this script:
 Rscript ./plotPCA.R  
 ```
 
-Q: How do population relationships differ between the on LD-pruned PCA and the full-dataset PCA?  
+Q: How do population relationships differ between the on LD-pruned PCA and the full-dataset PCA? And can you guess which individuals carry which inversion karyotype? 
 
 
 
@@ -236,7 +236,8 @@ Q: How do population relationships differ between the on LD-pruned PCA and the f
 
 ## Admixture analysis
 
-In some cases we also want to infer genome-wide admixture proportions for each individuals. Similar to PCA, there are different ways of inferring admixture proportions from genotype likelihoods. Here, we will use [ngsAdmix](http://www.popgen.dk/software/index.php/NgsAdmix) and will also present a way of inferring admixture proportions with PCAngsd.  
+In some cases we also want to infer genome-wide admixture proportions for each individuals. Similar to PCA, there are different ways of inferring admixture proportions from genotype likelihoods. Here, we will use [ngsAdmix](http://www.popgen.dk/software/index.php/NgsAdmix) and will also present a way of inferring admixture proportions with PCAngsd.
+Similar to the PCA, we want to use an LD-pruned SNP dataset for this analysis to reduce the impact of non-independent SNPs on the ancestry inference. 
 
 ### ngsAdmix
 
