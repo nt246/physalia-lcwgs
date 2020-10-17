@@ -13,6 +13,7 @@ NGS=/programs/angsd0.930/
 DIR=/workdir/arne/physalia_lcwgs_data/data_practicals/
 DATA=$DIR/BAMS/
 REF=$DIR/Ref.fa
+ANC=$DIR/outgrp_ref.fa
 
 mkdir Results
 mkdir Data
@@ -63,14 +64,14 @@ NB:
 	  If -pest is supplied in addition to -doSaf then the output will then be posterior probability of the sample allelefrequency for each site
 ```
 
-The SFS is typically computed for each population separately.
+The SFS is typically computed for each population separately. 
 
-We cycle across all populations and compute SAF files:
+We cycle across all populations and compute SAF files. By specifying an outgroup genome using the `-anc $ANC` option, we can polarize the sample allele frequencies and estimate the derived allele frequency. This will allow us to later compute the unfolded site frequency spectrum.
 ```
 for POP in JIGA PANY MBNS MAQU
 do
         echo $POP
-        $NGS/angsd/angsd -b $DIR/$POP'_bams.txt' -ref $REF -anc $REF -out Results/$POP \
+        $NGS/angsd/angsd -b $DIR/$POP'_bams.txt' -ref $REF -anc $ANC -out Results/$POP \
                 -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
                 -minMapQ 20 -minQ 20 -minInd 5 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
                 -GL 1 -doSaf 1
@@ -136,11 +137,12 @@ done
 ```
 The output will be saved in `Results/POP.sfs` files.
 
-You can now have a look at the output file, for instance for the JIGAican samples:
+You can now have a look at the output file, for instance for the JIGA samples:
 ```
 cat Results/JIGA.sfs
 ```
-The first value represent the expected number of sites with derived allele frequency equal to 0, the second column the expected number of sites with frequency equal to 1 and so on.
+The first value represents the expected number of sites with derived allele frequency equal to 0, the second column the expected number of sites with frequency equal to 1 and so on.
+
 
 **QUESTION**
 
@@ -169,6 +171,43 @@ Do they behave like expected?
 Which population has more SNPs?
 
 Which population has a higher proportion of common (not rare) variants?
+
+
+---------------------------------------
+
+
+**Optional: The folded minor allele frequency spectrum**
+If you do not have an outgroup genome, you can compute the folded site frequency spectrum by estimating sample allele frequencies by specifying the reference genome as the ancestral genome: 
+```
+for POP in JIGA PANY MBNS MAQU
+do
+        echo $POP
+        $NGS/angsd/angsd -b $DIR/$POP'_bams.txt' -ref $REF -anc $REF -out Results/$POP.folded \
+                -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
+                -minMapQ 20 -minQ 20 -minInd 5 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
+                -GL 1 -doSaf 1
+done
+```
+
+and then compute the overall folded SFS by specifying the `-fold 1` option as part of the `realSFS` command:
+```
+for POP in JIGA PANY MBNS MAQU
+do
+        echo $POP
+        $NGS/angsd/misc/realSFS Results/$POP.folded.saf.idx -fold 1 > Results/$POP.folded.sfs
+done
+```
+
+**QUESTION**
+
+How many values do you expect for folded SFS?
+
+```
+awk -F' ' '{print NF; exit}' Results/$POP.folded.sfs
+```
+In contrast to the unfolded spectrum, the folded spectrum only has `2N+1` values with N diploid individuals.
+
+
 
 ---------------------------------------
 
@@ -228,7 +267,7 @@ This command may take some time and you should skip it if not interested.
 
 #### 2. Population genetic differentiation
 
-Here we are going to calculate **allele frequency differentiation** using the PBS (population branch statistic) metric.
+Here we are going to calculate **allele frequency differentiation** using the FST and PBS (population branch statistic) metric.
 Again, we can achieve this by avoid genotype calling using ANGSD.
 From the sample allele frequencies likelihoods (.saf files) we can estimate PBS using the following pipeline.
 
