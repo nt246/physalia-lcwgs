@@ -10,9 +10,22 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-In this tuturial, you will learn how to take the raw sequencing files in `fastq` format, and convert them into alignment files in `bam` format. Along the way, you will perform multiple quality control (QC) procedures, and will map the short sequences to a reference genome. 
+<br>
 
-## Initial preparations
+## Case study for practicals
+
+Throughout this course, you will be working with data from the Atlantic silverside, *Menidia menidia*, a small estuarine fish
+![](../img/IMG_8658_SnyderCredit.jpg)
+
+MORE TO ADD
+
+<br>
+
+## From `.fastq` to `.bam`
+
+In this tutorial, you will learn how to take the raw sequencing files in `fastq` format, and convert them into alignment files in `bam` format. Along the way, you will perform multiple quality control (QC) procedures, and will map the short sequences to a reference genome. 
+
+## Initial preparation
 
 #### Get familiarized with some basic shell scripting
 
