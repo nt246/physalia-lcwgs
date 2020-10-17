@@ -1,14 +1,18 @@
-Tutorial 1: data processing
+Tutorial 1: Data processing: From fastq to bam
 ================
 
-  - [Initial preparations](#initial-preparations)
-      - [Get familiarized with some basic shell
-        scripting](#get-familiarized-with-some-basic-shell-scripting)
-      - [Create a project directory](#create-a-project-directory)
-      - [Move data to appropriate
-        directories](#move-data-to-appropriate-directories)
-      - [Create a sample list](#create-a-sample-list)
-      - [Prepare a sample table](#prepare-a-sample-table)
+  - [Case study for practicals](#case-study-for-practicals)
+      - [Today’s data](#todays-data)
+  - [Initial preparation](#initial-preparation)
+      - [Make sure you’re up to speed on basic shell
+        scripting](#make-sure-youre-up-to-speed-on-basic-shell-scripting)
+      - [Copy the working directories with the needed input
+        files](#copy-the-working-directories-with-the-needed-input-files)
+      - [Bash for loops](#bash-for-loops)
+      - [Understanding the sample list and sample
+        table](#understanding-the-sample-list-and-sample-table)
+      - [Using bash `for loops` to iterate over target
+        samples](#using-bash-for-loops-to-iterate-over-target-samples)
   - [Data processing pipeline](#data-processing-pipeline)
       - [Define paths to the project directory and
         programs](#define-paths-to-the-project-directory-and-programs)
@@ -27,140 +31,259 @@ Tutorial 1: data processing
       - [Read count](#read-count)
       - [Summarize counting result](#summarize-counting-result)
 
-In this tuturial, you will learn how to take the raw sequencing files in
-`fastq` format, and convert them into alignment files in `bam` format.
-Along the way, you will perform multiple quality control (QC)
-procedures, and will map the short sequences to a reference genome.
+<br>
 
-## Initial preparations
+In this tutorial, you will learn how to go from raw sequencing files in
+`fastq` format through alignment files in `bam` format that we can use
+for downstream analysis. Along the way, you will perform multiple
+quality control (QC) procedures, and will map the short sequences to a
+snippet of a reference genome.
 
-#### Get familiarized with some basic shell scripting
+<br>
 
-If you have not used shell scripting before or are getting rusty on it,
-it may be helpful to have a look at a cheat sheet before proceeding to
-the next step.
+## Case study for practicals
 
-Example cheat sheets:
+Throughout this course, you will be working with data from the Atlantic
+silverside, *Menidia menidia*, a small estuarine fish
+![](../img/IMG_8658_SnyderCredit.jpg)
 
-#### Create a project directory
+MORE TO ADD
 
-As a first step, you should create a project directory (referred to as
-`BASEDIR` in certain scripts), which you can name `day_1`, with the
-following subdirectories:
+Add sample table
 
-  - `raw_fastq` raw fastq files
+<br>
 
-  - `adapter_clipped` adapter clipped fastq files
+#### Today’s data
 
-  - `bam` bam files
+Today, we will work with subsets of two different fastq files from each
+of three Atlantic silversides from the Therkildsen et al. 2019 and
+Wilder et al. 2020 papers. The libraries were prepared as described in
+Therkildsen and Palumbi 2017. There are two different fastq files
+because each of these individuals were sequenced in two different
+sequencing runs, to even out sequence coverage among individuals (as
+discussed in lecture).
 
-  - `sample_lists` sample tables, sample lists, and other small text
+We will map these raw sequence files to the Atlantic silverside genome
+(Tigano et al. nearly submitted\!). To minimize computational time, we
+are just looking at a small snippet of chromosome 24 for all the
+exercises in this course.
+
+<br>
+
+## Initial preparation
+
+#### Make sure you’re up to speed on basic shell scripting
+
+We’ll be working almost exclusively through the command line, so if you
+have not used shell scripting before or are getting rusty on it, it may
+be helpful to have a look at a cheat sheet before proceeding to the next
+step.
+
+[Example cheat
+sheet](https://bioinformaticsworkbook.org/Appendix/Unix/UnixCheatSheet.html#gsc.tab=0)
+
+<br>
+
+#### Copy the working directories with the needed input files
+
+Let’s first get set up and retrieve a copy the data we will be working
+on. Copy the `day_1` directory from `xxx_path`. This directory will be
+referred to as `BASEDIR` in many of the scripts below. Have a look at
+your new `day_1` directory; it contains the following subdirectories:
+
+  - `raw_fastq` has the raw fastq files we’ll be working on today
+
+  - `adapter_clipped` is empty, but you’ll use it for storing your
+    adapter clipped fastq files
+
+  - `bam` is empty, but you’ll use it for storing your bam (alignment)
     files
 
-  - `fastqc` FastQC output
+  - `sample_lists` is for storing sample tables, sample lists, and other
+    small text files
 
-  - `markdowns` RMarkdown and Markdown files
+  - `fastqc` is empty, but you’ll use it for storing your FastQC output
 
-  - `reference` Reference genome, adapter sequences, and others
+  - `markdowns` contains this exercise, and you can also add your own
+    markdown notes here
 
-  - `scripts` Scripting codes
+  - `reference` currently contains the reference genome file and a list
+    of adapter sequences
 
-> Hint: New directories can be created using the `mkdir` command in Unix
-> shell.
+  - `scripts` is for storing scripts
 
-#### Move data to appropriate directories
+> Hint: We move between directories using the `cd` command in the Unix
+> shell. New directories can be created using the `mkdir` command in
+> Unix shell.
 
-  - Copy raw fastq files to the `raw_fastq` folder.
+<br>
 
-  - Copy the fasta file of the reference genome
-    (`mme_physalia_testdata_chr24.fa`) and the Nextera adapter file
-    (`NexteraPE_NT.fa`) to the `reference` folder
+#### Bash for loops
 
-> Hint: Files can be copied using the `cp` command.
+In low-coverage whole genome sequencing datasets, we’ll typically have
+data from hundreds of individuals, so we need an efficient way to
+process all of these files without having to write a separate line of
+code for each file. `for loops` are a powerful way to achieve this, and
+we will be using them in every step of our pipeline, so let’s first take
+a moment to make sure we understand the syntax.
 
-#### Create a sample list
+FOR LOOPS
 
-A sample list is a list of the prefixes of raw fastq files. These should
-be unique for each fastq file, and the rest of the names have to be the
-same for all raw fastq files. No header should be included in this list.
+<br>
 
-For this excercise, the sample list can be created using the following
-command. You may also use the `nano` command to edit text files in Unix
-shell.
+#### Understanding the sample list and sample table
 
-``` bash
-echo '11467X8
-11677X48
-11295X32
-11678X32
-11295X44
-11677X37' \
-> /workdir/physalia-lcwgs/day_1/sample_lists/sample_list.txt
-```
+When we get data files back from the sequencing center, the files often
+have obscure names, so we need a data table that let’s us link those
+file names to our sample IDs and other information. Often, part of the
+file name will be identical and part of it will reflect some kind of
+unique sample identifier (either a name you supplied or a name given by
+the sequencing center). As an example, look in the `day_1/raw_fastq`
+folder and notice how all the files end in either `_1.fastq.gz` or
+`_2.fastq.gz` (these are the forward and reverse sequences) while the
+first part differs. We call the sample identifier the `prefix`.
 
-#### Prepare a sample table
+Our pipeline is set up to link up these `prefix` names with sample
+details based on a sample table set up as the example you can find in
+`day_1/sample_lists/sample_table.tsv`.
 
-A sample table is a **tab deliminated** table that includes relevant
-information for all fastq files. It should include the following six
-columns, strictly in this order:
+For our scripts below to work, the sample table has to be a **tab
+deliminated** table with the following six columns, strictly in this
+order:
 
-  - `prefix` prefix of raw fastq files; these should match the entries
-    in the sample list
+  - `prefix` the prefix of raw fastq file names
 
-  - `lane_number` lane number; each sequencing lane should be assigned a
-    different number
+  - `lane_number` lane number; each sequencing lane or batch should be
+    assigned a different number
 
-  - `seq_id` sequence ID，this can be the same thing as sample ID or lane
-    ID and it does not matter except for when different libraries were
-    prepared out of the same sample and were run in the same lane. In
-    this case, seq\_id should be used to distinguish these.
+  - `seq_id` sequence ID; this variable is only relevant when different
+    libraries were prepared out of the same sample and were run in the
+    same lane (e.g. if you wanted to include a replicate). In this case,
+    seq\_id should be used to distinguish these separate libraries.
 
   - `sample_id` sample ID
 
   - `population` population name
 
   - `data_type` data type; there can only be two possible entries: `pe`
-    (for paired-end data) or `se` (for single end data)
+    (for paired-end data) or `se` (for single end data). We need this in
+    the table because for some of our processing steps, the commands are
+    slightly different for paired-end and single-end data.
 
 It is important to make sure that the combination of lane\_number,
-seq\_id, and sample\_id has to be unique for each fastq file.
+seq\_id, and sample\_id is unique for each fastq file.
 
-For this excercise, the sample table can be created using the following
-command.
+<br>
+
+A second file that we’ll use is called a sample list. This is simply a
+list of prefixes for the samples we want to analyze. Our sample table
+can contain data for all individuals in our study, but at any given
+time, we may only want to perform an operation on a subset of them. Like
+today, in the interest of time, we only want to run 6 sets of fastq
+files through each processing step.
+
+Have a look at the list we’ll be using in
+`day_1/sample_lists/sample_list.txt` and note that it’s just a list of
+fastq name prefixes, each on a separate line and there should be no
+header in this file.
+
+##### Your turn
+
+Compare the `sample_list.txt` to the `sample_table.txt`. Which samples
+will we be analyzing today?
+
+With our small sample table and sample list here, we can easily look
+this up manually. But if we have hundeds of samples, that becomes more
+cumbersome. Let’s automate it with our first `for loop`.
+
+<br>
+
+#### Using bash `for loops` to iterate over target samples
+
+For each prefix in our `sample_list.txt` will use `grep` to extract the
+relevant line from the sample table, use `cut` to extract the column
+with sample ID, and then `echo` to print the sample ID
 
 ``` bash
-echo -e 'prefix\tlane_number\tseq_id\tsample_id\tpopulation\tdata_type
-11467X8\t1\t1\t892\tMAQU\tpe
-11677X48\t2\t1\t892\tMAQU\tpe
-11295X32\t1\t1\t985\tPANY\tpe
-11678X32\t2\t1\t985\tPANY\tpe
-11295X44\t1\t1\t987\tPANY\tpe
-11677X37\t2\t1\t987\tPANY\tpe' \
-> /workdir/physalia-lcwgs/day_1/sample_lists/sample_table.tsv
+
+BASEDIR=/workdir/physalia-lcwgs/day_1/ # Path to the base directory / project directory.
+SAMPLELIST=$BASEDIR/sample_lists/sample_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
+SAMPLETABLE=$BASEDIR/sample_lists/sample_table.tsv # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID. 
+
+
+for SAMPLEFILE in `cat $SAMPLELIST`; do   # Loop through each of the prefixes listed in our sample list
+    
+    # For each prefix, extract the associated sample ID (column 4) from the table
+    SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4` 
+
+    echo $SAMPLEFILE refers to sample $SAMPLE_ID
+    
+done
 ```
 
-You can run `cat
-/workdir/physalia-lcwgs/day_1/sample_lists/sample_table.tsv` to check
-the structure of the sample table.
+<br>
+
+Now change the `for loop` so it also outputs which population each fastq
+file has data for.
+
+<details>
+
+<summary>Click here to see a solution</summary>
+
+``` bash
+
+BASEDIR=/workdir/physalia-lcwgs/day_1/ # Path to the base directory / project directory.
+SAMPLELIST=$BASEDIR/sample_lists/sample_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
+SAMPLETABLE=$BASEDIR/sample_lists/sample_table.tsv # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID. 
+
+
+for SAMPLEFILE in `cat $SAMPLELIST`; do   # Loop through each of the prefixes listed in our sample list
+    
+    # For each prefix, extract the associated sample ID (column 4) and population ID (column 5) from the table
+    SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4` 
+    POPULATION=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 5` 
+
+    echo $SAMPLEFILE refers to sample $SAMPLE_ID from $POPULATION
+    
+done
+```
+
+</details>
+
+<br> <br>
 
 ## Data processing pipeline
 
+Now let’s get started processing the data\!
+
+<br>
+
 #### Define paths to the project directory and programs
 
-###### Write the project directory as a variable named `BASEDIR`
+First we need to make sure the server knows where to find the programs
+we’ll be running and our input and output directories. This will always
+need to be specified on each new system we run our scripts on.
+
+<br>
+
+##### Write the project directory as a variable named `BASEDIR`
 
 > Hint: Change the `/workdir/physalia-lcwgs/day_1/` part in the
 > following line to the path of your base directory
 
 ``` bash
-BASEDIR=/workdir/physalia-lcwgs/day_1/ # Path to the base directory / project directory.
+
+BASEDIR=/workdir/physalia-lcwgs/day_1/ # Note that no spaces are allowed!
 ```
 
-###### Write the paths to required programs as variables
+<br>
 
-For participants using the physalia server, run the following:
+##### Write the paths to required programs as variables
+
+When running these scripts on the Physalia server, run the following:
 
 ``` bash
+
 FASTQC=fastqc
 TRIMMOMATIC=trimmomatic
 PICARD=/home/ubuntu/Software/picard-2.23.8/picard.jar
@@ -172,23 +295,11 @@ JAVA=/home/ubuntu/miniconda3/pkgs/java-jdk-8.0.92-1/bin/java
 GATK=
 ```
 
-For participants using the Therkildsen lab server, run the following:
-
-``` bash
-FASTQC=/programs/bin/fastqc/fastqc
-TRIMMOMATIC='java -jar /programs/trimmomatic/trimmomatic-0.39.jar'
-PICARD=/programs/picard-tools-2.19.2/picard.jar
-SAMTOOLS=/programs/bin/samtools/samtools
-BOWTIEBUILD=/programs/bin/bowtie2/bowtie2-build
-BOWTIE=/programs/bin/bowtie2/bowtie2
-BAMUTIL=/programs/bamUtil/bam
-JAVA=/usr/local/jdk1.8.0_121/bin/java
-GATK=/programs/GenomeAnalysisTK-3.7/GenomeAnalysisTK.jar
-```
+<br>
 
 #### Examine the raw fastq files
 
-###### fastq file structure
+##### fastq file structure
 
 A FASTQ file normally uses four lines per sequence.
 
@@ -211,16 +322,22 @@ identify the group of four lines for each read.
 > directory.
 
 ``` bash
+
 SAMPLELIST=$BASEDIR/sample_lists/sample_list.txt # Path to the sample list.
 RAWFASTQSUFFIX1=_1.fastq.gz # Suffix to raw fastq files. Use forward reads with paired-end data.
+
 for SAMPLE in `cat $SAMPLELIST`; do
+
   echo $SAMPLE
   zcat $BASEDIR'raw_fastq/'$SAMPLE$RAWFASTQSUFFIX1 | head -n 4
   echo ' '
+
 done
 ```
 
-###### FastQC report
+<br>
+
+##### FastQC report
 
 Run the FastQC program on your fastq files to check the quality of these
 files.
@@ -700,15 +817,6 @@ count_final <- left_join(fastq_count_sum, bam_count_unmerged_sum, by="sample_id"
   relocate(sample_id) %>%
   relocate(-avg_fragment_size)
 count_final %>% kable()
-```
-
-| sample\_id | raw\_bases | adapter\_clipped\_bases | mapped\_bases | qual\_filtered\_mapped\_bases | dedup\_mapped\_bases | overlap\_clipped\_bases | avg\_fragment\_size |
-| :--------- | ---------: | ----------------------: | ------------: | ----------------------------: | -------------------: | ----------------------: | ------------------: |
-| 892        |   47013250 |                46450657 |      37189935 |                       6639141 |              6059867 |                 5637986 |            399.5238 |
-| 985        |   65576750 |                61577292 |      44303341 |                       9765389 |              8600430 |                 6143556 |            175.8378 |
-| 987        |   76269750 |                75126120 |      60281981 |                       9065443 |              7994084 |                 6988127 |            286.2297 |
-
-``` r
 count_final %>% 
   pivot_longer(cols = 2:7, names_to = "step", values_to = "base_count") %>%
   arrange(sample_id, desc(base_count)) %>%
@@ -719,5 +827,3 @@ count_final %>%
   coord_flip() +
   theme_cowplot()
 ```
-
-![](data_processing_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
