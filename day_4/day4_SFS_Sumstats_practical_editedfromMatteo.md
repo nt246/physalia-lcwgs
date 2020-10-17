@@ -198,16 +198,6 @@ do
 done
 ```
 
-**QUESTION**
-
-How many values do you expect for folded SFS?
-
-```
-awk -F' ' '{print NF; exit}' Results/$POP.folded.sfs
-```
-In contrast to the unfolded spectrum, the folded spectrum only has `2N+1` values with N diploid individuals.
-
-
 
 ---------------------------------------
 
@@ -224,6 +214,9 @@ This command may take some time.
 The output file has one line for each boostrapped replicate.
 
 
+
+
+
 ---------------------------------------
 
 Secondly, we need to estimate a **multi-dimensional SFS**, for instance the joint SFS between 2 populations (2D).
@@ -233,18 +226,18 @@ However, here we are interested in estimating the 2D-SFS as prior information fo
 An important issue when doing this is to be sure that we are comparing the exactly same corresponding sites between populations.
 ANGSD does that automatically and considers only a set of overlapping sites.
 
-We are performing PBS assuming MAQU being the targeted population, and JIGA and MBNS as reference populations.
+We are performing PBS assuming JIGA being the targeted population, and MAQU and MBNS as reference populations.
 All 2D-SFS between such populations and MAQU are computed with:
 ```
-POP2=MAQU
-for POP in JIGA MBNS
+POP2=JIGA
+for POP in MAQU MBNS
 do
         echo $POP
         $NGS/angsd/misc/realSFS Results/$POP.saf.idx Results/$POP2.saf.idx > Results/$POP.$POP2.sfs
 done
 
-# we also need the comparison between JIGA and MBNS 
-$NGS/angsd/misc/realSFS Results/JIGA.saf.idx Results/MBNS.saf.idx > Results/JIGA.MBNS.sfs
+# we also need the comparison between MAQU and MBNS 
+$NGS/angsd/misc/realSFS Results/MAQU.saf.idx Results/MBNS.saf.idx > Results/MAQU.MBNS.sfs
 ```
 
 The output file is a flatten matrix, where each value is the count of sites with the corresponding joint frequency ordered as [0,0] [0,1] and so on.
@@ -272,24 +265,28 @@ Again, we can achieve this by avoid genotype calling using ANGSD.
 From the sample allele frequencies likelihoods (.saf files) we can estimate PBS using the following pipeline.
 
 Note that here we use the previously calculated SFS as prior information.
-Also, MAQU is our target population, while JIGA and MBNS are reference populations.
+Also, JIGA is our target population, while MAQU and MBNS are reference populations.
 If not already done, you should calculate .saf.idx files for each population, as explained in the section above.
 
 The 2D-SFS will be used as prior information for the joint allele frequency probabilities at each site.
-From these probabilities we will calculate the population branch statistic (PBS) using the MAQU as target population and JIGA and MBNS as reference populations.
-Our goal is to detect selection in MAQU in terms of allele frequency differentiation.
+From these probabilities we will calculate the FST and population branch statistic (PBS) using JIGA as target population and MAQU and MBNS as reference populations.
+Our goal is to detect selection in JIGA in terms of allele frequency differentiation compared to MAQY and MBNS. 
+
+**Question**
+Based on the knowledge from the practicals of day 3, what pattern of selection (PBS) do you expect in JIGA? And would you expect any pronounced differentiation between MAQU and MBNS?
 
 
-Specifically, we are computing a slinding windows scan, with windows of 50kbp and a step of 10kbp.
+
+Specifically, we are computing a slinding windows scan, with windows of 10kbp and a step of 1kbp.
 This can be achieved using the following commands.
 
-1) This command will compute per-site FST indexes (please note the order of files):
+1) This command will compute per-site FST indexes (please note the order of files). The `-whichFst 1` option is preferred Fst estimator for small sample sizes, as it is the case for our test dataset.
 ```
-$NGS/angsd/misc/realSFS fst index Results/JIGA.saf.idx Results/MBNS.saf.idx Results/MAQU.saf.idx -sfs Results/JIGA.MBNS.sfs -sfs Results/JIGA.MAQU.sfs -sfs Results/MBNS.MAQU.sfs -fstout Results/MAQU.pbs -whichFst 1
+$NGS/angsd/misc/realSFS fst index Results/MAQU.saf.idx Results/MBNS.saf.idx Results/JIGA.saf.idx -sfs Results/MAQU.MBNS.sfs -sfs Results/JIGA.MAQU.sfs -sfs Results/JIGA.MBNS.sfs -fstout Results/JIGA.pbs -whichFst 1
 ```
 and you can have a look at their values:
 ```
-$NGS/angsd/misc/realSFS fst print Results/MAQU.pbs.fst.idx | less -S
+$NGS/angsd/misc/realSFS fst print Results/JIGA.pbs.fst.idx | less -S
 ```
 where columns are: chromosome, position, (a), (a+b) values for the three FST comparisons, where FST is defined as a/(a+b).
 Note that FST on multiple SNPs is calculated as sum(a)/sum(a+b).
@@ -297,12 +294,12 @@ Note that FST on multiple SNPs is calculated as sum(a)/sum(a+b).
 
 2) The next command will perform a sliding-window analysis:
 ```
-$NGS/angsd/misc/realSFS fst stats2 Results/MAQU.pbs.fst.idx -win 10000 -step 5000 > Results/MAQU.pbs.fst.txt
+$NGS/angsd/misc/realSFS fst stats2 Results/JIGA.pbs.fst.idx -win 10000 -step 1000 > Results/JIGA.pbs.fst.txt
 ```
 
 Have a look at the output file:
 ```
-less -S Results/MAQU.pbs.fst.txt
+less -S Results/JIGA.pbs.fst.txt
 ```
 The header is:
 ```
@@ -324,15 +321,24 @@ This script will also plot the PBS variation in JIGA as a control comparison.
 evince Results/MAQU.pbs.pdf
 ```
 
+**QUESTION**
+In which part of our test sequence does JIGA display signatures of selection?
+
+
+
 **EXERCISE**
 
 Calculate PBS assuming PANY as target population.
+
+
+
+
 
 -------------------------
 
 #### 3. Nucleotide diversity
 
-We are also interested in assessing whether an increase in allele frequency differentiation is also associated with a change of **nucleotide diversity** in MAQU.
+We are also interested in assessing whether an increase in allele frequency differentiation is also associated with a change of **nucleotide diversity** in JIGA.
 Again, we can achieve this using ANGSD by estimating levels of diversity without relying on called genotypes.
 
 The procedure is similar to what done for PBS, and the SFS is again used as a prior to compute allele frequencies probabilities.
@@ -341,31 +347,47 @@ This can be achieved using the following pipeline.
 
 First we compute the allele frequency posterior probabilities and associated statistics (-doThetas) using the SFS as prior information (-pest)
 ```
-POP=MAQU
-$NGS/angsd/angsd -b $DIR/$POP'_bams.txt' -ref $REF -anc $REF -out Results/$POP \
+POP=JIGA
+$NGS/angsd/angsd -b $DIR/$POP'_bams.txt' -ref $REF -anc $ANC -out Results/$POP \
 	-uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
 	-minMapQ 20 -minQ 20 -minInd 5 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
 	-GL 1 -doSaf 1 \
 	-doThetas 1 -pest Results/$POP.sfs
 ```
 
-Then we need to index these files and perform a sliding windows analysis using a window length of 50kbp and a step size of 10kbp.
+Then we need to index these files and perform a sliding windows analysis using a window length of 10kbp and a step size of 1kbp.
 ```
-POP=MAQU
+POP=JIGA
 # estimate for the whole region
 $NGS/angsd/misc/thetaStat do_stat Results/$POP.thetas.idx
 # perform a sliding-window analysis
-$NGS/angsd/misc/thetaStat do_stat Results/$POP.thetas.idx -win 10000 -step 5000 -outnames Results/$POP.thetas.windows
+$NGS/angsd/misc/thetaStat do_stat Results/$POP.thetas.idx -win 10000 -step 1000 -outnames Results/$POP.thetas.windows
 ```
 
 Look at the results:
 ```
-cat Results/MAQU.thetas.idx.pestPG
-less -S Results/MAQU.thetas.windows.pestPG
+cat Results/JIGA.thetas.idx.pestPG
+less -S Results/JIGA.thetas.windows.pestPG
 ```
 
-**EXERCISE**
+The output contains many different columns: 
 
+`#(indexStart,indexStop)(firstPos_withData,lastPos_withData)(WinStart,WinStop)   Chr     WinCenter       tW      tP      tF      tH      tL      Tajima  fuf     fud     fayh    zeng    nSites`
+
+but we will only focus on a few here:
+
+`Chr, WinCenter, tW, tP, Tajima and nSites`
+
+`Chr` and `WinCenter` provide the chromosome and basepair coordinates for each window and `nSites` tells us how many genotyped sites (variant and invariant) are present in each 10kb. `tW` and `tP` are estimates of theta, namely Watterson's theta and pairwise theta. `tP` can be used to estimate the window-based pairwise nucleotide diversity (π), when we divide `tP` by the number of sites within the corresponding window (`-nSites`). 
+Furthermore, the output also contains multiple neutrality statistics. As we used an outgroup to polarise the spectrum, we can theoretically look at all of these. When you only have a folded spectrum, you can't correctly estimate many of these neutrality statistics, such as Fay's H (`fayH`). However, Tajima's D (`Tajima`) can be estimated using the folded or unfolded spectrum.   
+
+**Question**
+Do regions with increased PBS values in JIGA (PBS02) correspond to regions with low Tajima's D and reduced nucleotide diversity? If so, this would be additional evidence for positive selection in JIGA. 
+
+
+
+**EXERCISE**
+Estimate the nucleotide diversity for MAQU. How do pattern of nucleotide diversity differ between MAQU and JIGA? 
 
 ------------------------
 
