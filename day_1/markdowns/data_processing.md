@@ -1,26 +1,29 @@
-Tutorial 1: Data processing: From fastq to bam
+Tutorial 1: Data processing - from .fastq to .bam
 ================
 
   - [Case study for practicals](#case-study-for-practicals)
       - [Today’s data](#todays-data)
   - [Initial preparation](#initial-preparation)
-      - [Make sure you’re up to speed on basic shell
+      - [1. Make sure you’re up to speed on basic shell
         scripting](#make-sure-youre-up-to-speed-on-basic-shell-scripting)
-      - [Copy the working directories with the needed input
+      - [2. Copy the working directories with the needed input
         files](#copy-the-working-directories-with-the-needed-input-files)
-      - [Bash for loops](#bash-for-loops)
-      - [Understanding the sample list and sample
-        table](#understanding-the-sample-list-and-sample-table)
-      - [Using bash `for loops` to iterate over target
-        samples](#using-bash-for-loops-to-iterate-over-target-samples)
-  - [Data processing pipeline](#data-processing-pipeline)
-      - [Define paths to the project directory and
+      - [3. Make sure you’re familiar with `for loops` in
+        bash](#make-sure-youre-familiar-with-for-loops-in-bash)
+      - [4. Orient yourself to the formatting of our sample table and
+        sample
+        list](#orient-yourself-to-the-formatting-of-our-sample-table-and-sample-list)
+      - [5. Practice using bash `for loops` to iterate over target
+        samples](#practice-using-bash-for-loops-to-iterate-over-target-samples)
+      - [6. Define paths to the project directory and
         programs](#define-paths-to-the-project-directory-and-programs)
+  - [Data processing pipeline](#data-processing-pipeline)
       - [Examine the raw fastq files](#examine-the-raw-fastq-files)
       - [Adapter clipping](#adapter-clipping)
+      - [OPTIONAL: Quality trimming](#optional-quality-trimming)
       - [Build reference index files](#build-reference-index-files)
-      - [Map to reference, sort, and quality
-        filter](#map-to-reference-sort-and-quality-filter)
+      - [Map to the reference, sort, and quality
+        filter](#map-to-the-reference-sort-and-quality-filter)
       - [Examine the bam files](#examine-the-bam-files)
       - [Merge samples that were sequenced multiple
         times](#merge-samples-that-were-sequenced-multiple-times)
@@ -44,7 +47,8 @@ snippet of a reference genome.
 ## Case study for practicals
 
 Throughout this course, you will be working with data from the Atlantic
-silverside, *Menidia menidia*, a small estuarine fish
+silverside, *Menidia menidia*, a small estuarine fish.
+
 ![](../img/IMG_8658_SnyderCredit.jpg)
 
 MORE TO ADD
@@ -53,26 +57,27 @@ Add sample table
 
 <br>
 
-#### Today’s data
+### Today’s data
 
 Today, we will work with subsets of two different fastq files from each
 of three Atlantic silversides from the Therkildsen et al. 2019 and
 Wilder et al. 2020 papers. The libraries were prepared as described in
-Therkildsen and Palumbi 2017. There are two different fastq files
+Therkildsen and Palumbi 2017 and sequenced with 125bp paired-end reads
+on an Illumina HiSeq instrument. There are two different fastq files
 because each of these individuals were sequenced in two different
 sequencing runs, to even out sequence coverage among individuals (as
 discussed in lecture).
 
 We will map these raw sequence files to the Atlantic silverside genome
 (Tigano et al. nearly submitted\!). To minimize computational time, we
-are just looking at a small snippet of chromosome 24 for all the
+are just looking at a small 2 Mb snippet of chromosome 24 for all the
 exercises in this course.
 
 <br>
 
 ## Initial preparation
 
-#### Make sure you’re up to speed on basic shell scripting
+#### 1\. Make sure you’re up to speed on basic shell scripting
 
 We’ll be working almost exclusively through the command line, so if you
 have not used shell scripting before or are getting rusty on it, it may
@@ -84,7 +89,7 @@ sheet](https://bioinformaticsworkbook.org/Appendix/Unix/UnixCheatSheet.html#gsc.
 
 <br>
 
-#### Copy the working directories with the needed input files
+#### 2\. Copy the working directories with the needed input files
 
 Let’s first get set up and retrieve a copy the data we will be working
 on. Copy the `day_1` directory from `xxx_path`. This directory will be
@@ -112,13 +117,15 @@ your new `day_1` directory; it contains the following subdirectories:
 
   - `scripts` is for storing scripts
 
+<br>
+
 > Hint: We move between directories using the `cd` command in the Unix
 > shell. New directories can be created using the `mkdir` command in
 > Unix shell.
 
 <br>
 
-#### Bash for loops
+#### 3\. Make sure you’re familiar with `for loops` in bash
 
 In low-coverage whole genome sequencing datasets, we’ll typically have
 data from hundreds of individuals, so we need an efficient way to
@@ -127,11 +134,13 @@ code for each file. `for loops` are a powerful way to achieve this, and
 we will be using them in every step of our pipeline, so let’s first take
 a moment to make sure we understand the syntax.
 
+Variables
+
 FOR LOOPS
 
 <br>
 
-#### Understanding the sample list and sample table
+#### 4\. Orient yourself to the formatting of our sample table and sample list
 
 When we get data files back from the sequencing center, the files often
 have obscure names, so we need a data table that let’s us link those
@@ -187,10 +196,12 @@ Have a look at the list we’ll be using in
 fastq name prefixes, each on a separate line and there should be no
 header in this file.
 
-##### Your turn
+<br>
 
-Compare the `sample_list.txt` to the `sample_table.txt`. Which samples
-will we be analyzing today?
+**Activity:**: Compare the `sample_list.txt` to the `sample_table.txt`.
+Which samples will we be analyzing today?
+
+<br>
 
 With our small sample table and sample list here, we can easily look
 this up manually. But if we have hundeds of samples, that becomes more
@@ -198,7 +209,7 @@ cumbersome. Let’s automate it with our first `for loop`.
 
 <br>
 
-#### Using bash `for loops` to iterate over target samples
+#### 5\. Practice using bash `for loops` to iterate over target samples
 
 For each prefix in our `sample_list.txt` will use `grep` to extract the
 relevant line from the sample table, use `cut` to extract the column
@@ -207,7 +218,9 @@ with sample ID, and then `echo` to print the sample ID
 ``` bash
 
 BASEDIR=/workdir/physalia-lcwgs/day_1/ # Path to the base directory / project directory.
+
 SAMPLELIST=$BASEDIR/sample_lists/sample_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
+
 SAMPLETABLE=$BASEDIR/sample_lists/sample_table.tsv # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID. 
 
 
@@ -232,11 +245,6 @@ file has data for.
 
 ``` bash
 
-BASEDIR=/workdir/physalia-lcwgs/day_1/ # Path to the base directory / project directory.
-SAMPLELIST=$BASEDIR/sample_lists/sample_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
-SAMPLETABLE=$BASEDIR/sample_lists/sample_table.tsv # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID. 
-
-
 for SAMPLEFILE in `cat $SAMPLELIST`; do   # Loop through each of the prefixes listed in our sample list
     
     # For each prefix, extract the associated sample ID (column 4) and population ID (column 5) from the table
@@ -250,19 +258,13 @@ done
 
 </details>
 
-<br> <br>
-
-## Data processing pipeline
-
-Now let’s get started processing the data\!
-
 <br>
 
-#### Define paths to the project directory and programs
+#### 6\. Define paths to the project directory and programs
 
-First we need to make sure the server knows where to find the programs
-we’ll be running and our input and output directories. This will always
-need to be specified on each new system we run our scripts on.
+We need to make sure the server knows where to find the programs we’ll
+be running and our input and output directories. This will always need
+to be specified every time we run our scripts in a new login session.
 
 <br>
 
@@ -297,11 +299,17 @@ GATK=
 
 <br>
 
+## Data processing pipeline
+
+Now let’s get started processing the data\!
+
+<br>
+
 #### Examine the raw fastq files
 
 ##### fastq file structure
 
-A FASTQ file normally uses four lines per sequence.
+A FASTQ file normally contains four lines per sequence.
 
   - Line 1 contains the sequence identifier, with information on the
     sequencing run and the cluster. The exact content of this line
@@ -311,15 +319,18 @@ A FASTQ file normally uses four lines per sequence.
   - Line 3 often consists of a single `+` symbol.
   - Line 4 encodes the quality of each base in the sequence in Line 2
     (i.e. the probability of sequencing error in log scale). For most
-    sequencers, these base qualities are encoded in the [Phred33
-    format](https://drive5.com/usearch/manual/quality_score.html).
+    current sequencers, these base qualities are encoded in the [Phred33
+    format](https://drive5.com/usearch/manual/quality_score.html), but
+    always check to make sure how your quality scores are encoded.
 
 Now read the code below, guess what it does, and run it on your own.
 Does it do what you expect it to do? Inspect the output and try to
 identify the group of four lines for each read.
 
-> Hint: make sure that you change the `BASEDIR` path to your own base
-> directory.
+> Hint: make sure that you have changed the `BASEDIR` path to your own
+> base directory.
+
+<br>
 
 ``` bash
 
@@ -329,7 +340,7 @@ RAWFASTQSUFFIX1=_1.fastq.gz # Suffix to raw fastq files. Use forward reads with 
 for SAMPLE in `cat $SAMPLELIST`; do
 
   echo $SAMPLE
-  zcat $BASEDIR'raw_fastq/'$SAMPLE$RAWFASTQSUFFIX1 | head -n 4
+  zcat $BASEDIR'raw_fastq/'$SAMPLE$RAWFASTQSUFFIX1 | head -n 8
   echo ' '
 
 done
@@ -337,37 +348,70 @@ done
 
 <br>
 
-##### FastQC report
+##### Evaluate the overall data quality
 
-Run the FastQC program on your fastq files to check the quality of these
-files.
+With a new batch of data, it is always to good idea to start out by
+getting an overview of the data quality and look for any signs of
+quality issues. The
+[FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
+program provides a useful set of diagnostics, so we’ll run it on each on
+our fastq files to check their quality.
+
+<br>
 
 ``` bash
+
 SAMPLELIST=$BASEDIR/sample_lists/sample_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
 RAWFASTQSUFFIX1=_1.fastq.gz # Suffix to raw fastq files. Use forward reads with paired-end data.
 RAWFASTQSUFFIX2=_2.fastq.gz # Suffix to raw fastq files. Use reverse reads with paired-end data.
 
 for SAMPLE in `cat $SAMPLELIST`; do
+
   $FASTQC $BASEDIR'raw_fastq/'$SAMPLE$RAWFASTQSUFFIX1 -o $BASEDIR'fastqc/'
   $FASTQC $BASEDIR'raw_fastq/'$SAMPLE$RAWFASTQSUFFIX2 -o $BASEDIR'fastqc/'
+  
 done
 ```
+
+Grab the html output files and examine
+
+If you can’t get the file transfer to work, you can download our’s from
+here.
+
+Which samples do you think came from which library?
+
+<br>
 
 #### Adapter clipping
 
 When the insert length of a library fragment is shorter than the read
-length, the adapters would be incorporated into the sequencing reads (as
-shown below), which may lead to lower alignment performance and even
-biases in the result if not removed.
+length, the sequencer will read into the adapter sequence (as shown
+below). This means that the end of the read will not be from our actual
+sample, but will be adapter sequence, which may lead to lower alignment
+performance and even biases in the result if not removed.
 
-![](https://www.ecseq.com/support/ngs/img/fragmentsize.png)
+![](https://www.ecseq.com/support/ngs/img/fragmentsize.png) <br>
 
-Here, we use Trimmomatic to clip the adapter sequences. This step
-require us to input the known adapter sequences that we used when
+We saw in our FastQC report that we have substantial adapter content in
+some of our libraries, so will will need to clip that off. Here, we use
+[Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic) to clip
+the adapter sequence off the ends of reads where they appear. This step
+requires us to input the known adapter sequences that we used when
 preparing the libraries (`ADAPTERS`). In this exercise, the libraries
-were prepared using the Nextera kit (NexteraPE\_NT.fa).
+were prepared using Illumina’s Nextera adapters (sequences listed in
+NexteraPE\_NT.fa).
+
+Look over the code below. The first block of text specifies which files
+we are using as input. Then we start looping over our samples. Within
+the loop, the first step is to extract the relevant sample data from our
+sample table and assign those as temporary variables. Then we have two
+`if statements` to call the program with slightly different parameters
+for paired-end and single-end data.
+
+<br>
 
 ``` bash
+
 SAMPLELIST=$BASEDIR/sample_lists/sample_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
 SAMPLETABLE=$BASEDIR/sample_lists/sample_table.tsv # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. The 6th column should be data type, which is either pe or se. 
 RAWFASTQDIR=$BASEDIR/raw_fastq/ # Path to raw fastq files. 
@@ -394,6 +438,7 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
     ## Adapter clip the reads with Trimmomatic
     # The options for ILLUMINACLIP are: ILLUMINACLIP:<fastaWithAdaptersEtc>:<seed mismatches>:<palindrome clip threshold>:<simple clip threshold>:<minAdapterLength>:<keepBothReads>
     # For definitions of these options, see http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf
+    
     if [ $DATATYPE = pe ]; then
         $TRIMMOMATIC PE -threads 18 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $RAWFASTQ_ID$RAWFASTQSUFFIX2 $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_f_unpaired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_unpaired.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10:1:true'
     
@@ -404,20 +449,67 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
 done
 ```
 
-#### Build reference index files
+<br>
 
-Prior to sequence alignment, we will first build the reference index
-files that are required by the alignment software `bowtie2`.
+Have a look at the output printed to the screen. Do you notice a
+difference in the amount of sequence removed from the different
+libraries?
+
+The output from Trimmomatic only shows how many full reads get removed,
+not how much the reads within the file get truncated. We could have
+added an additional parameters to remove reads shorter than a certain
+length (e.g. 50bp) after adapter trimming, which probably would have
+resulted in some more reads getting dropped.
+
+But we can check how much sequence in terms of bp actually got removed
+from the fastq files by comparing base counts with a simple bash
+command.
 
 ``` bash
-REFERENCE=$BASEDIR/reference/mme_physalia_testdata_chr24.fa
+```
+
+<br>
+
+#### OPTIONAL: Quality trimming
+
+As we saw in our FastQC output, the base call quality score tends to
+drop off towards the ends of the reads. As we’ll learn more about
+tomorrow, probabilistic analysis frameworks, like angsd and others based
+on genotype likelihoods, can take the basecall quality into account and
+that way give less weight to a basecall that is less certain.
+
+However, as a conservative measure, we may want to just trim off the
+rest of the read if the quality score drops too low over multiple bases.
+We can do this with the `SLIDINGWINDOW` module in
+[Trimmomatic](http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf).
+We won’t have time to do that in this practical, but if you’re
+interested, you can modify the Trimmomatic code above to also trim off
+low-quality bases.
+
+<br>
+
+#### Build reference index files
+
+There are lots of different programs developed for mapping short reads
+to a reference sequence. We will use the program
+[bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml). This
+program requires a set of reference index files to be able to perform
+the sequence alignment. So we will start by indexing our reference.
+
+<br>
+
+``` bash
+
+REFERENCE=$BASEDIR/reference/mme_physalia_testdata_chr24.fa   # This is a fasta file with the reference genome sequence we will map to 
 REFBASENAME="${REFERENCE%.*}"
 $SAMTOOLS faidx $REFERENCE
 java -jar $PICARD CreateSequenceDictionary R=$REFERENCE O=$REFBASENAME'.dict'
 $BOWTIEBUILD $REFERENCE $REFBASENAME
 ```
 
-#### Map to reference, sort, and quality filter
+<br> <br>
+
+#### Map to the reference, sort, and quality filter
 
 In this step, we align each fastq file to the reference genome using
 `bowtie2`. The resulting alignment file, in `sam` format, will be
