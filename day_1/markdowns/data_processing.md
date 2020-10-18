@@ -10,11 +10,12 @@ Tutorial 1: Data processing - from .fastq to .bam
             files](#copy-the-working-directories-with-the-needed-input-files)
           - [3. Make sure you’re familiar with `for loops` in
             bash](#make-sure-youre-familiar-with-for-loops-in-bash)
-          - [4. Orient yourself to the formatting of our sample table
-            and sample
-            list](#orient-yourself-to-the-formatting-of-our-sample-table-and-sample-list)
+          - [4. Orient yourself to the formatting of our fastq table and
+            fastq
+            list](#orient-yourself-to-the-formatting-of-our-fastq-table-and-fastq-list)
           - [5. Practice using bash `for loops` to iterate over target
             samples](#practice-using-bash-for-loops-to-iterate-over-target-samples)
+          - [See a solution](#see-a-solution)
           - [6. Define paths to the project directory and
             programs](#define-paths-to-the-project-directory-and-programs)
       - [Data processing pipeline](#data-processing-pipeline)
@@ -60,7 +61,7 @@ silverside, *Menidia menidia*, a small estuarine fish.
 
 MORE TO ADD
 
-Add sample table
+Add sample map
 
 <br>
 
@@ -163,20 +164,21 @@ FOR LOOPS
 
 <br>
 
-#### 4\. Orient yourself to the formatting of our sample table and sample list
+#### 4\. Orient yourself to the formatting of our fastq table and fastq list
 
 When we get data files back from the sequencing center, the files often
 have obscure names, so we need a data table that let’s us link those
 file names to our sample IDs and other information. Often, part of the
-file name will be identical and part of it will reflect some kind of
-unique sample identifier (either a name you supplied or a name given by
-the sequencing center). As an example, look in the `day1/raw_fastq`
-folder and notice how all the files end in either `_1.fastq.gz` or
-`_2.fastq.gz` (these are the forward and reverse sequences) while the
-first part differs. We call the sample identifier the `prefix`.
+fastq file name will be identical among all samples in a run and part of
+it will reflect some kind of unique sample identifier (either a name you
+supplied or a name given by the sequencing center). As an example, look
+in the `day1/raw_fastq` folder and notice how all the files end in
+either `_1.fastq.gz` or `_2.fastq.gz` (these are the forward and reverse
+sequences) while the first part of the file names differs (the unique
+sample identifier). We call the sample identifier the `prefix`.
 
 Our pipeline is set up to link up these `prefix` names with sample
-details based on a sample table set up as the example you can find in
+details based on a fastq table set up as the example you can find in
 `day1/sample_lists/fastq_table.tsv`.
 
 For our scripts below to work, the sample table has to be a **tab
@@ -186,28 +188,33 @@ order:
   - `prefix` the prefix of raw fastq file names
 
   - `lane_number` lane number; each sequencing lane or batch should be
-    assigned a different number
+    assigned a unique identifier
 
   - `seq_id` sequence ID; this variable is only relevant when different
     libraries were prepared out of the same sample and were run in the
     same lane (e.g. if you wanted to include a replicate). In this case,
-    seq\_id should be used to distinguish these separate libraries.
+    seq\_id should be used to distinguish these separate libraries. If
+    you only have a single library prepared from each of your samples
+    (even if you sequence that same library across multiple lanes), you
+    can just put 1 for all samples in this column.
 
-  - `sample_id` sample ID
+  - `sample_id` sample ID; a unique identifier for each individual
+    sequenced
 
-  - `population` population name
+  - `population` population name; the population or other relevant
+    grouping variable that the individual belongs to
 
   - `data_type` data type; there can only be two possible entries: `pe`
     (for paired-end data) or `se` (for single end data). We need this in
     the table because for some of our processing steps, the commands are
     slightly different for paired-end and single-end data.
 
-It is important to make sure that the combination of lane\_number,
-seq\_id, and sample\_id is unique for each fastq file.
+It is important to make sure that the combination of sample\_id,
+seq\_id, and lane\_number is unique for each fastq file.
 
 <br>
 
-A second file that we’ll use is called a fastq list. This is simply a
+We’ll also use a second file that we call a fastq list. This is simply a
 list of prefixes for the samples we want to analyze. Our sample table
 can contain data for all individuals in our study, but at any given
 time, we may only want to perform an operation on a subset of them. Like
@@ -222,21 +229,23 @@ header in this file.
 <br>
 
 **Activity:**: Compare the `fastq_list.txt` to the `fastq_table.txt`.
-Which samples will we be analyzing today?
+Which populations to the samples we’ll be analyzing today originate
+from?
 
 <br>
 
 With our small fastq table and fastq list here, we can easily look this
 up manually. But if we have hundreds of samples, that becomes more
-cumbersome. Let’s automate it with our first `for loop`.
+cumbersome. Let’s automate the sample lookup with our first `for loop`.
 
 <br>
 
 #### 5\. Practice using bash `for loops` to iterate over target samples
 
-For each prefix in our `fastq_list.txt` will use `grep` to extract the
-relevant line from the fastq table, use `cut` to extract the column with
-sample ID, and then `echo` to print the sample ID
+First, let’s just look up the sample IDs. For each prefix in our
+`fastq_list.txt` will use `grep` to extract the relevant line from the
+fastq table, use `cut` to extract the column with sample ID, and then
+`echo` to print the sample ID
 
 ``` bash
 
@@ -262,9 +271,11 @@ done
 **Exercise:** Now change the `for loop` so it also outputs which
 population each fastq file has data for.
 
+#### See a solution
+
 <details>
 
-<summary>Click here to see a solution</summary>
+<summary>Click here to expand</summary>
 
 ``` bash
 
@@ -291,14 +302,15 @@ to be specified every time we run our scripts in a new login session.
 
 <br>
 
-##### Write the project directory as a variable named `BASEDIR`
+##### Set the project directory as a variable named `BASEDIR`
 
-> Hint: Change the `/workdir/physalia-lcwgs/day1/` part in the following
-> line to the path of your base directory
+> Hint: Use `pwd` to check the path to where you copied your day1 folder
+> to and change the `~/exercises/day1/` part in the following line if
+> that is not the correct path to your base directory
 
 ``` bash
 
-BASEDIR=/workdir/physalia-lcwgs/day1/ # Note that no spaces are allowed!
+BASEDIR=~/exercises/day1/ # Note that no spaces are allowed!
 ```
 
 <br>
@@ -381,34 +393,65 @@ getting an overview of the data quality and look for any signs of
 quality issues. The
 [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
 program provides a useful set of diagnostics, so we’ll run it on each on
-our fastq files to check their quality.
+our fastq files to check their quality. In the interest of time, we will
+only look at three of our fastq files, listed in the
+`fastQC_fastq_list.txt` file in your `sample_lists` folder. We’ll loop
+over each of these and call FastQC (it only takes the path to the input
+and the path to where you want the output as parameters)
 
 <br>
 
 ``` bash
 
-SAMPLELIST=$BASEDIR/sample_lists/fastq_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
-RAWFASTQSUFFIX1=_1.fastq.gz # Suffix to raw fastq files. Use forward reads with paired-end data.
-RAWFASTQSUFFIX2=_2.fastq.gz # Suffix to raw fastq files. Use reverse reads with paired-end data.
+SAMPLELIST=$BASEDIR/sample_lists/fastQC_fastq_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
+RAWFASTQSUFFIX1=_1.fastq.gz # Suffix to raw fastq files. We'll only look at the forward reads here
 
 for SAMPLE in `cat $SAMPLELIST`; do
 
   $FASTQC $BASEDIR'raw_fastq/'$SAMPLE$RAWFASTQSUFFIX1 -o $BASEDIR'fastqc/'
-  $FASTQC $BASEDIR'raw_fastq/'$SAMPLE$RAWFASTQSUFFIX2 -o $BASEDIR'fastqc/'
   
 done
 ```
 
 <br>
 
-NEED TO ADD Grab the html output files and examine
+If the program ran, you should now see the output (in html format and a
+zip file with various files) in your `day1/fastqc` directory. To view
+the .html, use `scp` (as described [here](NEED%20LINK)) or FileZilla to
+transfer the html output files to your local machine and open them in a
+web browser.
 
-If you can’t get the file transfer to work, you can download our’s from
-here.
+If you’re not able to download your own files, you can have a look at
+our’s
+[here](https://github.com/nt246/physalia-lcwgs/tree/main/day_1/fastqc).
+we are keeping them in our GitHub repo, but GitHub doesn’t render .html
+files, so to view the output, click on the output.html file you want to
+view, copy its URL and paste it into [this handy
+viewer](https://htmlpreview.github.io/) to see it in rendered html
+format.
 
-Which samples do you think came from which library?
+**Question:** Do you notice anything different about the fastQC reports
+from the three different fastq files?
 
-<br>
+The libraries for these samples were prepared in different batches.
+Below are representative Bioanalyzer traces for each of the batches.
+Which sample do you think came from which batch?
+
+<div class="figure" style="text-align: center">
+
+<img src="../img/Bioanalyzer_Batch1.png" alt="Library fragment size distributions" width="49%" height="20%" /><img src="../img/Bioanalyzer_Batch2.png" alt="Library fragment size distributions" width="49%" height="20%" />
+
+<p class="caption">
+
+Library fragment size distributions
+
+</p>
+
+</div>
+
+![](../img/Bioanalyzer_Batch1.png) ![](../img/Bioanalyzer_Batch2.png)
+
+<br> <br>
 
 #### Adapter clipping
 
