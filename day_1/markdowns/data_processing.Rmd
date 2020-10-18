@@ -29,7 +29,7 @@ Throughout this course, you will be working with data from the Atlantic silversi
 MORE TO ADD
 
 
-Add sample table
+Add sample map
 
 <br>
 
@@ -68,6 +68,7 @@ ls
 
 # Check the path to your copy of the day1 directory - you will need to enter this as your BASEDIR variable below
 pwd
+
 ```
 
 <br>
@@ -106,31 +107,31 @@ FOR LOOPS
 
 <br>
 
-#### 4. Orient yourself to the formatting of our sample table and sample list
+#### 4. Orient yourself to the formatting of our fastq table and fastq list
 
-When we get data files back from the sequencing center, the files often have obscure names, so we need a data table that let's us link those file names to our sample IDs and other information. Often, part of the file name will be identical and part of it will reflect some kind of unique sample identifier (either a name you supplied or a name given by the sequencing center). As an example, look in the `day1/raw_fastq` folder and notice how all the files end in either `_1.fastq.gz` or `_2.fastq.gz` (these are the forward and reverse sequences) while the first part differs. We call the sample identifier the `prefix`.
+When we get data files back from the sequencing center, the files often have obscure names, so we need a data table that let's us link those file names to our sample IDs and other information. Often, part of the fastq file name will be identical among all samples in a run and part of it will reflect some kind of unique sample identifier (either a name you supplied or a name given by the sequencing center). As an example, look in the `day1/raw_fastq` folder and notice how all the files end in either `_1.fastq.gz` or `_2.fastq.gz` (these are the forward and reverse sequences) while the first part of the file names differs (the unique sample identifier). We call the sample identifier the `prefix`.
 
-Our pipeline is set up to link up these `prefix` names with sample details based on a sample table set up as the example you can find in `day1/sample_lists/fastq_table.tsv`.
+Our pipeline is set up to link up these `prefix` names with sample details based on a fastq table set up as the example you can find in `day1/sample_lists/fastq_table.tsv`.
 
 For our scripts below to work, the sample table has to be a **tab deliminated** table with the following six columns, strictly in this order:
 
   * `prefix` the prefix of raw fastq file names
   
-  * `lane_number` lane number; each sequencing lane or batch should be assigned a different number
+  * `lane_number` lane number; each sequencing lane or batch should be assigned a unique identifier
   
-  * `seq_id` sequence ID; this variable is only relevant when different libraries were prepared out of the same sample and were run in the same lane (e.g. if you wanted to include a replicate). In this case, seq_id should be used to distinguish these separate libraries.
+  * `seq_id` sequence ID; this variable is only relevant when different libraries were prepared out of the same sample and were run in the same lane (e.g. if you wanted to include a replicate). In this case, seq_id should be used to distinguish these separate libraries. If you only have a single library prepared from each of your samples (even if you sequence that same library across multiple lanes), you can just put 1 for all samples in this column.
 
-  * `sample_id` sample ID
+  * `sample_id` sample ID; a unique identifier for each individual sequenced
   
-  * `population` population name
+  * `population` population name; the population or other relevant grouping variable that the individual belongs to 
   
   * `data_type` data type; there can only be two possible entries: `pe` (for paired-end data) or `se` (for single end data). We need this in the table because for some of our processing steps, the commands are slightly different for paired-end and single-end data.
 
-It is important to make sure that the combination of lane_number, seq_id, and sample_id is unique for each fastq file. 
+It is important to make sure that the combination of sample_id, seq_id, and lane_number is unique for each fastq file. 
 
 <br>
 
-A second file that we'll use is called a fastq list. This is simply a list of prefixes for the samples we want to analyze. Our sample table can contain data for all individuals in our study, but at any given time, we may only want to perform an operation on a subset of them. Like today, in the interest of time, we only want to run 6 sets of fastq files through each processing step. 
+We'll also use a second file that we call a fastq list. This is simply a list of prefixes for the samples we want to analyze. Our sample table can contain data for all individuals in our study, but at any given time, we may only want to perform an operation on a subset of them. Like today, in the interest of time, we only want to run 6 sets of fastq files through each processing step. 
 
 Have a look at the list we'll be using in `day1/sample_lists/fastq_list.txt` and note that it's just a list of fastq name prefixes, each on a separate line and there should be no header in this file.
 
