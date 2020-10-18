@@ -507,7 +507,7 @@ done
 <br>
 <br>
 
-Have a look at the output printed to the screen. How many of our reads are mapping to the reference? Does it vary between samples?
+Have a look at the output printed to the screen. How many of our reads are mapping to the reference? Does it vary between samples? Is there anything that seems weird to you about the stats reported?
 
 <br>
 <br>
@@ -522,7 +522,11 @@ Note that we have converted our sam files to bam files. That's useful for saving
 
 As an example, let's look at the output for `985_PANY`. The following command can be used to inspect the first eight lines the sorted bam file for this sample.
 
-`$SAMTOOLS view $BASEDIR/bam/985_PANY_1_lane1_pe_bt2_mme_physalia_testdata_chr24_minq20_sorted.bam | head -n 8`
+```{bash, eval = FALSE}
+
+$SAMTOOLS view $BASEDIR/bam/985_PANY_1_lane1_pe_bt2_mme_physalia_testdata_chr24_minq20_sorted.bam | head -n 8
+
+```
 
 <br>
 
@@ -530,7 +534,7 @@ Take a few minutes to look at the output and look at the [column descriptors](ht
 
 <br>
 
-**OPTIONAL exercise:** Write a loop on your own to print the first three alignments of all the sorted bam files that you generated in the last step. You can use the general template code below as a starting point.
+**OPTIONAL exercise:** Write a loop to print the first three alignments of all the sorted bam files that you generated in the last step. You can use the general template code below as a starting point.
 
 ```{bash, eval = FALSE}
 
@@ -541,18 +545,11 @@ $SAMTOOLS view $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'_minq20_sorted.bam' | head 
 <br>
 <br>
 
-#### Merge samples that were sequenced multiple times
+#### Merge samples that were sequenced in multiple batches
 
-We have now mapped the two separate sets of fastq files for each sample (the separate sets generated in independent sequencing runs), so we also have two bam files for each sample. If the two sequencing runs were performed with different aliquots of the same library, we will need to merge the bam files before we remove duplicate sequences because the two sequencing lanes would have been sequencing the same set of molecules (so each may contain duplicate fragments also sequenced in the other). For most downstream analysis, it's also a lot more convenient to only have a single bam file per individual.
-
-<br>
-
-As part of the the merging and for downstream steps, we need a new sample table. This is because prior to merging, each row represent a pair of fastq files (forward and reverse, or a single fastq file if we're using single-end reads) and samples sequenced in multiple runs, would appear in multiple lines. After merging, we need each unique sample to only occupy a single row. The merged sample table also has a slightly different formatting. Since we'll also be working on bam files rather than fastq files downstream from this point, we need to list bam IDs rather than fastq IDs in the sample lists that specify which samples we want to loop over in a particular pipeline step. In the interest of time, we provide these merged sample table and lists in the `sample_lists` directory, but we also provide R-code that generates them from the your fastq-level sample table and list, so you don't need to do this manually if you're working with your own samples.   
+We have now mapped the two separate sets of fastq files for each sample (the separate sets generated in independent sequencing runs), so we also have two bam files for each sample. If the two sequencing runs were performed with aliquots of the same library, we will need to merge the bam files before we remove duplicate sequences because the two sequencing lanes would have been sequencing the same set of molecules (so each may contain duplicate fragments also sequenced in the other). For most downstream analysis, it's also a lot more convenient to only have a single bam file per individual.
 
 <br>
-<br>
-
-##### Create merging script (whole genome)
 
 We will merge the two bam files for each individual with [samtools merge](http://www.htslib.org/doc/samtools-merge.html) with the following parameters
 
@@ -562,22 +559,27 @@ We will merge the two bam files for each individual with [samtools merge](http:/
 
 ```
 
-In this case, we will not use a for loop to iterate over our samples. Instead we will run a shell script that has a line that call `samtools merge` for each sample. You can find the script `merge_bams.sh` in the `scripts` folder. Have a look at it.
+We could write a for loop to get the separate fastq files for eacch individual merged. But in this case, we will instead run a shell script that has a line that calls `samtools merge` for each individual. You can find the script `merge_bams.sh` in the `scripts` folder. Have a look at it.
 
-With just three samples, we could quickly copy and edit these three lines to construct this shell script manually. But if we had hundreds of samples, that approach would become error-prone. We've this provided an R-script below that will generate the merging script if you need to do this for your own samples. 
+With just three samples, we could quickly copy and edit these three lines to construct this shell script manually. But if we had hundreds of samples, that approach would become error-prone so we want to use a script to automate it. In the interest of time, let's move forward with the merging script we have already generated, but we provide R-code below that generates this script from the your fastq-level sample table and list, so you don't need to do this manually if you're working with your own samples. The R-code also write a new sample_list that 
+
+Since we'll also be working on bam files rather than fastq files downstream from this point, we also need to list bam IDs rather than fastq IDs in the sample lists that specify which samples we want to loop over in a particular pipeline step. The R-code below generates that as well, but for today, we'll just use the list that we've already added to `$BASEDIR/sample_lists`.
+
+<br>
 
 <details>
   <summary>Click here to view the R code</summary>
-  
-# Need to take datatype out and add population   
-  
+
+#### This code is just provided for your reference. You DON'T need to run it - the output is already generated in your `scripts` and `sample_lists` folders
+
+<br>
+
 ```{r eval=F}
 
 library(tidyverse)
 
 basedir <- "/Users/nt246/github/physalia-lcwgs/for_AWS/day1/"
 refname <- "mme_physalia_testdata_chr24"
-
 
 fastq_list <- read_lines(paste0(basedir, "sample_lists/fastq_list.txt"))
 fastq_table <- read_tsv(paste0(basedir, "sample_lists/fastq_table.tsv"))
@@ -589,7 +591,7 @@ target_samples <- filter(fastq_table, prefix %in% fastq_list)
 duplicated_samples <- (target_samples$sample_id)[duplicated(target_samples$sample_id)] %>% unique()
 
 # Write cd
-write_lines(paste("cd", basedir, "\n"), paste0(basedir, "scripts/merge_bam.sh"))
+write_lines("cd $BASEDIR\n", paste0(basedir, "scripts/merge_bam.sh"))
 
 
 ## Loop through all duplicated samples 
@@ -606,9 +608,9 @@ for (i in 1:length(duplicated_samples)){
     
   ## Paste together the command line
   #merging_script[i+1] <- paste("samtools merge", as.character(output), input[1], input[2], sep = " ")
-  write_lines(paste("samtools merge", as.character(output), input[1], input[2], sep = " "), paste0(basedir, "scripts/merge_bam_new.sh"), append = TRUE)
+  write_lines(paste("samtools merge", as.character(output), input[1], input[2], sep = " "), paste0(basedir, "scripts/merge_bam.sh"), append = TRUE)
   
-  # Also write a target bam list that we'll use for the next steps
+  # Also write a target bam list that we'll use for downstream looping over merged bam files
   if (i == 1){
   write_lines(paste(dup_sample_dat[1,"sample_id"], dup_sample_dat[1, "population"], "merged", sep = "_"), paste0(basedir, "sample_lists/merged_bam_list.tsv"))
   }
@@ -627,11 +629,11 @@ for (i in 1:length(duplicated_samples)){
 <br>
 
 ##### Run the merging script
+
 To execute the merging, run the bash script with the following command:
 
 ```{bash, eval = FALSE}
 
-chmod u+x $BASEDIR/scripts/merge_bam.sh
 bash $BASEDIR/scripts/merge_bam.sh 
 
 ```
