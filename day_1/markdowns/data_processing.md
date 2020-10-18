@@ -310,7 +310,7 @@ to be specified every time we run our scripts in a new login session.
 
 ``` bash
 
-BASEDIR=~/exercises/day1/ # Note that no spaces are allowed!
+BASEDIR=~/exercises/day1 # Note that no spaces are allowed! And don't put a slash after day1
 ```
 
 <br>
@@ -394,19 +394,21 @@ quality issues. The
 [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
 program provides a useful set of diagnostics, so we’ll run it on each on
 our fastq files to check their quality. In the interest of time, we will
-only look at three of our fastq files, listed in the
-`fastQC_fastq_list.txt` file in your `sample_lists` folder. We’ll loop
-over each of these and call FastQC (it only takes the path to the input
-and the path to where you want the output as parameters)
+only look at three of our fastqs. We’ll loop over each of these and call
+FastQC on the forward file only (it only takes the path to the input and
+the path to where you want the output as parameters). When working with
+your own data, always make sure to look both at the forward and reverse
+files because sometimes issues can arise in only one of the read
+directions.
 
 <br>
 
 ``` bash
 
-SAMPLELIST=$BASEDIR/sample_lists/fastQC_fastq_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
+SAMPLELIST=$BASEDIR/sample_lists/fastq_list.txt # Path to the sample list.
 RAWFASTQSUFFIX1=_1.fastq.gz # Suffix to raw fastq files. We'll only look at the forward reads here
 
-for SAMPLE in `cat $SAMPLELIST`; do
+for SAMPLE in `cat $SAMPLELIST | head -n 3`; do  # The head -n 3 is taking just the first three elements of our fastq list to loop over
 
   $FASTQC $BASEDIR'raw_fastq/'$SAMPLE$RAWFASTQSUFFIX1 -o $BASEDIR'fastqc/'
   
@@ -430,12 +432,16 @@ view, copy its URL and paste it into [this handy
 viewer](https://htmlpreview.github.io/) to see it in rendered html
 format.
 
+<br>
+
 **Question:** Do you notice anything different about the fastQC reports
 from the three different fastq files?
 
 The libraries for these samples were prepared in different batches.
 Below are representative Bioanalyzer traces for each of the batches.
 Which sample do you think came from which batch?
+
+<br>
 
 <div class="figure" style="text-align: center">
 
@@ -448,8 +454,6 @@ Library fragment size distributions
 </p>
 
 </div>
-
-![](../img/Bioanalyzer_Batch1.png) ![](../img/Bioanalyzer_Batch2.png)
 
 <br> <br>
 
@@ -477,7 +481,9 @@ we are using as input. Then we start looping over our samples. Within
 the loop, the first step is to extract the relevant sample data from our
 sample table and assign those as temporary variables. Then we have two
 `if statements` to call the program with slightly different parameters
-for paired-end and single-end data.
+for paired-end and single-end data. Trimmomatic has lots of different
+filtering modules. Here we only clip sequence that match to our adapter
+sequence and remove reads that end up being \<40bp after clipping.
 
 <br>
 
@@ -498,24 +504,25 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
     POP_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 5`
     SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
     LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
-    SAMPLE_SEQ_ID=$SAMPLE_ID'_'$POP_ID'_'$SEQ_ID'_'$LANE_ID  # When a sample has been sequenced in multiple lanes, we need to be able to identify the files from each run uniquely
+    SAMPLE_UNIQ_ID=$SAMPLE_ID'_'$POP_ID'_'$SEQ_ID'_'$LANE_ID  # When a sample has been sequenced in multiple lanes, we need to be able to identify the files from each run uniquely
     
     ## Extract data type from the sample table
     DATATYPE=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 6`
     
     ## The input and output path and file prefix
     RAWFASTQ_ID=$RAWFASTQDIR$SAMPLEFILE
-    SAMPLEADAPT=$BASEDIR'adapter_clipped/'$SAMPLE_SEQ_ID
+    SAMPLEADAPT=$BASEDIR'/adapter_clipped/'$SAMPLE_UNIQ_ID
     
     ## Adapter clip the reads with Trimmomatic
     # The options for ILLUMINACLIP are: ILLUMINACLIP:<fastaWithAdaptersEtc>:<seed mismatches>:<palindrome clip threshold>:<simple clip threshold>:<minAdapterLength>:<keepBothReads>
+    # The MINLENGTH drops the read if it is below the specified length in bp
     # For definitions of these options, see http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf
     
     if [ $DATATYPE = pe ]; then
-        $TRIMMOMATIC PE -threads 1 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $RAWFASTQ_ID$RAWFASTQSUFFIX2 $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_f_unpaired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_unpaired.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10:1:true'
+        $TRIMMOMATIC PE -threads 1 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $RAWFASTQ_ID$RAWFASTQSUFFIX2 $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_f_unpaired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_unpaired.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10:1:true MINLENGTH:40' 
     
     elif [ $DATATYPE = se ]; then
-        $TRIMMOMATIC SE -threads 18 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $SAMPLEADAPT'_adapter_clipped_se.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10'
+        $TRIMMOMATIC SE -threads 18 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $SAMPLEADAPT'_adapter_clipped_se.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10 MINLENGTH:40'
     fi
     
 done
@@ -523,32 +530,58 @@ done
 
 <br>
 
-Have a look at the output printed to the screen. Do you notice a
-difference in the amount of sequence removed from the different
-libraries?
+Have a look at the output printed to the screen and we’re iterating over
+the samples. Note the first time it says
 
-The output from Trimmomatic only shows how many full reads get removed,
-not how much the reads within the file get truncated. We could have
-added an additional parameters to remove reads shorter than a certain
-length (e.g. 50bp) after adapter trimming, which probably would have
-resulted in some more reads getting dropped.
+`TrimmomaticPE: Started with arguments:`
 
-But we can check how much sequence in terms of bp actually got removed
-from the fastq files by comparing base counts with a simple bash
-command.
+Following this, you will see that actual variable names that were added
+to the command in each iteration of our loop (e.g. what
+`$RAWFASTQ_ID$RAWFASTQSUFFIX1` expanded to (was value was assigned to
+this variable)).
 
-``` bash
-```
+Also examine the section that says `ILLUMINACLIP: Using 2 prefix
+pairs, 8 forward/reverse sequences, 0 forward only sequences, 0 reverse
+only sequences Input Read Pairs:`
+
+This will show how many reads were removed from our filtering.
+
+**Question:** The first three samples are the samples for which we
+examined the FastQC outputs. Do you expect different amount of sequence
+getting removed from each of these? Is that what you see? Why/Why not?
 
 <br>
+
+Discuss first, then you can check here for a hint
+
+<details>
+
+<summary>Click here to view the R code</summary>
+
+The output from Trimmomatic only shows how many full reads get removed,
+not how much the reads within the file get truncated. In the library
+with lots of adapter, many of the reads will now be shorter, but as long
+as they’re still longer than our threshold of 40bp, they will not get
+removed. If we wanted to know how much sequence we lost from each fastq,
+counting the number of bases lost is more informative than the number of
+sequences. It is also always a good idea to check the adapter clipped
+fastq files with FastQC to make sure that you did in fact get rid of the
+adapter sequence. We don’t have time to do this in class, but if you’re
+interested, you can use the fastqc loop above and just change it to run
+on the files in your `adapter_clipped` folder.
+
+</details>
+
+<br> <br>
 
 #### OPTIONAL: Quality trimming
 
 As we saw in our FastQC output, the base call quality score tends to
 drop off towards the ends of the reads. As we’ll learn more about
-tomorrow, probabilistic analysis frameworks, like angsd and others based
-on genotype likelihoods, can take the basecall quality into account and
-that way give less weight to a basecall that is less certain.
+tomorrow, probabilistic analysis frameworks, like `angsd` and others
+based on genotype likelihoods, can take the basecall quality into
+account and that way give less weight to a basecall that is less
+certain.
 
 However, as a conservative measure, we may want to just trim off the
 rest of the read if the quality score drops too low over multiple bases.
@@ -558,7 +591,7 @@ We won’t have time to do that in this practical, but if you’re
 interested, you can modify the Trimmomatic code above to also trim off
 low-quality bases.
 
-<br>
+<br> <br>
 
 #### Build reference index files
 
@@ -575,7 +608,9 @@ the sequence alignment. So we will start by indexing our reference.
 REFERENCE=$BASEDIR/reference/mme_physalia_testdata_chr24.fa   # This is a fasta file with the reference genome sequence we will map to 
 REFBASENAME="${REFERENCE%.*}"
 $SAMTOOLS faidx $REFERENCE
+
 java -jar $PICARD CreateSequenceDictionary R=$REFERENCE O=$REFBASENAME'.dict'
+
 $BOWTIEBUILD $REFERENCE $REFBASENAME
 ```
 
@@ -626,14 +661,14 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
     POP_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 5`
     SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
     LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
-    SAMPLE_SEQ_ID=$SAMPLE_ID'_'$POP_ID'_'$SEQ_ID'_'$LANE_ID  # When a sample has been sequenced in multiple lanes, we need to be able to identify the files from each run uniquely
+    SAMPLE_UNIQ_ID=$SAMPLE_ID'_'$POP_ID'_'$SEQ_ID'_'$LANE_ID  # When a sample has been sequenced in multiple lanes, we need to be able to identify the files from each run uniquely
     
     ## Extract data type from the sample table
     DATATYPE=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 6`
     
     ## The input and output path and file prefix
-    SAMPLETOMAP=$FASTQDIR$SAMPLE_SEQ_ID
-    SAMPLEBAM=$BASEDIR'bam/'$SAMPLE_SEQ_ID
+    SAMPLETOMAP=$FASTQDIR$SAMPLE_UNIQ_ID
+    SAMPLEBAM=$BASEDIR'/bam/'$SAMPLE_UNIQ_ID
     
     ## Define platform unit (PU), which is the lane number
     PU=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
@@ -642,28 +677,34 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
     REFBASENAME="${REFERENCE%.*}"
     
     ## Map reads to the reference 
+    echo $SAMPLE_UNIQ_ID
     
     # Map the paired-end reads
     if [ $DATATYPE = pe ]; then 
     # We ignore the reads that get orphaned during adapter clipping because that is typically a very small proportion of reads. If a large proportion of reads get orphaned (loose their mate so they become single-end), these can be mapped in a separate step and the resulting bam files merged with the paired-end mapped reads.
-    $BOWTIE -q --phred33 --$MAPPINGPRESET -p 16 -I 0 -X 1500 --fr --rg-id $SAMPLE_SEQ_ID --rg SM:$SAMPLE_ID --rg LB:$SAMPLE_ID --rg PU:$PU --rg PL:ILLUMINA -x $REFBASENAME -1 $SAMPLETOMAP$FASTQSUFFIX1 -2 $SAMPLETOMAP$FASTQSUFFIX2 -S $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam'
+    $BOWTIE -q --phred33 --$MAPPINGPRESET -p 16 -I 0 -X 1500 --fr --rg-id $SAMPLE_UNIQ_ID --rg SM:$SAMPLE_ID --rg LB:$SAMPLE_ID --rg PU:$PU --rg PL:ILLUMINA -x $REFBASENAME -1 $SAMPLETOMAP$FASTQSUFFIX1 -2 $SAMPLETOMAP$FASTQSUFFIX2 -S $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam'
     
     # Map the single-end reads
     elif [ $DATATYPE = se ]; then
-    $BOWTIE -q --phred33 --$MAPPINGPRESET -p 16 --rg-id $SAMPLE_SEQ_ID --rg SM:$SAMPLE_ID --rg LB:$SAMPLE_ID --rg PU:$PU --rg PL:ILLUMINA -x $REFBASENAME -U $SAMPLETOMAP$FASTQSUFFIX1 -S $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam'
+    $BOWTIE -q --phred33 --$MAPPINGPRESET -p 16 --rg-id $SAMPLE_UNIQ_ID --rg SM:$SAMPLE_ID --rg LB:$SAMPLE_ID --rg PU:$PU --rg PL:ILLUMINA -x $REFBASENAME -U $SAMPLETOMAP$FASTQSUFFIX1 -S $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam'
     
     fi
     
-    ## Convert to bam file for storage
+    ## Convert to bam file for storage (including all the mapped reads)
     $SAMTOOLS view -bS -F 4 $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam' > $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.bam'
     rm $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam'
     
-    ## Filter the mapped reads
+    ## Filter the mapped reads (to onky retain reads with high mapping quality)
     # Filter bam files to remove poorly mapped reads (non-unique mappings and mappings with a quality score < 20) -- do we want the quality score filter??
     $SAMTOOLS view -h -q 20 $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.bam' | $SAMTOOLS view -buS - | $SAMTOOLS sort -o $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'_minq20_sorted.bam'
     
 done
 ```
+
+<br> <br>
+
+Have a look at the output printed to the screen. How many of our reads
+are mapping to the reference? Does it vary between samples?
 
 <br> <br>
 
@@ -690,13 +731,13 @@ human readable. However, we can use the `view` utility in the program
 [samtools](http://www.htslib.org/doc/samtools.html) to convert the
 content back to human readable output to we can examine our alignments.
 
-As an example, let’s look at the output for `985_lane1`. The following
-command can we used to inspect the first eight lines the sorted bam file
+As an example, let’s look at the output for `985_PANY`. The following
+command can be used to inspect the first eight lines the sorted bam file
 for this sample.
 
-`$SAMTOOLS
-view 985_1_1_pe_bt2_mme_physalia_testdata_chr24_minq20_sorted.bam | head
--n 8`
+`$SAMTOOLS view
+$BASEDIR/bam/985_PANY_1_lane1_pe_bt2_mme_physalia_testdata_chr24_minq20_sorted.bam
+| head -n 8`
 
 <br>
 
