@@ -591,7 +591,7 @@ target_samples <- filter(fastq_table, prefix %in% fastq_list)
 duplicated_samples <- (target_samples$sample_id)[duplicated(target_samples$sample_id)] %>% unique()
 
 # Write cd
-write_lines("cd $BASEDIR\n", paste0(basedir, "scripts/merge_bam.sh"))
+write_lines("cd $BASEDIR'/bam'\n", paste0(basedir, "scripts/merge_bam.sh"))
 
 
 ## Loop through all duplicated samples 
