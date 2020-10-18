@@ -3,37 +3,43 @@ Tutorial 1: Data processing - from .fastq to .bam
 
   - [Case study for practicals](#case-study-for-practicals)
       - [Today’s data](#todays-data)
-  - [Initial preparation](#initial-preparation)
-      - [1. Make sure you’re up to speed on basic shell
-        scripting](#make-sure-youre-up-to-speed-on-basic-shell-scripting)
-      - [2. Copy the working directories with the needed input
-        files](#copy-the-working-directories-with-the-needed-input-files)
-      - [3. Make sure you’re familiar with `for loops` in
-        bash](#make-sure-youre-familiar-with-for-loops-in-bash)
-      - [4. Orient yourself to the formatting of our sample table and
-        sample
-        list](#orient-yourself-to-the-formatting-of-our-sample-table-and-sample-list)
-      - [5. Practice using bash `for loops` to iterate over target
-        samples](#practice-using-bash-for-loops-to-iterate-over-target-samples)
-      - [6. Define paths to the project directory and
-        programs](#define-paths-to-the-project-directory-and-programs)
-  - [Data processing pipeline](#data-processing-pipeline)
-      - [Examine the raw fastq files](#examine-the-raw-fastq-files)
-      - [Adapter clipping](#adapter-clipping)
-      - [OPTIONAL: Quality trimming](#optional-quality-trimming)
-      - [Build reference index files](#build-reference-index-files)
-      - [Map to the reference, sort, and quality
-        filter](#map-to-the-reference-sort-and-quality-filter)
-      - [Examine the bam files](#examine-the-bam-files)
-      - [Merge samples that were sequenced multiple
-        times](#merge-samples-that-were-sequenced-multiple-times)
+      - [Initial preparation](#initial-preparation)
+          - [1. Make sure you’re up to speed on basic shell
+            scripting](#make-sure-youre-up-to-speed-on-basic-shell-scripting)
+          - [2. Copy the working directories with the needed input
+            files](#copy-the-working-directories-with-the-needed-input-files)
+          - [3. Make sure you’re familiar with `for loops` in
+            bash](#make-sure-youre-familiar-with-for-loops-in-bash)
+          - [4. Orient yourself to the formatting of our sample table
+            and sample
+            list](#orient-yourself-to-the-formatting-of-our-sample-table-and-sample-list)
+          - [5. Practice using bash `for loops` to iterate over target
+            samples](#practice-using-bash-for-loops-to-iterate-over-target-samples)
+          - [6. Define paths to the project directory and
+            programs](#define-paths-to-the-project-directory-and-programs)
+      - [Data processing pipeline](#data-processing-pipeline)
+          - [Examine the raw fastq files](#examine-the-raw-fastq-files)
+          - [Adapter clipping](#adapter-clipping)
+          - [OPTIONAL: Quality trimming](#optional-quality-trimming)
+          - [Build reference index files](#build-reference-index-files)
+          - [Map to the reference, sort, and quality
+            filter](#map-to-the-reference-sort-and-quality-filter)
+          - [Examine the bam files](#examine-the-bam-files)
+          - [Merge samples that were sequenced multiple
+            times](#merge-samples-that-were-sequenced-multiple-times)
+  - [Need to take datatype out and add
+    population](#need-to-take-datatype-out-and-add-population)
+      - [Run the merging script](#run-the-merging-script)
+      - [Answer](#answer)
+      - [New merged sample table and bam
+        lists](#new-merged-sample-table-and-bam-lists)
       - [Deduplicate (all samples) and clip overlapping read pairs
         (paired-end reads
         only)](#deduplicate-all-samples-and-clip-overlapping-read-pairs-paired-end-reads-only)
       - [Indel realignment (optional)](#indel-realignment-optional)
-  - [Estimate read depth](#estimate-read-depth)
-      - [Read count](#read-count)
-      - [Summarize counting result](#summarize-counting-result)
+      - [Estimate read depth](#estimate-read-depth)
+          - [Read count](#read-count)
+          - [Summarize counting result](#summarize-counting-result)
 
 <br>
 
@@ -45,7 +51,7 @@ snippet of a reference genome.
 
 <br>
 
-## Case study for practicals
+# Case study for practicals
 
 Throughout this course, you will be working with data from the Atlantic
 silverside, *Menidia menidia*, a small estuarine fish.
@@ -93,9 +99,29 @@ before proceeding to the next step.
 #### 2\. Copy the working directories with the needed input files
 
 Let’s first get set up and retrieve a copy the data we will be working
-on. Copy the `day_1` directory from `xxx_path`. This directory will be
-referred to as `BASEDIR` in many of the scripts below. Have a look at
-your new `day_1` directory; it contains the following subdirectories:
+on. First let’s create an `exercises` directory, and copy the `day1`
+directory from `~/Share`.
+
+``` bash
+
+mkdir exercises
+cd exercises
+
+cp ~/Share/day1 .
+
+# Go into your new day1 directory and examine its contents
+cd day1
+ls
+
+# Check the path to your copy of the day1 directory - you will need to enter this as your BASEDIR variable below
+pwd
+```
+
+<br>
+
+Your own copy of the `day1` directory will be referred to as `BASEDIR`
+in many of the scripts below. Have a look inside; `day1` contains the
+following subdirectories:
 
   - `raw_fastq` has the raw fastq files we’ll be working on today
 
@@ -110,9 +136,6 @@ your new `day_1` directory; it contains the following subdirectories:
 
   - `fastqc` is empty, but you’ll use it for storing your FastQC output
 
-  - `markdowns` contains this exercise, and you can also add your own
-    markdown notes here
-
   - `reference` currently contains the reference genome file and a list
     of adapter sequences
 
@@ -120,9 +143,8 @@ your new `day_1` directory; it contains the following subdirectories:
 
 <br>
 
-> Hint: We move between directories using the `cd` command in the Unix
-> shell. New directories can be created using the `mkdir` command in
-> Unix shell.
+> Hint: We move between directories using the `cd` command and can view
+> the content of directories with the `ls` command in the Unix shell.
 
 <br>
 
@@ -148,14 +170,14 @@ have obscure names, so we need a data table that let’s us link those
 file names to our sample IDs and other information. Often, part of the
 file name will be identical and part of it will reflect some kind of
 unique sample identifier (either a name you supplied or a name given by
-the sequencing center). As an example, look in the `day_1/raw_fastq`
+the sequencing center). As an example, look in the `day1/raw_fastq`
 folder and notice how all the files end in either `_1.fastq.gz` or
 `_2.fastq.gz` (these are the forward and reverse sequences) while the
 first part differs. We call the sample identifier the `prefix`.
 
 Our pipeline is set up to link up these `prefix` names with sample
 details based on a sample table set up as the example you can find in
-`day_1/sample_lists/sample_table.tsv`.
+`day1/sample_lists/fastq_table.tsv`.
 
 For our scripts below to work, the sample table has to be a **tab
 deliminated** table with the following six columns, strictly in this
@@ -185,7 +207,7 @@ seq\_id, and sample\_id is unique for each fastq file.
 
 <br>
 
-A second file that we’ll use is called a sample list. This is simply a
+A second file that we’ll use is called a fastq list. This is simply a
 list of prefixes for the samples we want to analyze. Our sample table
 can contain data for all individuals in our study, but at any given
 time, we may only want to perform an operation on a subset of them. Like
@@ -193,39 +215,39 @@ today, in the interest of time, we only want to run 6 sets of fastq
 files through each processing step.
 
 Have a look at the list we’ll be using in
-`day_1/sample_lists/sample_list.txt` and note that it’s just a list of
+`day1/sample_lists/fastq_list.txt` and note that it’s just a list of
 fastq name prefixes, each on a separate line and there should be no
 header in this file.
 
 <br>
 
-**Activity:**: Compare the `sample_list.txt` to the `sample_table.txt`.
+**Activity:**: Compare the `fastq_list.txt` to the `fastq_table.txt`.
 Which samples will we be analyzing today?
 
 <br>
 
-With our small sample table and sample list here, we can easily look
-this up manually. But if we have hundeds of samples, that becomes more
+With our small fastq table and fastq list here, we can easily look this
+up manually. But if we have hundreds of samples, that becomes more
 cumbersome. Let’s automate it with our first `for loop`.
 
 <br>
 
 #### 5\. Practice using bash `for loops` to iterate over target samples
 
-For each prefix in our `sample_list.txt` will use `grep` to extract the
-relevant line from the sample table, use `cut` to extract the column
-with sample ID, and then `echo` to print the sample ID
+For each prefix in our `fastq_list.txt` will use `grep` to extract the
+relevant line from the fastq table, use `cut` to extract the column with
+sample ID, and then `echo` to print the sample ID
 
 ``` bash
 
-BASEDIR=/workdir/physalia-lcwgs/day_1/ # Path to the base directory / project directory.
+BASEDIR=~/exercises/day1 # Path to the base directory / project directory.
 
-SAMPLELIST=$BASEDIR/sample_lists/sample_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
+SAMPLELIST=$BASEDIR/sample_lists/fastq_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the fastq table.
 
-SAMPLETABLE=$BASEDIR/sample_lists/sample_table.tsv # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID. 
+SAMPLETABLE=$BASEDIR/sample_lists/fastq_table.tsv # Path to a fastq table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID. 
 
 
-for SAMPLEFILE in `cat $SAMPLELIST`; do   # Loop through each of the prefixes listed in our sample list
+for SAMPLEFILE in `cat $SAMPLELIST`; do   # Loop through each of the prefixes listed in our fastq list
     
     # For each prefix, extract the associated sample ID (column 4) from the table
     SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4` 
@@ -237,8 +259,8 @@ done
 
 <br>
 
-Now change the `for loop` so it also outputs which population each fastq
-file has data for.
+**Exercise:** Now change the `for loop` so it also outputs which
+population each fastq file has data for.
 
 <details>
 
@@ -271,17 +293,17 @@ to be specified every time we run our scripts in a new login session.
 
 ##### Write the project directory as a variable named `BASEDIR`
 
-> Hint: Change the `/workdir/physalia-lcwgs/day_1/` part in the
-> following line to the path of your base directory
+> Hint: Change the `/workdir/physalia-lcwgs/day1/` part in the following
+> line to the path of your base directory
 
 ``` bash
 
-BASEDIR=/workdir/physalia-lcwgs/day_1/ # Note that no spaces are allowed!
+BASEDIR=/workdir/physalia-lcwgs/day1/ # Note that no spaces are allowed!
 ```
 
 <br>
 
-##### Write the paths to required programs as variables
+##### Specify the paths to required programs as variables
 
 When running these scripts on the Physalia server, run the following:
 
@@ -296,6 +318,10 @@ BOWTIE=bowtie2
 BAMUTIL=
 JAVA=/home/ubuntu/miniconda3/pkgs/java-jdk-8.0.92-1/bin/java
 ```
+
+<br> If you will be running these programs on a different system, you
+will have to specify the paths to the different programs on that system
+(or add them to your $PATH).
 
 <br>
 
@@ -334,7 +360,7 @@ identify the group of four lines for each read.
 
 ``` bash
 
-SAMPLELIST=$BASEDIR/sample_lists/sample_list.txt # Path to the sample list.
+SAMPLELIST=$BASEDIR/sample_lists/fastq_list.txt # Path to the sample list.
 RAWFASTQSUFFIX1=_1.fastq.gz # Suffix to raw fastq files. Use forward reads with paired-end data.
 
 for SAMPLE in `cat $SAMPLELIST`; do
@@ -361,7 +387,7 @@ our fastq files to check their quality.
 
 ``` bash
 
-SAMPLELIST=$BASEDIR/sample_lists/sample_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
+SAMPLELIST=$BASEDIR/sample_lists/fastq_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
 RAWFASTQSUFFIX1=_1.fastq.gz # Suffix to raw fastq files. Use forward reads with paired-end data.
 RAWFASTQSUFFIX2=_2.fastq.gz # Suffix to raw fastq files. Use reverse reads with paired-end data.
 
@@ -373,7 +399,9 @@ for SAMPLE in `cat $SAMPLELIST`; do
 done
 ```
 
-Grab the html output files and examine
+<br>
+
+NEED TO ADD Grab the html output files and examine
 
 If you can’t get the file transfer to work, you can download our’s from
 here.
@@ -412,8 +440,8 @@ for paired-end and single-end data.
 
 ``` bash
 
-SAMPLELIST=$BASEDIR/sample_lists/sample_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
-SAMPLETABLE=$BASEDIR/sample_lists/sample_table.tsv # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. The 6th column should be data type, which is either pe or se. 
+SAMPLELIST=$BASEDIR/sample_lists/fastq_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
+SAMPLETABLE=$BASEDIR/sample_lists/fastq_table.tsv # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. The 6th column should be data type, which is either pe or se. 
 RAWFASTQDIR=$BASEDIR/raw_fastq/ # Path to raw fastq files. 
 RAWFASTQSUFFIX1=_1.fastq.gz # Suffix to raw fastq files. Use forward reads with paired-end data.
 RAWFASTQSUFFIX2=_2.fastq.gz # Suffix to raw fastq files. Use reverse reads with paired-end data. 
@@ -424,9 +452,10 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
     
     ## Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
     SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4`
+    POP_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 5`
     SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
     LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
-    SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID'_'$LANE_ID  # When a sample has been sequenced in multiple lanes, we need to be able to identify the files from each run uniquely
+    SAMPLE_SEQ_ID=$SAMPLE_ID'_'$POP_ID'_'$SEQ_ID'_'$LANE_ID  # When a sample has been sequenced in multiple lanes, we need to be able to identify the files from each run uniquely
     
     ## Extract data type from the sample table
     DATATYPE=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 6`
@@ -440,7 +469,7 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
     # For definitions of these options, see http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf
     
     if [ $DATATYPE = pe ]; then
-        $TRIMMOMATIC PE -threads 18 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $RAWFASTQ_ID$RAWFASTQSUFFIX2 $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_f_unpaired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_unpaired.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10:1:true'
+        $TRIMMOMATIC PE -threads 1 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $RAWFASTQ_ID$RAWFASTQSUFFIX2 $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_f_unpaired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_unpaired.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10:1:true'
     
     elif [ $DATATYPE = se ]; then
         $TRIMMOMATIC SE -threads 18 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $SAMPLEADAPT'_adapter_clipped_se.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10'
@@ -537,8 +566,8 @@ copy and run it.
 
 ``` bash
 
-SAMPLELIST=$BASEDIR/sample_lists/sample_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
-SAMPLETABLE=$BASEDIR/sample_lists/sample_table.tsv # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. The 6th column should be data type, which is either pe or se. 
+SAMPLELIST=$BASEDIR/sample_lists/fastq_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
+SAMPLETABLE=$BASEDIR/sample_lists/fastq_table.tsv # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. The 6th column should be data type, which is either pe or se. 
 FASTQDIR=$BASEDIR/adapter_clipped/ # Path to the directory where fastq file are stored. 
 FASTQSUFFIX1=_adapter_clipped_f_paired.fastq.gz # Suffix to fastq files. Use forward reads with paired-end data. 
 FASTQSUFFIX2=_adapter_clipped_r_paired.fastq.gz # Suffix to fastq files. Use reverse reads with paired-end data. 
@@ -551,9 +580,10 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
     
     ## Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
     SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4`
+    POP_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 5`
     SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
     LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
-    SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID'_'$LANE_ID
+    SAMPLE_SEQ_ID=$SAMPLE_ID'_'$POP_ID'_'$SEQ_ID'_'$LANE_ID  # When a sample has been sequenced in multiple lanes, we need to be able to identify the files from each run uniquely
     
     ## Extract data type from the sample table
     DATATYPE=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 6`
@@ -673,52 +703,6 @@ time, we provide these merged sample table and lists in the
 from the your fastq-level sample table and list, so you don’t need to do
 this manually if you’re working with your own samples.
 
-<br>
-
-<details>
-
-<summary>Click here to view the R code</summary>
-
-##### New merged sample table and bam lists
-
-``` r
-library(tidyverse) #install.packages("tidyverse) is you don't have it already
-
-## Define base directory and reference name
-basedir <- "/workdir/physalia-lcwgs/day_1/"
-refname <- "mme_physalia_testdata_chr24"
-
-## Create a merged table by keeping only one row for each unique sample
-# seq_id, lane_number, and data_type are all replaced with "merged" for duplicated samples
-sample_table <- read_tsv(paste0("../sample_lists/sample_table.tsv"))
-sample_table_merged <- sample_table  %>%
-  group_by(sample_id) %>%
-  summarise(population = unique(population), seq_id = ifelse(n() == 1, seq_id, "merged"), 
-            lane_number = ifelse(length(unique(lane_number))==1,unique(lane_number), "merged"),
-            data_type = paste0(unique(data_type), collapse = "")) %>%
-  mutate(sample_seq_id = paste(sample_id, seq_id, lane_number, data_type, sep = "_")) %>%
-  select(sample_seq_id, lane_number, seq_id, sample_id, population, data_type)
-
-## Write the merged table
-write_tsv(sample_table_merged, paste0(basedir, "sample_lists/sample_table_merged.tsv"))
-
-## Create bam lists as inputs for future steps
-bam_list_merged <- paste0(basedir, "bam/", sample_table_merged$sample_seq_id, "_bt2_", refname, "_minq20_sorted.bam")
-
-bam_list_dedup_overlapclipped <- transmute(sample_table_merged, suffix=ifelse(data_type=="se", paste0("_bt2_", refname, "_minq20_sorted_dedup.bam"), paste0("_bt2_", refname, "_minq20_sorted_dedup_overlapclipped.bam"))) %>%
-  .$suffix %>%
-  paste0(basedir, "bam/", sample_table_merged$sample_seq_id, .)
-
-bam_list_realigned <- transmute(sample_table_merged, suffix=ifelse(data_type=="se", paste0("_bt2_", refname, "_minq20_sorted_dedup_realigned.bam"), paste0("_bt2_", refname, "_minq20_sorted_dedup_overlapclipped_realigned.bam"))) %>%
-  .$suffix %>%
-  paste0(basedir, "bam/", sample_table_merged$sample_seq_id, .)
-write_lines(bam_list_merged, paste0(basedir, "sample_lists/bam_list_merged.txt"))
-write_lines(bam_list_dedup_overlapclipped, paste0(basedir, "sample_lists/bam_list_dedup_overlapclipped.txt"))
-write_lines(bam_list_realigned, paste0(basedir, "sample_lists/bam_list_realigned.txt"))
-```
-
-</details>
-
 <br> <br>
 
 ##### Create merging script (whole genome)
@@ -729,7 +713,7 @@ parameters
 
 ``` bash
 
-@SAMTOOLS merge merged.bam input1.bam input2.bam   # We replace the merged.bam with the name we want to give the output bam and the two input names with the names of the bam files we want to merge.
+@SAMTOOLS merge output.bam input1.bam input2.bam   # We replace the output.bam with the name we want to give the output merged bam and the two input names with the names of the bam files we want to merge.
 ```
 
 In this case, we will not use a for loop to iterate over our samples.
@@ -747,41 +731,54 @@ this for your own samples.
 
 <summary>Click here to view the R code</summary>
 
+# Need to take datatype out and add population
+
 ``` r
-## Find all duplicated samples
 library(tidyverse)
 
-basedir <- "/workdir/physalia-lcwgs/day_1/"
-
-sample_table <- read_tsv(paste0(basedir, "sample_lists/sample_table.tsv"))
-sample_table_merged <- read_tsv(paste0(basedir, "sample_lists/sample_table_merged.tsv"))
+basedir <- "/Users/nt246/github/physalia-lcwgs/for_AWS/day1/"
+refname <- "mme_physalia_testdata_chr24"
 
 
-duplicated_samples <- (sample_table$sample_id)[duplicated(sample_table$sample_id)] %>% unique()
-duplicated_samples_seq_ids <- sample_table_merged[match(duplicated_samples,sample_table_merged$sample_id),] %>%
-  .$sample_seq_id
+fastq_list <- read_lines(paste0(basedir, "sample_lists/fastq_list.txt"))
+fastq_table <- read_tsv(paste0(basedir, "sample_lists/fastq_table.tsv"))
 
-merging_script<-NULL
+#Subset the table to the samples we're currently interested in analyzing
+target_samples <- filter(fastq_table, prefix %in% fastq_list)
+
+## Find all duplicated samples
+duplicated_samples <- (target_samples$sample_id)[duplicated(target_samples$sample_id)] %>% unique()
+
+# Write cd
+write_lines(paste("cd", basedir, "\n"), paste0(basedir, "scripts/merge_bam.sh"))
 
 
 ## Loop through all duplicated samples 
 for (i in 1:length(duplicated_samples)){
-  duplicated_sample <- duplicated_samples[i]
-  duplicated_samples_seq_id <- duplicated_samples_seq_ids[i]
-  ## Extract the bam file names from the unmerged sample table
-  input <- filter(sample_table, sample_id==duplicated_sample) %>%
-    mutate(unmerged_bam=paste(sample_id, seq_id, lane_number, data_type, "bt2", refname, "minq20_sorted.bam", sep = "_")) %>% 
-    # Note that sample_id is used in here instead of sample_id, since the unmerged bam file still uses sample_id as part of its name, not the corrected one.
-    .$unmerged_bam %>%
-    paste0(basedir, "bam/", .) %>%
-    paste(collapse = " ")
+  dup_sample_dat <- filter(sample_table, sample_id==duplicated_samples[i])
   
+  ## Extract the bam file names from the unmerged sample table
+  input <- dup_sample_dat %>%
+    mutate(unmerged_bam = paste(sample_id, population, seq_id, lane_number, data_type, "bt2", refname, "minq20_sorted.bam", sep = "_")) %>% 
+    # We are reconstructing the $SAMPLE_SEQ_ID that is the first part of the separate bam file names
+    .$unmerged_bam
+  
+  output <- paste(dup_sample_dat[1,"sample_id"], dup_sample_dat[1, "population"], "merged_bt2", refname, "minq20_sorted.bam", sep = "_")
+    
   ## Paste together the command line
-  merging_script[i] <- paste0("samtools merge ", basedir, "bam/", duplicated_samples_seq_id, "_bt2_", refname, "_minq20_sorted.bam ", input)
+  #merging_script[i+1] <- paste("samtools merge", as.character(output), input[1], input[2], sep = " ")
+  write_lines(paste("samtools merge", as.character(output), input[1], input[2], sep = " "), paste0(basedir, "scripts/merge_bam_new.sh"), append = TRUE)
+  
+  # Also write a target bam list that we'll use for the next steps
+  if (i == 1){
+  write_lines(paste(dup_sample_dat[1,"sample_id"], dup_sample_dat[1, "population"], "merged", sep = "_"), paste0(basedir, "sample_lists/merged_bam_list.tsv"))
+  }
+  
+  if (i > 1){
+  write_lines(paste(dup_sample_dat[1,"sample_id"], dup_sample_dat[1, "population"], "merged", sep = "_"), paste0(basedir, "sample_lists/merged_bam_list.tsv"), append = TRUE)
+  }
+  
 }
-
-## Write the script
-write_lines(merging_script, paste0(basedir, "scripts/merge_bam.sh"))
 ```
 
 </details>
@@ -813,9 +810,6 @@ like like
 
 @SAMTOOLS view 985_merged_pe_bt2_mme_physalia_testdata_chr24_minq20_sorted.bam | wc -l
 ```
-
-    ## bash: line 1: @SAMTOOLS: command not found
-    ##        0
 
 Check the line count in the bam files for the two individual fastqs and
 see if the numbers add up.
@@ -852,6 +846,53 @@ reasons.
 
 <br> <br>
 
+<details>
+
+<summary>Click here to view the R code</summary>
+
+##### New merged sample table and bam lists
+
+``` r
+library(tidyverse) #install.packages("tidyverse) is you don't have it already
+
+## Define base directory and reference name
+basedir <- "/workdir/physalia-lcwgs/day1/"
+refname <- "mme_physalia_testdata_chr24"
+
+## Create a merged table by keeping only one row for each unique sample
+# seq_id, lane_number, and data_type are all replaced with "merged" for duplicated samples
+sample_table <- read_tsv(paste0("../sample_lists/sample_table.tsv"))
+
+
+
+sample_table_merged <- sample_table  %>%
+  group_by(sample_id) %>%
+  summarise(population = unique(population), seq_id = ifelse(n() == 1, seq_id, "merged"), 
+            lane_number = ifelse(length(unique(lane_number))==1,unique(lane_number), "merged"),
+            data_type = paste0(unique(data_type), collapse = "")) %>%
+  mutate(sample_seq_id = paste(sample_id, seq_id, lane_number, data_type, sep = "_")) %>%
+  select(sample_seq_id, lane_number, seq_id, sample_id, population, data_type)
+
+## Write the merged table
+write_tsv(sample_table_merged, paste0(basedir, "sample_lists/sample_table_merged.tsv"))
+
+## Create bam lists as inputs for future steps
+bam_list_merged <- paste0(basedir, "bam/", sample_table_merged$sample_seq_id, "_bt2_", refname, "_minq20_sorted.bam")
+
+bam_list_dedup_overlapclipped <- transmute(sample_table_merged, suffix=ifelse(data_type=="se", paste0("_bt2_", refname, "_minq20_sorted_dedup.bam"), paste0("_bt2_", refname, "_minq20_sorted_dedup_overlapclipped.bam"))) %>%
+  .$suffix %>%
+  paste0(basedir, "bam/", sample_table_merged$sample_seq_id, .)
+
+bam_list_realigned <- transmute(sample_table_merged, suffix=ifelse(data_type=="se", paste0("_bt2_", refname, "_minq20_sorted_dedup_realigned.bam"), paste0("_bt2_", refname, "_minq20_sorted_dedup_overlapclipped_realigned.bam"))) %>%
+  .$suffix %>%
+  paste0(basedir, "bam/", sample_table_merged$sample_seq_id, .)
+write_lines(bam_list_merged, paste0(basedir, "sample_lists/bam_list_merged.txt"))
+write_lines(bam_list_dedup_overlapclipped, paste0(basedir, "sample_lists/bam_list_dedup_overlapclipped.txt"))
+write_lines(bam_list_realigned, paste0(basedir, "sample_lists/bam_list_realigned.txt"))
+```
+
+</details>
+
 #### Deduplicate (all samples) and clip overlapping read pairs (paired-end reads only)
 
 Here, we remove the PCR duplicates and trim the overlapping part of each
@@ -864,24 +905,19 @@ different lanes.
 ``` bash
 
 BAMLIST=$BASEDIR/sample_lists/bam_list_merged.txt # Path to a list of merged bam files.
-SAMPLETABLE=$BASEDIR/sample_lists/sample_table_merged.tsv # Path to a sample table where the 1st column is the prefix of the MERGED bam files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The 5th column is population name and 6th column is the data type.
 REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files
 
 ## Loop over each sample
 for SAMPLEBAM in `cat $BAMLIST`; do
     
-    ## Extract the file name prefix for this sample
-    SAMPLEPREFIX=`echo $SAMPLEBAM | sed 's/_bt2_.*//' | sed -e 's#.*/bam/\(\)#\1#'`
-    
     ## Remove duplicates and print dupstat file
     # We used to be able to just specify picard.jar on the CBSU server, but now we need to specify the path and version
-    java -Xmx60g -jar $PICARD MarkDuplicates I=$SAMPLEBAM O=$BASEDIR'bam/'$SAMPLEPREFIX'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' M=$BASEDIR'bam/'$SAMPLEPREFIX'_bt2_'$REFNAME'_minq20_sorted_dupstat.txt' VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true
+    java -Xmx60g -jar $PICARD MarkDuplicates I=$SAMPLEBAM'mme_physalia_testdata_chr24_minq20_sorted.bam' O=$BASEDIR'bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' M=$BASEDIR'bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dupstat.txt' VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true
     
     ## Extract data type from the merged sample table
     DATATYPE=`grep -P "${SAMPLEPREFIX}\t" $SAMPLETABLE | cut -f 6`
     
-    if [ $DATATYPE != se ]; then
-        ## Clip overlapping paired end reads (only necessary for paired-end data)
+        ## Clip overlapping paired end reads (only necessary for paired-end data, so if you're only running se samples, you can comment this step out)
         $BAMUTIL clipOverlap --in $BASEDIR'bam/'$SAMPLEPREFIX'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' --out $BASEDIR'bam/'$SAMPLEPREFIX'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam' --stats
     fi
     
@@ -1090,8 +1126,8 @@ done
 #### Summarize counting result
 
 ``` r
-basedir="/workdir/physalia-lcwgs/day_1/"
-library(tidyverse)
+basedir="/workdir/physalia-lcwgs/day1/"
+library(tidyverse) #You need a post 2020/03/09 version of dplyr to access the relocate() function used below
 library(cowplot)
 library(knitr)
 fastq_count <- read_tsv(paste0(basedir, "/sample_lists/fastq_count.tsv")) %>% 
