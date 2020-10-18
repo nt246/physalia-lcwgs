@@ -1,0 +1,11 @@
+PASS	Basic Statistics	11295X32_1.fastq.gz
+PASS	Per base sequence quality	11295X32_1.fastq.gz
+PASS	Per tile sequence quality	11295X32_1.fastq.gz
+PASS	Per sequence quality scores	11295X32_1.fastq.gz
+FAIL	Per base sequence content	11295X32_1.fastq.gz
+FAIL	Per sequence GC content	11295X32_1.fastq.gz
+PASS	Per base N content	11295X32_1.fastq.gz
+PASS	Sequence Length Distribution	11295X32_1.fastq.gz
+PASS	Sequence Duplication Levels	11295X32_1.fastq.gz
+WARN	Overrepresented sequences	11295X32_1.fastq.gz
+FAIL	Adapter Content	11295X32_1.fastq.gz
