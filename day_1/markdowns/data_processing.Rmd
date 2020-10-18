@@ -137,16 +137,16 @@ Have a look at the list we'll be using in `day1/sample_lists/fastq_list.txt` and
 
 <br>
 
-**Activity:**: Compare the `fastq_list.txt` to the `fastq_table.txt`. Which samples will we be analyzing today?
+**Activity:**: Compare the `fastq_list.txt` to the `fastq_table.txt`. Which populations to the samples we'll be analyzing today originate from?
 
 <br>
 
-With our small fastq table and fastq list here, we can easily look this up manually. But if we have hundreds of samples, that becomes more cumbersome. Let's automate it with our first `for loop`.
+With our small fastq table and fastq list here, we can easily look this up manually. But if we have hundreds of samples, that becomes more cumbersome. Let's automate the sample lookup with our first `for loop`.
 
 <br>
 
 #### 5. Practice using bash `for loops` to iterate over target samples
-For each prefix in our `fastq_list.txt` will use `grep` to extract the relevant line from the fastq table, use `cut` to extract the column with sample ID, and then `echo` to print the sample ID 
+First, let's just look up the sample IDs. For each prefix in our `fastq_list.txt` will use `grep` to extract the relevant line from the fastq table, use `cut` to extract the column with sample ID, and then `echo` to print the sample ID 
 
 ```{bash, eval = FALSE}
 
@@ -172,8 +172,9 @@ done
 
 **Exercise:** Now change the `for loop` so it also outputs which population each fastq file has data for.
 
+#### See a solution
 <details>
-  <summary>Click here to see a solution</summary>
+  <summary>Click here to expand</summary>
   
 ```{bash, eval = FALSE}
 
@@ -200,13 +201,13 @@ We need to make sure the server knows where to find the programs we'll be runnin
 
 <br>
 
-##### Write the project directory as a variable named `BASEDIR`
+##### Set the project directory as a variable named `BASEDIR`
 
-> Hint: Change the `/workdir/physalia-lcwgs/day1/` part in the following line to the path of your base directory
+> Hint: Use `pwd` to check the path to where you copied your day1 folder to and change the `~/exercises/day1/` part in the following line if that is not the correct path to your base directory
 
-```{bash, eval=F}
+```{bash, eval = FALSE}
 
-BASEDIR=/workdir/physalia-lcwgs/day1/ # Note that no spaces are allowed!
+BASEDIR=~/exercises/day1/ # Note that no spaces are allowed!
 
 ```
 
@@ -216,7 +217,7 @@ BASEDIR=/workdir/physalia-lcwgs/day1/ # Note that no spaces are allowed!
 
 When running these scripts on the Physalia server, run the following:
 
-```{bash, eval=F}
+```{bash, eval = FALSE}
 
 FASTQC=fastqc
 TRIMMOMATIC=trimmomatic
@@ -257,7 +258,7 @@ Now read the code below, guess what it does, and run it on your own. Does it do 
 
 <br>
 
-```{bash, eval=F}
+```{bash, eval = FALSE}
 
 SAMPLELIST=$BASEDIR/sample_lists/fastq_list.txt # Path to the sample list.
 RAWFASTQSUFFIX1=_1.fastq.gz # Suffix to raw fastq files. Use forward reads with paired-end data.
@@ -276,20 +277,18 @@ done
 
 ##### Evaluate the overall data quality
 
-With a new batch of data, it is always to good idea to start out by getting an overview of the data quality and look for any signs of quality issues. The [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) program provides a useful set of diagnostics, so we'll run it on each on our fastq files to check their quality.
+With a new batch of data, it is always to good idea to start out by getting an overview of the data quality and look for any signs of quality issues. The [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) program provides a useful set of diagnostics, so we'll run it on each on our fastq files to check their quality. In the interest of time, we will only look at three of our fastq files, listed in the `fastQC_fastq_list.txt` file in your `sample_lists` folder. We'll loop over each of these and call FastQC (it only takes the path to the input and the path to where you want the output as parameters)
 
 <br>
 
-```{bash, eval=F}
+```{bash, eval = FALSE}
 
-SAMPLELIST=$BASEDIR/sample_lists/fastq_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
-RAWFASTQSUFFIX1=_1.fastq.gz # Suffix to raw fastq files. Use forward reads with paired-end data.
-RAWFASTQSUFFIX2=_2.fastq.gz # Suffix to raw fastq files. Use reverse reads with paired-end data.
+SAMPLELIST=$BASEDIR/sample_lists/fastQC_fastq_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
+RAWFASTQSUFFIX1=_1.fastq.gz # Suffix to raw fastq files. We'll only look at the forward reads here
 
 for SAMPLE in `cat $SAMPLELIST`; do
 
   $FASTQC $BASEDIR'raw_fastq/'$SAMPLE$RAWFASTQSUFFIX1 -o $BASEDIR'fastqc/'
-  $FASTQC $BASEDIR'raw_fastq/'$SAMPLE$RAWFASTQSUFFIX2 -o $BASEDIR'fastqc/'
   
 done
 
@@ -297,6 +296,7 @@ done
 
 <br>
 
+If the program ran, you should now see the output (in html format and a zip file with various files) in your 
 NEED TO ADD
 Grab the html output files and examine
 
@@ -319,7 +319,7 @@ Look over the code below. The first block of text specifies which files we are u
 
 <br>
 
-```{bash, eval=F}
+```{bash, eval = FALSE}
 
 SAMPLELIST=$BASEDIR/sample_lists/fastq_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
 SAMPLETABLE=$BASEDIR/sample_lists/fastq_table.tsv # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. The 6th column should be data type, which is either pe or se. 
@@ -390,7 +390,7 @@ There are lots of different programs developed for mapping short reads to a refe
 
 <br>
 
-```{bash, eval=F}
+```{bash, eval = FALSE}
 
 REFERENCE=$BASEDIR/reference/mme_physalia_testdata_chr24.fa   # This is a fasta file with the reference genome sequence we will map to 
 REFBASENAME="${REFERENCE%.*}"
@@ -413,7 +413,7 @@ Look over the code and make sure you understand what it's doing, then copy and r
 
 <br>
 
-```{bash, eval=F}
+```{bash, eval = FALSE}
 
 SAMPLELIST=$BASEDIR/sample_lists/fastq_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
 SAMPLETABLE=$BASEDIR/sample_lists/fastq_table.tsv # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. The 6th column should be data type, which is either pe or se. 
@@ -591,7 +591,7 @@ for (i in 1:length(duplicated_samples)){
 ##### Run the merging script
 To execute the merging, run the bash script with the following command:
 
-```{bash, eval=F}
+```{bash, eval = FALSE}
 
 chmod u+x $BASEDIR/scripts/merge_bam.sh
 bash $BASEDIR/scripts/merge_bam.sh 
@@ -688,7 +688,7 @@ Here, we remove the PCR duplicates and trim the overlapping part of each read pa
 
 ![](https://i.stack.imgur.com/7dkOV.png)
 
-```{bash, eval=F}
+```{bash, eval = FALSE}
 
 BAMLIST=$BASEDIR/sample_lists/bam_list_merged.txt # Path to a list of merged bam files.
 REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files
@@ -721,7 +721,7 @@ Unlike other variant detector programs like the [GATK Haplotype Caller](https://
 <details>
   <summary>Click here to see the GATK IndelRealigner code</summary>
 
-```{bash, eval=F}
+```{bash, eval = FALSE}
 ## Use an older version of Java
 #export JAVA_HOME=/usr/local/jdk1.8.0_121
 #export PATH=$JAVA_HOME/bin:$PATH
@@ -780,7 +780,7 @@ $JAVA -Xmx40g -jar $GATK \
 
 ##### Count fastq files
 
-```{bash, eval=F}
+```{bash, eval = FALSE}
 SAMPLELIST=$BASEDIR/sample_lists/sample_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
 SAMPLETABLE=$BASEDIR/sample_lists/sample_table.tsv # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. The 6th column should be data type, which is either pe or se. 
 RAWFASTQDIR=$BASEDIR/raw_fastq/ # Path to raw fastq files. 
@@ -834,7 +834,7 @@ done
 
 ##### Count unmerged bam files
 
-```{bash, eval=F}
+```{bash, eval = FALSE}
 SAMPLELIST=$BASEDIR/sample_lists/sample_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
 SAMPLETABLE=$BASEDIR/sample_lists/sample_table.tsv # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. The 6th column should be data type, which is either pe or se. 
 REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files
@@ -866,7 +866,7 @@ done
 
 ##### Count merged bam files
 
-```{bash, eval=F}
+```{bash, eval = FALSE}
 BAMLIST=$BASEDIR/sample_lists/bam_list_merged.txt # Path to a list of merged bam files.
 SAMPLETABLE=$BASEDIR/sample_lists/sample_table_merged.tsv # Path to a sample table where the 1st column is the prefix of the MERGED bam files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The 5th column is population name and 6th column is the data type.
 REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files
