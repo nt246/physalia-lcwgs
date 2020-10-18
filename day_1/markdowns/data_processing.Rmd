@@ -277,7 +277,11 @@ done
 
 ##### Evaluate the overall data quality
 
+<<<<<<< HEAD
 With a new batch of data, it is always to good idea to start out by getting an overview of the data quality and look for any signs of quality issues. The [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) program provides a useful set of diagnostics, so we'll run it on each on our fastq files to check their quality. In the interest of time, we will only look at three of our fastqs. We'll loop over each of these and call FastQC on the forward file only (it only takes the path to the input and the path to where you want the output as parameters). When working with your own data, always make sure to look both at the forward and reverse files because sometimes issues can arise in only one of the read directions.
+=======
+With a new batch of data, it is always to good idea to start out by getting an overview of the data quality and look for any signs of quality issues. The [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) program provides a useful set of diagnostics, so we'll run it on each on our fastq files to check their quality. In the interest of time, we will only look at three of our fastq files, listed in the `fastQC_fastq_list.txt` file in your `sample_lists` folder. We'll loop over each of these and call FastQC (it only takes the path to the input and the path to where you want the output as parameters)
+>>>>>>> eaf6291c10523223ce974e702d2139b180038e11
 
 <br>
 
@@ -296,7 +300,13 @@ done
 
 <br>
 
+<<<<<<< HEAD
 If the program ran, you should now see the output (in html format and a zip file with various files) in your `day1/fastqc` directory. To view the .html, use `scp` (as described [here](NEED LINK)) or FileZilla to transfer the html output files to your local machine and open them in a web browser.
+=======
+If the program ran, you should now see the output (in html format and a zip file with various files) in your 
+NEED TO ADD
+Grab the html output files and examine
+>>>>>>> eaf6291c10523223ce974e702d2139b180038e11
 
 If you're not able to download your own files, you can have a look at our's [here](https://github.com/nt246/physalia-lcwgs/tree/main/day_1/fastqc). we are keeping them in our GitHub repo, but GitHub doesn't render .html files, so to view the output, click on the output.html file you want to view, copy its URL and paste it into [this handy viewer](https://htmlpreview.github.io/) to see it in rendered html format.
 
