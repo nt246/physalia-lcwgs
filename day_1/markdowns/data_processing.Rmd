@@ -939,7 +939,7 @@ printf "%s\t%s\t%s\t%s\n" $SAMPLEPREFIX $DEDUPMAPPEDBASES $AVGFRAG $CLIPOVERLAPB
 done
 ```
 
-#### Summarize counting result
+#### Summarize read counting result
 
 ```{r eval=F, message=F, warning=F, fig.width=12, fig.height=4}
 basedir="/workdir/physalia-lcwgs/day1/"
@@ -977,3 +977,55 @@ count_final %>%
   theme_cowplot()
 ```
 
+#### Depth count
+
+```{bash eval=F}
+BAMLIST=$BASEDIR/sample_lists/bam_list_dedup_overlapclipped.txt
+for SAMPLEBAM in `cat $BAMLIST`; do
+	## Count per position depth per sample
+	samtools depth -aa $SAMPLEBAM | cut -f 3 | gzip > $SAMPLEBAM'.depth.gz'
+done
+```
+
+```{r eval=F}
+library(tidyverse)
+library(data.table)
+
+basedir <- "~/exercises/day1"
+bam_list_path <- paste0(basedir, "sample_lists/bam_list_dedup_overlapclipped.txt") 
+sample_table_path <- paste0(basedir, "sample_lists/sample_table_merged.tsv") 
+
+bam_list <- read_tsv(bam_list_path, col_names = F)$X1
+bam_list_prefix <- str_extract(bam_list, "[^.]+")
+sample_table <- read_tsv(sample_table_path)
+for (i in 1:length(bam_list)){
+  print(i)
+  depth <- read_tsv(paste0(bam_list[i], ".depth.gz"), col_names = F)$X1
+  mean_depth <- mean(depth)
+  sd_depth <- sd(depth)
+  presence <- as.logical(depth)
+  proportion_of_reference_covered <- mean(presence)
+  if (i==1){
+    output <- data.frame(sample_seq_id=sample_table[i,1], mean_depth, sd_depth, proportion_of_reference_covered)
+    total_depth <- depth
+    total_presence <- presence
+  } else {
+    output <- rbind(output, cbind(sample_seq_id=sample_table[i,1], mean_depth, sd_depth, proportion_of_reference_covered))
+    total_depth <- total_depth + depth
+    total_presence <- total_presence + presence
+  }
+}
+print(output)
+tibble(total_depth=total_depth, position=1:length(total_depth))  %>%
+  ggplot(aes(x=position, y=total_depth)) +
+  geom_point(size=0.1)
+# Total Depth per Site across All Individuals 
+total_depth_summary <- count(tibble(total_depth=total_depth), total_depth)
+total_presence_summary <- count(tibble(total_presence=total_presence), total_presence)
+total_depth_summary %>%
+  ggplot(aes(x=log(total_depth), y=n)) +
+  geom_point()
+total_presence_summary %>%
+  ggplot(aes(x=total_presence, y=n)) +
+  geom_col()
+```
