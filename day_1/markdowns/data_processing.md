@@ -28,9 +28,10 @@ Tutorial 1: Data processing - from .fastq to .bam
       - [Merge samples that were sequenced multiple
         times](#merge-samples-that-were-sequenced-multiple-times)
       - [Deduplicate (all samples) and clip overlapping read pairs
-        (pair-end reads
-        only)](#deduplicate-all-samples-and-clip-overlapping-read-pairs-pair-end-reads-only)
-      - [In-del realignment (optional)](#in-del-realignment-optional)
+        (paired-end reads
+        only)](#deduplicate-all-samples-and-clip-overlapping-read-pairs-paired-end-reads-only)
+      - [Indel realignment (optional)](#indel-realignment-optional)
+  - [Estimate read depth](#estimate-read-depth)
       - [Read count](#read-count)
       - [Summarize counting result](#summarize-counting-result)
 
@@ -81,11 +82,11 @@ exercises in this course.
 
 We’ll be working almost exclusively through the command line, so if you
 have not used shell scripting before or are getting rusty on it, it may
-be helpful to have a look at a cheat sheet before proceeding to the next
-step.
-
-[Example cheat
-sheet](https://bioinformaticsworkbook.org/Appendix/Unix/UnixCheatSheet.html#gsc.tab=0)
+be helpful to have a look at a tutorial like [this
+one](https://linuxconfig.org/bash-scripting-tutorial-for-beginners) or a
+cheat sheet like [this
+one](https://bioinformaticsworkbook.org/Appendix/Unix/UnixCheatSheet.html#gsc.tab=0)
+before proceeding to the next step.
 
 <br>
 
@@ -294,7 +295,6 @@ BOWTIEBUILD=bowtie2-build
 BOWTIE=bowtie2
 BAMUTIL=
 JAVA=/home/ubuntu/miniconda3/pkgs/java-jdk-8.0.92-1/bin/java
-GATK=
 ```
 
 <br>
@@ -511,13 +511,32 @@ $BOWTIEBUILD $REFERENCE $REFBASENAME
 
 #### Map to the reference, sort, and quality filter
 
-In this step, we align each fastq file to the reference genome using
-`bowtie2`. The resulting alignment file, in `sam` format, will be
-converted to a binary format `bam` for more efficient storage. We will
-then filter out the reads with a mapping quality lower than 20, and sort
-the filtered alignment file for easier computation in the next step.
+In this step, we align the short reads within each fastq file to the
+reference genome using `bowtie2`. The resulting alignment file, in `sam`
+format, will be converted to a binary format `bam` for more efficient
+storage. Each mapped read will have a mapping quality, which indicates
+how confident that mapper is that a read is mapped in the correct
+position. The [bowtie2
+manual](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) defines
+it as “a non-negative integer Q = -10 log10 p, where p is an estimate of
+the probability that the alignment does not correspond to the read’s
+true point of origin.” Accordingly, a mapping quality (or MAPQ) of 10 or
+less indicates that there is at least a 1 in 10 chance that the read
+truly originated elsewhere, and a MAPQ of 20 indicates at least a 1 in
+100 chance.
+
+Here, to only retain reads for which we are reasonably certain have been
+mapped in the correct place, we will filter out reads with a mapping
+quality lower than 20, and after that sort the filtered alignment file
+for easier computation in the next step.
+
+Look over the code and make sure you understand what it’s doing, then
+copy and run it.
+
+<br>
 
 ``` bash
+
 SAMPLELIST=$BASEDIR/sample_lists/sample_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
 SAMPLETABLE=$BASEDIR/sample_lists/sample_table.tsv # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. The 6th column should be data type, which is either pe or se. 
 FASTQDIR=$BASEDIR/adapter_clipped/ # Path to the directory where fastq file are stored. 
@@ -550,6 +569,7 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
     REFBASENAME="${REFERENCE%.*}"
     
     ## Map reads to the reference 
+    
     # Map the paired-end reads
     if [ $DATATYPE = pe ]; then 
     # We ignore the reads that get orphaned during adapter clipping because that is typically a very small proportion of reads. If a large proportion of reads get orphaned (loose their mate so they become single-end), these can be mapped in a separate step and the resulting bam files merged with the paired-end mapped reads.
@@ -572,34 +592,98 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
 done
 ```
 
+<br> <br>
+
 #### Examine the bam files
 
-SAM stands for Sequence Alignment/Map format. It is a TAB-delimited text
-format consisting of a header section, which is optional, and an
+SAM stands for Sequence Alignment/Map format. BAM is the binary format
+for sam files (which takes up much less space). It is a TAB-delimited
+text format consisting of a header section, which is optional, and an
 alignment section. If present, the header must be prior to the
 alignments. Header lines start with ‘@’, while alignment lines do not.
 Each alignment line has 11 mandatory fields for essential alignment
 information such as mapping position, and variable number of optional
 fields for flexible or aligner specific information. BAM is the binary
-version of the SAM format. You can use commands in the format of
-`$SAMTOOLS view
-$SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'_minq20_sorted.bam' | head -n 1`
-to inspect the first alignment of a bam file. Write a loop on your own
-to print the first alignment of all five sorted bam files that you have
-generated in the last step.
+version of the SAM format.
+
+See the full documentation of the sam file format
+[here](https://samtools.github.io/hts-specs/SAMv1.pdf) or a quick
+overview of the column descriptors
+[here](https://en.wikipedia.org/wiki/SAM_\(file_format\))
+
+Note that we have converted our sam files to bam files. That’s useful
+for saving disk space, but because bam files are binary, they are not
+human readable. However, we can use the `view` utility in the program
+[samtools](http://www.htslib.org/doc/samtools.html) to convert the
+content back to human readable output to we can examine our alignments.
+
+As an example, let’s look at the output for `985_lane1`. The following
+command can we used to inspect the first eight lines the sorted bam file
+for this sample.
+
+`$SAMTOOLS
+view 985_1_1_pe_bt2_mme_physalia_testdata_chr24_minq20_sorted.bam | head
+-n 8`
+
+<br>
+
+Take a few minutes to look at the output and look at the [column
+descriptors](https://en.wikipedia.org/wiki/SAM_\(file_format\)) to
+understand its content.
+
+<br>
+
+**OPTIONAL exercise:** Write a loop on your own to print the first three
+alignments of all the sorted bam files that you generated in the last
+step. You can use the general template code below as a starting point.
+
+``` bash
+
+$SAMTOOLS view $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'_minq20_sorted.bam' | head -n 3
+```
+
+<br> <br>
 
 #### Merge samples that were sequenced multiple times
 
-We need a new sample table, because prior to merging, each row represent
-a fastq file, but after merging, each row represent a unique sample. The
-merged sample table also has a slightly different formatting. We will
-also need some new bam lists and a merging script. We will write these
-in R.
+We have now mapped the two separate sets of fastq files for each sample
+(the separate sets generated in independent sequencing runs), so we also
+have two bam files for each sample. If the two sequencing runs were
+performed with different aliquots of the same library, we will need to
+merge the bam files before we remove duplicate sequences because the two
+sequencing lanes would have been sequencing the same set of molecules
+(so each may contain duplicate fragments also sequenced in the other).
+For most downstream analysis, it’s also a lot more convenient to only
+have a single bam file per individual.
 
-###### Create merged sample table and bam lists
+<br>
+
+As part of the the merging and for downstream steps, we need a new
+sample table. This is because prior to merging, each row represent a
+pair of fastq files (forward and reverse, or a single fastq file if
+we’re using single-end reads) and samples sequenced in multiple runs,
+would appear in multiple lines. After merging, we need each unique
+sample to only occupy a single row. The merged sample table also has a
+slightly different formatting. Since we’ll also be working on bam files
+rather than fastq files downstream from this point, we need to list bam
+IDs rather than fastq IDs in the sample lists that specify which samples
+we want to loop over in a particular pipeline step. In the interest of
+time, we provide these merged sample table and lists in the
+`sample_lists` directory, but we also provide R-code that generates them
+from the your fastq-level sample table and list, so you don’t need to do
+this manually if you’re working with your own samples.
+
+<br>
+
+<details>
+
+<summary>Click here to view the R code</summary>
+
+##### New merged sample table and bam lists
 
 ``` r
-library(tidyverse)
+library(tidyverse) #install.packages("tidyverse) is you don't have it already
+
 ## Define base directory and reference name
 basedir <- "/workdir/physalia-lcwgs/day_1/"
 refname <- "mme_physalia_testdata_chr24"
@@ -609,8 +693,10 @@ refname <- "mme_physalia_testdata_chr24"
 sample_table <- read_tsv(paste0("../sample_lists/sample_table.tsv"))
 sample_table_merged <- sample_table  %>%
   group_by(sample_id) %>%
-  summarise(population=unique(population), seq_id=ifelse(n()==1,seq_id, "merged"), lane_number=ifelse(length(unique(lane_number))==1,unique(lane_number), "merged"), data_type=paste0(unique(data_type), collapse = "")) %>%
-  mutate(sample_seq_id=paste(sample_id, seq_id, lane_number, data_type, sep = "_")) %>%
+  summarise(population = unique(population), seq_id = ifelse(n() == 1, seq_id, "merged"), 
+            lane_number = ifelse(length(unique(lane_number))==1,unique(lane_number), "merged"),
+            data_type = paste0(unique(data_type), collapse = "")) %>%
+  mutate(sample_seq_id = paste(sample_id, seq_id, lane_number, data_type, sep = "_")) %>%
   select(sample_seq_id, lane_number, seq_id, sample_id, population, data_type)
 
 ## Write the merged table
@@ -618,9 +704,11 @@ write_tsv(sample_table_merged, paste0(basedir, "sample_lists/sample_table_merged
 
 ## Create bam lists as inputs for future steps
 bam_list_merged <- paste0(basedir, "bam/", sample_table_merged$sample_seq_id, "_bt2_", refname, "_minq20_sorted.bam")
+
 bam_list_dedup_overlapclipped <- transmute(sample_table_merged, suffix=ifelse(data_type=="se", paste0("_bt2_", refname, "_minq20_sorted_dedup.bam"), paste0("_bt2_", refname, "_minq20_sorted_dedup_overlapclipped.bam"))) %>%
   .$suffix %>%
   paste0(basedir, "bam/", sample_table_merged$sample_seq_id, .)
+
 bam_list_realigned <- transmute(sample_table_merged, suffix=ifelse(data_type=="se", paste0("_bt2_", refname, "_minq20_sorted_dedup_realigned.bam"), paste0("_bt2_", refname, "_minq20_sorted_dedup_overlapclipped_realigned.bam"))) %>%
   .$suffix %>%
   paste0(basedir, "bam/", sample_table_merged$sample_seq_id, .)
@@ -629,14 +717,52 @@ write_lines(bam_list_dedup_overlapclipped, paste0(basedir, "sample_lists/bam_lis
 write_lines(bam_list_realigned, paste0(basedir, "sample_lists/bam_list_realigned.txt"))
 ```
 
-###### Create merging script (whole genome)
+</details>
+
+<br> <br>
+
+##### Create merging script (whole genome)
+
+We will merge the two bam files for each individual with [samtools
+merge](http://www.htslib.org/doc/samtools-merge.html) with the following
+parameters
+
+``` bash
+
+@SAMTOOLS merge merged.bam input1.bam input2.bam   # We replace the merged.bam with the name we want to give the output bam and the two input names with the names of the bam files we want to merge.
+```
+
+In this case, we will not use a for loop to iterate over our samples.
+Instead we will run a shell script that has a line that call `samtools
+merge` for each sample. You can find the script `merge_bams.sh` in the
+`scripts` folder. Have a look at it.
+
+With just three samples, we could quickly copy and edit these three
+lines to construct this shell script manually. But if we had hundreds of
+samples, that approach would become error-prone. We’ve this provided an
+R-script below that will generate the merging script if you need to do
+this for your own samples.
+
+<details>
+
+<summary>Click here to view the R code</summary>
 
 ``` r
 ## Find all duplicated samples
+library(tidyverse)
+
+basedir <- "/workdir/physalia-lcwgs/day_1/"
+
+sample_table <- read_tsv(paste0(basedir, "sample_lists/sample_table.tsv"))
+sample_table_merged <- read_tsv(paste0(basedir, "sample_lists/sample_table_merged.tsv"))
+
+
 duplicated_samples <- (sample_table$sample_id)[duplicated(sample_table$sample_id)] %>% unique()
 duplicated_samples_seq_ids <- sample_table_merged[match(duplicated_samples,sample_table_merged$sample_id),] %>%
   .$sample_seq_id
+
 merging_script<-NULL
+
 
 ## Loop through all duplicated samples 
 for (i in 1:length(duplicated_samples)){
@@ -658,13 +784,75 @@ for (i in 1:length(duplicated_samples)){
 write_lines(merging_script, paste0(basedir, "scripts/merge_bam.sh"))
 ```
 
-###### Run the merging script
+</details>
+
+<br> <br>
+
+##### Run the merging script
+
+To execute the merging, run the bash script with the following command:
 
 ``` bash
+
+chmod u+x $BASEDIR/scripts/merge_bam.sh
 bash $BASEDIR/scripts/merge_bam.sh 
 ```
 
-#### Deduplicate (all samples) and clip overlapping read pairs (pair-end reads only)
+<br>
+
+Check that your merged bam files get generated. As a sanity check, we
+can compare the number of lines in our merged and set of unmerged bam
+files for each sample with [samtools
+view](http://www.htslib.org/doc/samtools-view.html) and the command
+`samtools view in.bam | wc -l`
+
+Run on our server, for the merged file for sample 985, the command would
+like like
+
+``` bash
+
+@SAMTOOLS view 985_merged_pe_bt2_mme_physalia_testdata_chr24_minq20_sorted.bam | wc -l
+```
+
+    ## bash: line 1: @SAMTOOLS: command not found
+    ##        0
+
+Check the line count in the bam files for the two individual fastqs and
+see if the numbers add up.
+
+**OPTIONAL exercise**: You could write a for loop that will extract the
+line count for each file.
+
+<br> <br>
+
+**Discussion question:** This merging procedure required some extra
+effort. Why didn’t we just merge the fastq files for each individual
+before mapping?
+
+<br>
+
+##### Answer
+
+<details>
+
+<summary>Click here</summary>
+
+Because there may be particular issues associated each sequencing lane
+(in particular the base call quality score calibration may vary), so for
+some downstream analysis, we need to keep track of what data were
+sequenced in what lane. By mapping the fastq files separately, we were
+able to add read platform unit `PU` information to the read group tag in
+the bam file while mapping with `bowtie2` (see the script). This way we
+can continue to keep track of which read came from which lane, and could
+even filter our bam file based on this later on, if we ended up wanting
+to compare data from different lanes for troubleshooting or other
+reasons.
+
+</details>
+
+<br> <br>
+
+#### Deduplicate (all samples) and clip overlapping read pairs (paired-end reads only)
 
 Here, we remove the PCR duplicates and trim the overlapping part of each
 read pair in pair-end data. It is important to deduplicate after
@@ -674,6 +862,7 @@ different lanes.
 ![](https://i.stack.imgur.com/7dkOV.png)
 
 ``` bash
+
 BAMLIST=$BASEDIR/sample_lists/bam_list_merged.txt # Path to a list of merged bam files.
 SAMPLETABLE=$BASEDIR/sample_lists/sample_table_merged.tsv # Path to a sample table where the 1st column is the prefix of the MERGED bam files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The 5th column is population name and 6th column is the data type.
 REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files
@@ -692,19 +881,35 @@ for SAMPLEBAM in `cat $BAMLIST`; do
     DATATYPE=`grep -P "${SAMPLEPREFIX}\t" $SAMPLETABLE | cut -f 6`
     
     if [ $DATATYPE != se ]; then
-        ## Clip overlapping paired end reads (only necessary for paired end data)
+        ## Clip overlapping paired end reads (only necessary for paired-end data)
         $BAMUTIL clipOverlap --in $BASEDIR'bam/'$SAMPLEPREFIX'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' --out $BASEDIR'bam/'$SAMPLEPREFIX'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam' --stats
     fi
     
 done
 ```
 
-#### In-del realignment (optional)
+<br> <br>
 
-It is difficult to distinguish in-dels from SNPs at the end of reads if
-each read is considered separately. Therefore, in this step, we take all
-the aligned sequences from all samples in to account to validate the
-in-dels discovered from the mapping process.
+#### Indel realignment (optional)
+
+Unlike other variant detector programs like the [GATK Haplotype
+Caller](https://gatk.broadinstitute.org/hc/en-us/articles/360037225632-HaplotypeCaller)
+or [Freebayes](https://github.com/ekg/freebayes),
+[angsd](http://www.popgen.dk/angsd/index.php/ANGSD) does not realign
+reads during its analysis. Because it can be difficult to distinguish
+indels from SNPs at the end of reads if each alignment is considered
+separately, indels may interfere with genotype likelihood estimation. We
+there recommend running your bam files through a program that realigns
+reads around indels prior to running `angsd`. The [GATK
+IndelRealigner](https://github.com/broadinstitute/gatk-docs/blob/master/gatk3-tutorials/\(howto\)_Perform_local_realignment_around_indels.md)
+takes all the aligned sequences from all samples in to account to
+validate the indels discovered from the mapping process and then
+realigns each read locally. We don’t have time to run it today, but the
+code is provided here if you want to run it on your own.
+
+<details>
+
+<summary>Click here to see the GATK IndelRealigner code</summary>
 
 ``` bash
 ## Use an older version of Java
@@ -751,6 +956,12 @@ $JAVA -Xmx40g -jar $GATK \
 --nWayOut _realigned.bam
 ```
 
+</details>
+
+<br> <br>
+
+## Estimate read depth
+
 #### Read count
 
 ##### Count fastq files
@@ -762,14 +973,12 @@ RAWFASTQDIR=$BASEDIR/raw_fastq/ # Path to raw fastq files.
 SEQUENCER=@HWI # Sequencer name that appears in the beginning of the first line in a fastq file. 
 QUALFILTERED=false # Whether the sample has gone through quality filtering. true or false
 OUT=$BASEDIR/sample_lists/fastq_count.tsv
-
 # Create headers for the output
 if $QUALFILTERED; then
     printf 'sample_seq_id\traw_reads\traw_bases\tadapter_clipped_bases\tqual_filtered_bases\n' > $OUT
 else
     printf 'sample_seq_id\traw_reads\traw_bases\tadapter_clipped_bases\n' > $OUT
 fi
-
 # Loop over each sample in the sample table
 for SAMPLEFILE in `cat $SAMPLELIST`; do
   RAWFASTQFILES=$RAWFASTQDIR$SAMPLEFILE'*.gz'  # The input path and file prefix
@@ -816,9 +1025,7 @@ SAMPLELIST=$BASEDIR/sample_lists/sample_list.txt # Path to a list of prefixes of
 SAMPLETABLE=$BASEDIR/sample_lists/sample_table.tsv # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. The 6th column should be data type, which is either pe or se. 
 REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files
 OUT=$BASEDIR/sample_lists/bam_count_unmerged.tsv
-
 printf 'sample_seq_id\tmapped_bases\tqual_filtered_mapped_bases\n' > $OUT
-
 for SAMPLEFILE in `cat $SAMPLELIST`; do
     
     # Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
@@ -850,9 +1057,7 @@ BAMLIST=$BASEDIR/sample_lists/bam_list_merged.txt # Path to a list of merged bam
 SAMPLETABLE=$BASEDIR/sample_lists/sample_table_merged.tsv # Path to a sample table where the 1st column is the prefix of the MERGED bam files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The 5th column is population name and 6th column is the data type.
 REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files
 OUT=$BASEDIR/sample_lists/bam_count_merged.tsv
-
 printf 'sample_seq_id\tdedup_mapped_bases\tavg_fragment_size\toverlap_clipped_bases\n' > $OUT
-
 for SAMPLEBAM in `cat $BAMLIST`; do
   
   ## Extract the file name prefix for this sample
