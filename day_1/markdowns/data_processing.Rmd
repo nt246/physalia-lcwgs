@@ -225,7 +225,7 @@ PICARD=/home/ubuntu/Software/picard-2.23.8/picard.jar
 SAMTOOLS=samtools
 BOWTIEBUILD=bowtie2-build
 BOWTIE=bowtie2
-BAMUTIL=
+BAMUTIL=/home/ubuntu/miniconda3/pkgs/bamutil-1.0.14-h8b12597_5/bin/bam
 JAVA=/home/ubuntu/miniconda3/pkgs/java-jdk-8.0.92-1/bin/java
 
 ```
@@ -591,7 +591,7 @@ target_samples <- filter(fastq_table, prefix %in% fastq_list)
 duplicated_samples <- (target_samples$sample_id)[duplicated(target_samples$sample_id)] %>% unique()
 
 # Write cd
-write_lines("cd $BASEDIR'/bam'\n", paste0(basedir, "scripts/merge_bam.sh"))
+write_lines("", paste0(basedir, "scripts/merge_bam.sh")) # can write cd a working directory here
 
 
 ## Loop through all duplicated samples 
@@ -612,11 +612,11 @@ for (i in 1:length(duplicated_samples)){
   
   # Also write a target bam list that we'll use for downstream looping over merged bam files
   if (i == 1){
-  write_lines(paste(dup_sample_dat[1,"sample_id"], dup_sample_dat[1, "population"], "merged", sep = "_"), paste0(basedir, "sample_lists/merged_bam_list.tsv"))
+  write_lines(paste(dup_sample_dat[1,"sample_id"], dup_sample_dat[1, "population"], "merged", sep = "_"), paste0(basedir, "sample_lists/merged_bam_list.txt"))
   }
   
   if (i > 1){
-  write_lines(paste(dup_sample_dat[1,"sample_id"], dup_sample_dat[1, "population"], "merged", sep = "_"), paste0(basedir, "sample_lists/merged_bam_list.tsv"), append = TRUE)
+  write_lines(paste(dup_sample_dat[1,"sample_id"], dup_sample_dat[1, "population"], "merged", sep = "_"), paste0(basedir, "sample_lists/merged_bam_list.txt"), append = TRUE)
   }
   
 }
@@ -634,6 +634,7 @@ To execute the merging, run the bash script with the following command:
 
 ```{bash, eval = FALSE}
 
+cd $BASEDIR'/bam'
 bash $BASEDIR/scripts/merge_bam.sh 
 
 ```
@@ -651,6 +652,8 @@ Run on our server, for the merged file for sample 985, the command would like li
 ```
 
 Check the line count in the bam files for the two individual fastqs and see if the numbers add up.
+
+<br>
 
 **OPTIONAL exercise**: You could write a for loop that will extract the line count for each file.
 
@@ -674,81 +677,43 @@ Because there may be particular issues associated each sequencing lane (in parti
 <br>
 
 
-<details>
-  <summary>Click here to view the R code</summary>
+#### Deduplicate and clip overlapping read pairs
 
-##### New merged sample table and bam lists
+Here, we remove the PCR duplicates and trim the overlapping part of each read pair in pair-end data. It is important to deduplicate after merging, because PCR duplicates for the same sample may exist in different lanes. We use the [Picard Tools MarkDuplicates](https://gatk.broadinstitute.org/hc/en-us/articles/360037052812-MarkDuplicates-Picard-).
 
-```{r eval=F}
-
-library(tidyverse) #install.packages("tidyverse) is you don't have it already
-
-## Define base directory and reference name
-basedir <- "/workdir/physalia-lcwgs/day1/"
-refname <- "mme_physalia_testdata_chr24"
-
-## Create a merged table by keeping only one row for each unique sample
-# seq_id, lane_number, and data_type are all replaced with "merged" for duplicated samples
-sample_table <- read_tsv(paste0("../sample_lists/sample_table.tsv"))
-
-
-
-sample_table_merged <- sample_table  %>%
-  group_by(sample_id) %>%
-  summarise(population = unique(population), seq_id = ifelse(n() == 1, seq_id, "merged"), 
-            lane_number = ifelse(length(unique(lane_number))==1,unique(lane_number), "merged"),
-            data_type = paste0(unique(data_type), collapse = "")) %>%
-  mutate(sample_seq_id = paste(sample_id, seq_id, lane_number, data_type, sep = "_")) %>%
-  select(sample_seq_id, lane_number, seq_id, sample_id, population, data_type)
-
-## Write the merged table
-write_tsv(sample_table_merged, paste0(basedir, "sample_lists/sample_table_merged.tsv"))
-
-## Create bam lists as inputs for future steps
-bam_list_merged <- paste0(basedir, "bam/", sample_table_merged$sample_seq_id, "_bt2_", refname, "_minq20_sorted.bam")
-
-bam_list_dedup_overlapclipped <- transmute(sample_table_merged, suffix=ifelse(data_type=="se", paste0("_bt2_", refname, "_minq20_sorted_dedup.bam"), paste0("_bt2_", refname, "_minq20_sorted_dedup_overlapclipped.bam"))) %>%
-  .$suffix %>%
-  paste0(basedir, "bam/", sample_table_merged$sample_seq_id, .)
-
-bam_list_realigned <- transmute(sample_table_merged, suffix=ifelse(data_type=="se", paste0("_bt2_", refname, "_minq20_sorted_dedup_realigned.bam"), paste0("_bt2_", refname, "_minq20_sorted_dedup_overlapclipped_realigned.bam"))) %>%
-  .$suffix %>%
-  paste0(basedir, "bam/", sample_table_merged$sample_seq_id, .)
-write_lines(bam_list_merged, paste0(basedir, "sample_lists/bam_list_merged.txt"))
-write_lines(bam_list_dedup_overlapclipped, paste0(basedir, "sample_lists/bam_list_dedup_overlapclipped.txt"))
-write_lines(bam_list_realigned, paste0(basedir, "sample_lists/bam_list_realigned.txt"))
-
-```
-</details>
-
-
-#### Deduplicate (all samples) and clip overlapping read pairs (paired-end reads only)
-
-Here, we remove the PCR duplicates and trim the overlapping part of each read pair in pair-end data. It is important to deduplicate after merging, because PCR duplicates for the same sample may exist in different lanes. 
-
+We also want to clip overlapping reads. We will use the [BamUtil clipOverlap](https://genome.sph.umich.edu/wiki/BamUtil:_clipOverlap)
 ![](https://i.stack.imgur.com/7dkOV.png)
+
+<br>
 
 ```{bash, eval = FALSE}
 
-BAMLIST=$BASEDIR/sample_lists/bam_list_merged.txt # Path to a list of merged bam files.
+BAMLIST=$BASEDIR/sample_lists/merged_bam_list.txt # Path to a list of merged bam files.
 REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files
 
 ## Loop over each sample
 for SAMPLEBAM in `cat $BAMLIST`; do
-	
+
+echo 'Now running sample '$SAMPLEBAM
+
 	## Remove duplicates and print dupstat file
-	# We used to be able to just specify picard.jar on the CBSU server, but now we need to specify the path and version
-	java -Xmx60g -jar $PICARD MarkDuplicates I=$SAMPLEBAM'mme_physalia_testdata_chr24_minq20_sorted.bam' O=$BASEDIR'bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' M=$BASEDIR'bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dupstat.txt' VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true
+	java -Xmx60g -jar $PICARD MarkDuplicates I=$BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted.bam' O=$BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' M=$BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dupstat.txt' VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true
 	
-	## Extract data type from the merged sample table
-	DATATYPE=`grep -P "${SAMPLEPREFIX}\t" $SAMPLETABLE | cut -f 6`
-	
-		## Clip overlapping paired end reads (only necessary for paired-end data, so if you're only running se samples, you can comment this step out)
-		$BAMUTIL clipOverlap --in $BASEDIR'bam/'$SAMPLEPREFIX'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' --out $BASEDIR'bam/'$SAMPLEPREFIX'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam' --stats
-	fi
+	## Clip overlapping paired end reads (only necessary for paired-end data, so if you're only running se samples, you can comment this step out)
+	$BAMUTIL clipOverlap --in $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' --out $BASEDIR'/bam/'$SAMPLEPREFIX'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' --stats
 	
 done
+
 ```
+
+<br>
+
+MarkDuplicates is has very verbose output - take a look at it to make sure the programs ran and didn't throw an error. 
+
+Next, look at the output from the clipOverlap. Was there a substantial difference in how much sequence got clipped in the three samples, and does that make sense in light of their FastQC reports?
+
+Use `head` to look at the top lines of the dupstat report for each sample (in `$BASEDIR/bam/XXX_merged_bt2_mme_physalia_testdata_chr24_minq20_sorted_dupstat.txt`). Can you spot where the duplication rate is reported. Does it vary between our samples?
+
 
 <br>
 <br>
@@ -813,169 +778,4 @@ $JAVA -Xmx40g -jar $GATK \
 
 ## Estimate read depth
 
-
-
-
-#### Read count
-
-##### Count fastq files
-
-```{bash, eval = FALSE}
-SAMPLELIST=$BASEDIR/sample_lists/sample_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
-SAMPLETABLE=$BASEDIR/sample_lists/sample_table.tsv # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. The 6th column should be data type, which is either pe or se. 
-RAWFASTQDIR=$BASEDIR/raw_fastq/ # Path to raw fastq files. 
-SEQUENCER=@HWI # Sequencer name that appears in the beginning of the first line in a fastq file. 
-QUALFILTERED=false # Whether the sample has gone through quality filtering. true or false
-OUT=$BASEDIR/sample_lists/fastq_count.tsv
-# Create headers for the output
-if $QUALFILTERED; then
-	printf 'sample_seq_id\traw_reads\traw_bases\tadapter_clipped_bases\tqual_filtered_bases\n' > $OUT
-else
-	printf 'sample_seq_id\traw_reads\traw_bases\tadapter_clipped_bases\n' > $OUT
-fi
-# Loop over each sample in the sample table
-for SAMPLEFILE in `cat $SAMPLELIST`; do
-  RAWFASTQFILES=$RAWFASTQDIR$SAMPLEFILE'*.gz'  # The input path and file prefix
-  
-  # Count the number of reads in raw fastq files. We only need to count the forward reads, since the reverse will contain exactly   the same number of reads. fastq files contain 4 lines per read, so the number of total reads will be half of this line number. 
-  RAWREADS=`zcat $RAWFASTQFILES | wc -l`
-  
-  # Count the number of bases in raw fastq files. We only need to count the forward reads, since the reverse will contain exactly   the same number of bases. The total number of reads will be twice this count. 
-  RAWBASES=`zcat $RAWFASTQFILES | grep -A 1 -E "^$SEQUENCER" | grep "^[ACGTN]" | tr -d "\n" | wc -m` 
-  
-  # Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
-  SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4`
-  SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
-  LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
-  SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID'_'$LANE_ID
-  
-  # Find all adapter clipped fastq files corresponding to this sample and store them in the object ADAPTERFILES.
-  ADAPTERFILES=$BASEDIR'adapter_clipped/'$SAMPLE_SEQ_ID'*.gz'
-  
-  # Count all bases in adapter clipped files. 
-  ADPTERCLIPBASES=`zcat $ADAPTERFILES | grep -A 1 -E "^$SEQUENCER" | grep "^[ACGTN]" | tr -d "\n" | wc -m`
-  
-  # If reads are quality filtered, count quality filtered files.
-  if $QUALFILTERED; then
-    # Find all quality trimmed fastq files corresponding to this sample and store them in the object QUALFILES.
-    QUALFILES=$BASEDIR'qual_filtered/'$SAMPLE_SEQ_ID'*.gz'
-    # Count bases in quality trimmed files.
-    QUALFILTPBASES=`zcat $QUALFILES | grep -A 1 -E "^$SEQUENCER" | grep "^[ACGTN]" | tr -d "\n" | wc -m`
-    # Write the counts in appropriate order.
-    printf "%s\t%s\t%s\t%s\t%s\n" $SAMPLE_SEQ_ID $((RAWREADS/4)) $RAWBASES $ADPTERCLIPBASES $QUALFILTPBASES >> $OUT
-    # When reads are not quality filtered, directly write the output
-  
-  else
-    # Write the counts in appropriate order.
-    printf "%s\t%s\t%s\t%s\n" $SAMPLE_SEQ_ID $((RAWREADS/4)) $RAWBASES $ADPTERCLIPBASES >> $OUT
-  fi
-done
-```
-
-##### Count unmerged bam files
-
-```{bash, eval = FALSE}
-SAMPLELIST=$BASEDIR/sample_lists/sample_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
-SAMPLETABLE=$BASEDIR/sample_lists/sample_table.tsv # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. The 6th column should be data type, which is either pe or se. 
-REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files
-OUT=$BASEDIR/sample_lists/bam_count_unmerged.tsv
-printf 'sample_seq_id\tmapped_bases\tqual_filtered_mapped_bases\n' > $OUT
-for SAMPLEFILE in `cat $SAMPLELIST`; do
-	
-	# Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
-	SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4`
-	SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
-	LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
-	SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID'_'$LANE_ID
-	
-	## Extract data type from the sample table
-	DATATYPE=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 6`
-	
-	## Count raw mapped bases
-	RAWBAMFILE=$BASEDIR'bam/'$SAMPLE_SEQ_ID'_'$DATATYPE'_bt2_'$REFNAME'.bam'
-	MAPPEDBASES=`$SAMTOOLS stats $RAWBAMFILE | grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2`
-	
-	## Count quality filtered mapped bases
-	QUALFILTBAMFILE=$BASEDIR'bam/'$SAMPLE_SEQ_ID'_'$DATATYPE'_bt2_'$REFNAME'_minq20_sorted.bam'
-	QUAFILTBASES=`$SAMTOOLS stats $QUALFILTBAMFILE | grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2`
-	
-	printf "%s\t%s\t%s\n" $SAMPLE_SEQ_ID $MAPPEDBASES $QUAFILTBASES >> $OUT
-	
-done
-```
-
-##### Count merged bam files
-
-```{bash, eval = FALSE}
-BAMLIST=$BASEDIR/sample_lists/bam_list_merged.txt # Path to a list of merged bam files.
-SAMPLETABLE=$BASEDIR/sample_lists/sample_table_merged.tsv # Path to a sample table where the 1st column is the prefix of the MERGED bam files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The 5th column is population name and 6th column is the data type.
-REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files
-OUT=$BASEDIR/sample_lists/bam_count_merged.tsv
-printf 'sample_seq_id\tdedup_mapped_bases\tavg_fragment_size\toverlap_clipped_bases\n' > $OUT
-for SAMPLEBAM in `cat $BAMLIST`; do
-  
-  ## Extract the file name prefix for this sample
-  SAMPLEPREFIX=`echo $SAMPLEBAM | sed 's/_bt2_.*//' | sed -e 's#.*/bam/\(\)#\1#'`
-  
-  ## Count deduplicated bases
-  DEDUPFILE=$BASEDIR'bam/'$SAMPLEPREFIX'_bt2_'$REFNAME'_minq20_sorted_dedup.bam'
-  DEDUPMAPPEDBASES=`$SAMTOOLS stats $DEDUPFILE | grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2`
-  
-  ## Extract data type from the merged sample table
-  DATATYPE=`grep -P "${SAMPLEPREFIX}\t" $SAMPLETABLE | cut -f 6`
-  
-  if [ $DATATYPE != se ]; then
-    ## Calculate average fragment length for paired end reads
-    AVGFRAG=`$SAMTOOLS view $DEDUPFILE | grep YT:Z:CP | awk '{sum+=sqrt($9^2)} END {printf "%f", sum/NR}'`
-  if [ "$AVGFRAG" == '' ]; then AVGFRAG=0 ; fi
-    
-    ## Count overlap clipped bam files for paired end reads 
-    CLIPOVERLAPFILE=$BASEDIR'bam/'$SAMPLEPREFIX'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam'
-    CLIPOVERLAPBASES=`$SAMTOOLS stats $CLIPOVERLAPFILE | grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2`
-    
-  else
-    AVGFRAG=NA
-    CLIPOVERLAPBASES=NA
-  fi
-printf "%s\t%s\t%s\t%s\n" $SAMPLEPREFIX $DEDUPMAPPEDBASES $AVGFRAG $CLIPOVERLAPBASES >> $OUT
-done
-```
-
-#### Summarize counting result
-
-```{r eval=F, message=F, warning=F, fig.width=12, fig.height=4}
-basedir="/workdir/physalia-lcwgs/day1/"
-library(tidyverse) #You need a post 2020/03/09 version of dplyr to access the relocate() function used below
-library(cowplot)
-library(knitr)
-fastq_count <- read_tsv(paste0(basedir, "/sample_lists/fastq_count.tsv")) %>% 
-  mutate(sample_id=str_sub(sample_seq_id, 1, 3)) %>% 
-  dplyr::select(-sample_seq_id) 
-fastq_count_sum <- fastq_count %>%
-  group_by(sample_id) %>%
-  summarise(raw_bases=sum(raw_bases), adapter_clipped_bases=sum(adapter_clipped_bases))
-bam_count_unmerged <- read_tsv(paste0(basedir, "/sample_lists/bam_count_unmerged.tsv")) %>% 
-  mutate(sample_id=str_sub(sample_seq_id, 1, 3)) %>% 
-  dplyr::select(-sample_seq_id)
-bam_count_unmerged_sum <- bam_count_unmerged %>%
-  group_by(sample_id) %>%
-  summarise(mapped_bases=sum(mapped_bases), qual_filtered_mapped_bases=sum(qual_filtered_mapped_bases))
-bam_count_merged <- read_tsv(paste0(basedir, "/sample_lists/bam_count_merged.tsv")) %>% 
-  mutate(sample_id=str_sub(sample_seq_id, 1, 3)) %>% 
-  dplyr::select(-sample_seq_id)
-count_final <- left_join(fastq_count_sum, bam_count_unmerged_sum, by="sample_id") %>%
-  left_join(bam_count_merged, by="sample_id") %>%
-  relocate(sample_id) %>%
-  relocate(-avg_fragment_size)
-count_final %>% kable()
-count_final %>% 
-  pivot_longer(cols = 2:7, names_to = "step", values_to = "base_count") %>%
-  arrange(sample_id, desc(base_count)) %>%
-  mutate(step=fct_reorder(step, base_count, mean, .desc=T)) %>%
-  ggplot(aes(x=sample_id, y=base_count/2/10^6, fill=step)) +
-  geom_col(position="identity", col="black") +
-  ylab("average coverage") +
-  coord_flip() +
-  theme_cowplot()
-```
 
