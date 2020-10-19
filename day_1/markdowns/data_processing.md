@@ -3,16 +3,18 @@ Tutorial 1: Data processing - from .fastq to .bam
 
   - [Case study for practicals](#case-study-for-practicals)
       - [Today’s data](#todays-data)
+          - [References](#references)
       - [Initial preparation](#initial-preparation)
           - [1. Make sure you’re up to speed on basic shell
             scripting](#make-sure-youre-up-to-speed-on-basic-shell-scripting)
           - [2. Copy the working directories with the needed input
             files](#copy-the-working-directories-with-the-needed-input-files)
-          - [3. Make sure you’re familiar with `for loops` in
-            bash](#make-sure-youre-familiar-with-for-loops-in-bash)
-          - [4. Orient yourself to the formatting of our fastq table and
+          - [3. Orient yourself to the formatting of our fastq table and
             fastq
             list](#orient-yourself-to-the-formatting-of-our-fastq-table-and-fastq-list)
+          - [4. Make sure you’re familiar with `for loops` and how to
+            assign and call variables in
+            bash](#make-sure-youre-familiar-with-for-loops-and-how-to-assign-and-call-variables-in-bash)
           - [5. Practice using bash `for loops` to iterate over target
             samples](#practice-using-bash-for-loops-to-iterate-over-target-samples)
           - [6. Define paths to the project directory and
@@ -50,29 +52,65 @@ silverside, *Menidia menidia*, a small estuarine fish.
 
 ![](../img/IMG_8658_SnyderCredit.jpg)
 
-MORE TO ADD
-
-Add sample map
+The Atlantic silverside is distributed along the east coast of North
+America and shows a remarkable degree of local adaptation in growth
+rates and a suite of other traits (Conover et al. 2005). You will be
+exploring patterns of genomic variation across the species range, which
+spans one of the steepest thermal gradient in the world.
 
 <br>
 
 ### Today’s data
 
 Today, we will work with subsets of two different fastq files from each
-of three Atlantic silversides from the Therkildsen et al. 2019 and
-Wilder et al. 2020 papers. The libraries were prepared as described in
-Therkildsen and Palumbi 2017 and sequenced with 125bp paired-end reads
-on an Illumina HiSeq instrument. There are two different fastq files
-because each of these individuals were sequenced in two different
-sequencing runs, to even out sequence coverage among individuals (as
-discussed in lecture).
-
-We will map these raw sequence files to the Atlantic silverside genome
-(Tigano et al. nearly submitted\!). To minimize computational time, we
-are just looking at a small 2 Mb snippet of chromosome 24 for all the
-exercises in this course.
+of three Atlantic silversides used in recent studies of
+fisheries-induced evolution (Therkildsen et al. 2019) and local
+adaptation (Wilder et al. 2020). The samples we’ll use today originate
+from the MAQU and PANY populations shown in this map:
 
 <br>
+
+![](../img/Silverside_Sample_Map.png)
+
+<br>
+
+The libraries were prepared as described in Therkildsen and Palumbi
+(2017) and sequenced with 125bp paired-end reads on an Illumina HiSeq
+instrument. There are two different fastq files for each individual
+because our libraries were sequenced in two different sequencing runs,
+to even out sequence coverage among individuals (as discussed in
+lecture).
+
+We will map these raw sequence files to a snippet of the sparkling new
+Atlantic silverside genome (Tigano et al. nearly submitted\!). To
+minimize computational time, we are just working with a small 2 Mb
+section of chromosome 24 for all the exercises in this course.
+
+<br>
+
+#### References
+
+Conover, D. O., Arnott, S. A., Walsh, M. R., & Munch, S. B. (2005).
+Darwinian fishery science: lessons from the Atlantic silverside (Menidia
+menidia). Canadian Journal of Fisheries and Aquatic Sciences, 62(4),
+730–737. <http://doi.org/10.1139/f05-069>
+
+Therkildsen, N. O., & Palumbi, S. R. (2017). Practical low-coverage
+genomewide sequencing of hundreds of individually barcoded samples for
+population and evolutionary genomics in nonmodel species. Molecular
+Ecology Resources, 17(2), 194–208.
+<http://doi.org/10.1111/1755-0998.12593>
+
+Therkildsen, N. O., Wilder, A. P., Conover, D. O., Munch, S. B.,
+Baumann, H., & Palumbi, S. R. (2019). Contrasting genomic shifts
+underlie parallel phenotypic evolution in response to fishing. Science,
+365(6452), 487–490. <http://doi.org/10.1126/science.aaw7271>
+
+Wilder, A. P., Palumbi, S. R., Conover, D. O., and Therkildsen, N. O.
+2020. Footprints of local adaptation span hundreds of linked genes in
+the Atlantic silverside genome. Evolution Letters 9:177
+
+<br> <br>
 
 ## Initial preparation
 
@@ -140,22 +178,7 @@ following subdirectories:
 
 <br>
 
-#### 3\. Make sure you’re familiar with `for loops` in bash
-
-In low-coverage whole genome sequencing datasets, we’ll typically have
-data from hundreds of individuals, so we need an efficient way to
-process all of these files without having to write a separate line of
-code for each file. `for loops` are a powerful way to achieve this, and
-we will be using them in every step of our pipeline, so let’s first take
-a moment to make sure we understand the syntax.
-
-Variables
-
-FOR LOOPS
-
-<br>
-
-#### 4\. Orient yourself to the formatting of our fastq table and fastq list
+#### 3\. Orient yourself to the formatting of our fastq table and fastq list
 
 When we get data files back from the sequencing center, the files often
 have obscure names, so we need a data table that let’s us link those
@@ -228,6 +251,45 @@ from?
 With our small fastq table and fastq list here, we can easily look this
 up manually. But if we have hundreds of samples, that becomes more
 cumbersome. Let’s automate the sample lookup with our first `for loop`.
+
+<br>
+
+#### 4\. Make sure you’re familiar with `for loops` and how to assign and call variables in bash
+
+In low-coverage whole genome sequencing datasets, we’ll typically have
+data from hundreds of individuals, so we need an efficient way to
+process all of these files without having to write a separate line of
+code for each file. `for loops` are a powerful way to achieve this, and
+we will be using them in every step of our pipeline, so let’s first take
+a moment to make sure we understand the syntax.
+
+A ‘for loop’ is a bash programming language statement which allows code
+to be repeatedly executed. If you’ve never worked with `for loops` in
+bash before, it might be helpful to look over a tutorial, e.g. [this one
+from Software
+Carpentry](https://swcarpentry.github.io/shell-novice/05-loop/index.html).
+
+Some key extracts from that tutorial here:
+
+The basic syntax of a `for loop` is as follows
+
+``` bash
+
+for thing in list_of_things; do    # ; is equivalent to an end-of-line. We can alternatively put "do" on its own line
+
+    operation_using $thing    # Indentation within the loop is not required, but aids legibility
+
+done
+```
+
+When the shell sees the keyword for, it knows to repeat a command (or
+group of commands) once for each item in a list. Each time the loop runs
+(called an iteration), an item in the list is assigned in sequence to
+the variable, and the commands inside the loop are executed, before
+moving on to the next item in the list. Inside the loop, we call for the
+variable’s value by putting `$` in front of it. The `$` tells the shell
+interpreter to treat the variable as a variable name and substitute its
+value in its place, rather than treat it as text or an external command.
 
 <br>
 
@@ -435,7 +497,17 @@ Which sample do you think came from which batch?
 
 <br>
 
-<img src="../img/Bioanalyzer_Batch1.png" title="Library fragment size distributions" alt="Library fragment size distributions" width="49%" height="20%" style="display: block; margin: auto;" /><img src="../img/Bioanalyzer_Batch2.png" title="Library fragment size distributions" alt="Library fragment size distributions" width="49%" height="20%" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+
+<img src="../img/Bioanalyzer_Batch1.png" alt="Library fragment size distributions" width="49%" height="20%" /><img src="../img/Bioanalyzer_Batch2.png" alt="Library fragment size distributions" width="49%" height="20%" />
+
+<p class="caption">
+
+Library fragment size distributions
+
+</p>
+
+</div>
 
 <br> <br>
 
@@ -1043,7 +1115,12 @@ $JAVA -Xmx40g -jar $GATK \
 
 ## Estimate read depth in your bam files
 
-We use [samtools depth](http://www.htslib.org/doc/samtools-depth.html)
+After all the filtering steps, we want to know what final depth of
+coverage we have for each samples for downstream analysis. We will use
+[samtools depth](http://www.htslib.org/doc/samtools-depth.html) to first
+compute the read depth at each bp position in the genome. Then we will
+pull the output file to our local machines and computes depth summary
+stats in R.
 
 <br>
 
@@ -1088,10 +1165,12 @@ for (i in 1:length(bam_list)){
   }
 }
 print(output)
+
 # Plot the depth distribution
 tibble(total_depth = total_depth, position = 1:length(total_depth))  %>%
   ggplot(aes(x = position, y = total_depth)) +
   geom_point(size = 0.1)
+
 # Total depth per site across all individuals 
 total_depth_summary <- count(tibble(total_depth = total_depth), total_depth)
 total_presence_summary <- count(tibble(total_presence = total_presence), total_presence)
@@ -1103,7 +1182,11 @@ total_presence_summary %>%
   geom_col()
 ```
 
-<br>
+<br> You can see that there is a lot of variation among the different
+depth statistics. Which of them do you think are most relevant to
+report? Why?
+
+<br> <br>
 
 If you’re interested, you can go back and compare the depth distribution
 to in the raw mapped files.
