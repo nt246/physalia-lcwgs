@@ -244,9 +244,10 @@ header in this file.
 
 <br>
 
-**Activity:**: Compare the `fastq_list.txt` to the `fastq_table.txt`.
-Which populations to the samples we’ll be analyzing today originate
-from?
+### Activity
+
+Compare the `fastq_list.txt` to the `fastq_table.txt`. Which populations
+to the samples we’ll be analyzing today originate from?
 
 <br>
 
@@ -437,7 +438,7 @@ RAWFASTQSUFFIX1=_1.fastq.gz # Suffix to raw fastq files. Use forward reads with 
 for SAMPLE in `cat $SAMPLELIST`; do
 
   echo $SAMPLE
-  zcat $BASEDIR'raw_fastq/'$SAMPLE$RAWFASTQSUFFIX1 | head -n 8
+  zcat $BASEDIR'/raw_fastq/'$SAMPLE$RAWFASTQSUFFIX1 | head -n 8
   echo ' '
 
 done
@@ -469,7 +470,7 @@ RAWFASTQSUFFIX1=_1.fastq.gz # Suffix to raw fastq files. We'll only look at the 
 
 for SAMPLE in `cat $SAMPLELIST | head -n 3`; do  # The head -n 3 is taking just the first three elements of our fastq list to loop over
 
-  $FASTQC $BASEDIR'raw_fastq/'$SAMPLE$RAWFASTQSUFFIX1 -o $BASEDIR'fastqc/'
+  $FASTQC $BASEDIR'/raw_fastq/'$SAMPLE$RAWFASTQSUFFIX1 -o $BASEDIR'/fastqc/'
   
 done
 ```
@@ -970,14 +971,17 @@ $SAMTOOLS view $BASEDIR/bam/985_PANY_1_lane2_pe_bt2_mme_physalia_testdata_chr24_
 $SAMTOOLS view $BASEDIR/bam/985_PANY_1_lane1_pe_bt2_mme_physalia_testdata_chr24_minq20_sorted.bam | wc -l
 ```
 
+<br>
+
 **OPTIONAL exercise**: You could write a for loop that will extract the
 line count for each file.
 
-<br> <br>
+<br>
 
-**Discussion question:** This merging procedure required some extra
-effort. Why didn’t we just merge the fastq files for each individual
-before mapping?
+### Discussion question
+
+This merging procedure required some extra effort. Why didn’t we just
+merge the fastq files for each individual before mapping?
 
 <br>
 
@@ -1015,7 +1019,7 @@ MarkDuplicates](https://gatk.broadinstitute.org/hc/en-us/articles/360037052812-M
 We also want to clip overlapping reads. We will use the [BamUtil
 clipOverlap](https://genome.sph.umich.edu/wiki/BamUtil:_clipOverlap)
 
-![](../img/clip_overlap.png)
+<img src="../img/clip_overlap.png" width="49%" height="20%" />
 
 <br>
 
@@ -1029,10 +1033,10 @@ for SAMPLEBAM in `cat $BAMLIST`; do
     
     ## Remove duplicates and print dupstat file
     # We used to be able to just specify picard.jar on the CBSU server, but now we need to specify the path and version
-    java -Xmx60g -jar $PICARD MarkDuplicates I=$BASEDIR'bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted.bam' O=$BASEDIR'bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' M=$BASEDIR'bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dupstat.txt' VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true
+    java -Xmx60g -jar $PICARD MarkDuplicates I=$BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted.bam' O=$BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' M=$BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dupstat.txt' VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true
     
     ## Clip overlapping paired end reads (only necessary for paired-end data, so if you're only running se samples, you can comment this step out)
-    $BAMUTIL clipOverlap --in $BASEDIR'bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' --out $BASEDIR'bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam' --stats
+    $BAMUTIL clipOverlap --in $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' --out $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam' --stats
 
 done
 ```
@@ -1114,7 +1118,7 @@ $JAVA -Xmx40g -jar $GATK \
 -T RealignerTargetCreator \
 -R $REFERENCE \
 -I $BAMLIST \
--o $BASEDIR'bam/all_samples_for_indel_realigner.intervals' \
+-o $BASEDIR'/bam/all_samples_for_indel_realigner.intervals' \
 -drf BadMate
 
 ## Run the indel realigner tool
@@ -1122,7 +1126,7 @@ $JAVA -Xmx40g -jar $GATK \
 -T IndelRealigner \
 -R $REFERENCE \
 -I $BAMLIST \
--targetIntervals $BASEDIR'bam/all_samples_for_indel_realigner.intervals' \
+-targetIntervals $BASEDIR'/bam/all_samples_for_indel_realigner.intervals' \
 --consensusDeterminationModel USE_READS  \
 --nWayOut _realigned.bam
 ```
@@ -1168,16 +1172,17 @@ for (i in 1:length(bam_list)){
   sd_depth <- sd(depth)
   mean_depth_nonzero <- mean(depth[depth > 0])
   mean_depth_within2sd <- mean(depth[depth < mean_depth + 2 * sd_depth])
+  median <- median(depth)
   presence <- as.logical(depth)
   proportion_of_reference_covered <- mean(presence)
   
   # Bind stats into dataframe and store sample-specific per base depth and presence data
   if (i==1){
-    output <- data.frame(bamfile, mean_depth, sd_depth, mean_depth_nonzero, mean_depth_within2sd, proportion_of_reference_covered)
+    output <- data.frame(bamfile, mean_depth, sd_depth, mean_depth_nonzero, mean_depth_within2sd, median, proportion_of_reference_covered)
     total_depth <- depth
     total_presence <- presence
   } else {
-    output <- rbind(output, cbind(bamfile, mean_depth, sd_depth, mean_depth_nonzero, mean_depth_within2sd, proportion_of_reference_covered))
+    output <- rbind(output, cbind(bamfile, mean_depth, sd_depth, mean_depth_nonzero, mean_depth_within2sd, median, proportion_of_reference_covered))
     total_depth <- total_depth + depth
     total_presence <- total_presence + presence
   }
