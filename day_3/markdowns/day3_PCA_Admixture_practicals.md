@@ -126,10 +126,6 @@ varPC3 <- (mme.pca$values[3]/pca.eigenval.sum)*100 #Variance explained by PC3
 varPC4 <- (mme.pca$values[4]/pca.eigenval.sum)*100 #Variance explained by PC4
 ```
 
-You can run this Rscript to estimate and plot the principal components:
-```
-Rscript ./plotPCA.R  
-```
 
 
 **2. Alternative approach: Covariance matrix estimation with PCAngsd**
@@ -182,12 +178,6 @@ varPC4 <- (mme.pca$values[4]/pca.eigenval.sum)*100 #Variance explained by PC4
 ggsave(filename = "/workdir/arne/physalia_lcwgs_data/data_practicals/Results/pca_pcangsd_plot.pdf", plot = pca)
 ```
 
-You can run the Rscript containing this code to plot your results:
-```
-Rscript ./plot_pca_pcangsd.R  
-
-```
-
 
 
 ### Optional: Compare the results to a PCA based on all SNPs
@@ -233,11 +223,6 @@ pca = ggplot(data = df, aes(x=V2, y=V3, fill = pop, colour = pop)) +
 
 #Save plot as pdf
 ggsave(filename = "/workdir/arne/physalia_lcwgs_data/data_practicals/Results/pca_plot.pdf", plot = pca)
-
-```
-You can run the plot your results using this script:
-```
-Rscript ./plotPCA.R  
 ```
 
 Q: How do population relationships differ between the on LD-pruned PCA and the full-dataset PCA? And can you guess which individuals carry which inversion karyotype? 
