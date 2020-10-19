@@ -239,7 +239,7 @@ We need to make sure the server knows where to find the programs we'll be runnin
 
 ```{bash, eval = FALSE}
 
-BASEDIR=~/exercises/day1 # Note that no spaces are allowed! And don't put a slash after day1
+BASEDIR=~/exercises/day1/ # Note that no spaces are allowed! And don't put a slash after day1
 
 ```
 
@@ -849,7 +849,7 @@ Now we'll process the data in R
 
 ```{r eval = FALSE}
 library(tidyverse)
-basedir <- "~/exercises/day1" # Make sure to edit this to match your $BASEDIR
+basedir <- "~/exercises/day1/" # Make sure to edit this to match your $BASEDIR
 bam_list <- read_lines(paste0(basedir, "/sample_lists/merged_bam_list.txt"))
 for (i in 1:length(bam_list)){
   

@@ -2,7 +2,6 @@ Tutorial 1: Data processing - from .fastq to .bam
 ================
 
   - [Case study for practicals](#case-study-for-practicals)
-      - [Today’s data](#todays-data)
   - [Initial preparation](#initial-preparation)
       - [1. Make sure you’re up to speed on basic shell
         scripting](#make-sure-youre-up-to-speed-on-basic-shell-scripting)
@@ -370,7 +369,7 @@ to be specified every time we run our scripts in a new login session.
 
 ``` bash
 
-BASEDIR=~/exercises/day1 # Note that no spaces are allowed! And don't put a slash after day1
+BASEDIR=~/exercises/day1/ # Note that no spaces are allowed! And don't put a slash after day1
 ```
 
 <br>
@@ -508,17 +507,7 @@ Which sample do you think came from which batch?
 
 <br>
 
-<div class="figure" style="text-align: center">
-
-<img src="../img/Bioanalyzer_Batch1.png" alt="Library fragment size distributions" width="49%" height="20%" /><img src="../img/Bioanalyzer_Batch2.png" alt="Library fragment size distributions" width="49%" height="20%" />
-
-<p class="caption">
-
-Library fragment size distributions
-
-</p>
-
-</div>
+<img src="../img/Bioanalyzer_Batch1.png" title="Library fragment size distributions" alt="Library fragment size distributions" width="49%" height="20%" style="display: block; margin: auto;" /><img src="../img/Bioanalyzer_Batch2.png" title="Library fragment size distributions" alt="Library fragment size distributions" width="49%" height="20%" style="display: block; margin: auto;" />
 
 <br> <br>
 
@@ -1161,7 +1150,7 @@ Now we’ll process the data in R
 
 ``` r
 library(tidyverse)
-basedir <- "~/exercises/day1" # Make sure to edit this to match your $BASEDIR
+basedir <- "~/exercises/day1/" # Make sure to edit this to match your $BASEDIR
 bam_list <- read_lines(paste0(basedir, "/sample_lists/merged_bam_list.txt"))
 for (i in 1:length(bam_list)){
   
