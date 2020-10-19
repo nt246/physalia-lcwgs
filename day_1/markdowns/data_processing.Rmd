@@ -11,8 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 <br>
-
-
+<br>
 
 In this tutorial, you will learn how to go from raw sequencing files in `fastq` format through alignment files in `bam` format that we can use for downstream analysis. Along the way, you will perform multiple quality control (QC) procedures, and will map the short sequences to a snippet of a reference genome. 
 
@@ -27,16 +26,14 @@ Throughout this course, you will be working with data from the Atlantic silversi
 
 The Atlantic silverside is distributed along the east coast of North America and shows a remarkable degree of local adaptation in growth rates and a suite of other traits (Conover et al. 2005). You will be exploring patterns of genomic variation across the species range, which spans one of the steepest thermal gradient in the world. 
 
-
-<br>
-
-
 ### Today's data
 Today, we will work with subsets of two different fastq files from each of three Atlantic silversides used in recent studies of fisheries-induced evolution (Therkildsen et al. 2019) and local adaptation (Wilder et al. 2020). The samples we'll use today originate from the MAQU and PANY populations shown in this map:
 
 <br>
 
-![](../img/Silverside_Sample_Map.png)
+```{r, echo=FALSE,out.width="49%", out.height="20%"}
+knitr::include_graphics("../img/Silverside_Sample_Map.png") 
+```
 
 <br>
 
@@ -46,29 +43,31 @@ We will map these raw sequence files to a snippet of the sparkling new Atlantic 
 
 <br>
 
-#### References
+<span style='font-size:75%'> **References:**
 
-Conover, D. O., Arnott, S. A., Walsh, M. R., & Munch, S. B. (2005). Darwinian fishery science: lessons from the Atlantic silverside (Menidia menidia). Canadian Journal of Fisheries and Aquatic Sciences, 62(4), 730–737. http://doi.org/10.1139/f05-069
+<span style='font-size:75%'> Conover, D. O., Arnott, S. A., Walsh, M. R., & Munch, S. B. (2005). Darwinian fishery science: lessons from the Atlantic silverside (Menidia menidia). Canadian Journal of Fisheries and Aquatic Sciences, 62(4), 730–737. http://doi.org/10.1139/f05-069
 
-Therkildsen, N. O., & Palumbi, S. R. (2017). Practical low-coverage genomewide sequencing of hundreds of individually barcoded samples for population and evolutionary genomics in nonmodel species. Molecular Ecology Resources, 17(2), 194–208. http://doi.org/10.1111/1755-0998.12593
+<span style='font-size:75%'> Therkildsen, N. O., & Palumbi, S. R. (2017). Practical low-coverage genomewide sequencing of hundreds of individually barcoded samples for population and evolutionary genomics in nonmodel species. Molecular Ecology Resources, 17(2), 194–208. http://doi.org/10.1111/1755-0998.12593
 
-Therkildsen, N. O., Wilder, A. P., Conover, D. O., Munch, S. B., Baumann, H., & Palumbi, S. R. (2019). Contrasting genomic shifts underlie parallel phenotypic evolution in response to fishing. Science, 365(6452), 487–490. http://doi.org/10.1126/science.aaw7271
+<span style='font-size:75%'> Therkildsen, N. O., Wilder, A. P., Conover, D. O., Munch, S. B., Baumann, H., & Palumbi, S. R. (2019). Contrasting genomic shifts underlie parallel phenotypic evolution in response to fishing. Science, 365(6452), 487–490. http://doi.org/10.1126/science.aaw7271
 
-Wilder, A. P., Palumbi, S. R., Conover, D. O., and Therkildsen, N. O. 2020. Footprints of local adaptation span hundreds of linked genes in the Atlantic silverside genome. Evolution Letters 9:177
+<span style='font-size:75%'> Wilder, A. P., Palumbi, S. R., Conover, D. O., and Therkildsen, N. O. 2020. Footprints of local adaptation span hundreds of linked genes in the Atlantic silverside genome. Evolution Letters 9:177. https://doi.org/10.1002/evl3.189
+
+</span>
 
 <br>
 <br>
 
-## Initial preparation
+# Initial preparation
 
-#### 1. Make sure you're up to speed on basic shell scripting
+## 1. Make sure you're up to speed on basic shell scripting
 
 We'll be working almost exclusively through the command line, so if you have not used shell scripting before or are getting rusty on it, it may be helpful to have a look at a tutorial like [this one](https://linuxconfig.org/bash-scripting-tutorial-for-beginners) or a cheat sheet like [this one](https://bioinformaticsworkbook.org/Appendix/Unix/UnixCheatSheet.html#gsc.tab=0) before proceeding to the next step. 
 
 
 <br>
 
-#### 2. Copy the working directories with the needed input files
+## 2. Copy the working directories with the needed input files
 
 Let's first get set up and retrieve a copy the data we will be working on. First let's create an `exercises` directory, and copy the `day1` directory from `~/Share`. 
 
@@ -112,7 +111,7 @@ Your own copy of the `day1` directory will be referred to as `BASEDIR` in many o
 
 <br>
 
-#### 3. Orient yourself to the formatting of our fastq table and fastq list
+## 3. Orient yourself to the formatting of our fastq table and fastq list
 
 When we get data files back from the sequencing center, the files often have obscure names, so we need a data table that let's us link those file names to our sample IDs and other information. Often, part of the fastq file name will be identical among all samples in a run and part of it will reflect some kind of unique sample identifier (either a name you supplied or a name given by the sequencing center). As an example, look in the `day1/raw_fastq` folder and notice how all the files end in either `_1.fastq.gz` or `_2.fastq.gz` (these are the forward and reverse sequences) while the first part of the file names differs (the unique sample identifier). We call the sample identifier the `prefix`.
 
@@ -150,7 +149,7 @@ With our small fastq table and fastq list here, we can easily look this up manua
 
 <br>
 
-#### 4. Make sure you're familiar with `for loops` and how to assign and call variables in bash
+## 4. Make sure you're familiar with `for loops` and how to assign and call variables in bash
 
 In low-coverage whole genome sequencing datasets, we'll typically have data from hundreds of individuals, so we need an efficient way to process all of these files without having to write a separate line of code for each file. `for loops` are a powerful way to achieve this, and we will be using them in every step of our pipeline, so let's first take a moment to make sure we understand the syntax.
 
@@ -174,7 +173,7 @@ When the shell sees the keyword for, it knows to repeat a command (or group of c
 
 <br>
 
-#### 5. Practice using bash `for loops` to iterate over target samples
+## 5. Practice using bash `for loops` to iterate over target samples
 First, let's just look up the sample IDs. For each prefix in our `fastq_list.txt` will use `grep` to extract the relevant line from the fastq table, use `cut` to extract the column with sample ID, and then `echo` to print the sample ID 
 
 ```{bash, eval = FALSE}
@@ -201,7 +200,7 @@ done
 
 **Exercise:** Now change the `for loop` so it also outputs which population each fastq file has data for.
 
-##### See a solution
+#### See a solution
 <details>
   <summary>Click here to expand</summary>
   
@@ -224,13 +223,13 @@ done
 
 <br>
 
-#### 6. Define paths to the project directory and programs
+## 6. Define paths to the project directory and programs
 
 We need to make sure the server knows where to find the programs we'll be running and our input and output directories. This will always need to be specified every time we run our scripts in a new login session.
 
 <br>
 
-##### Set the project directory as a variable named `BASEDIR`
+### Set the project directory as a variable named `BASEDIR`
 
 > Hint: Use `pwd` to check the path to where you copied your day1 folder to and change the `~/exercises/day1/` part in the following line if that is not the correct path to your base directory
 
@@ -242,7 +241,7 @@ BASEDIR=~/exercises/day1/ # Note that no spaces are allowed! And don't put a sla
 
 <br>
 
-##### Specify the paths to required programs as variables
+### Specify the paths to required programs as variables
 
 When running these scripts on the Physalia server, run the following:
 
@@ -263,16 +262,17 @@ JAVA=java
 If you will be running these programs on a different system, you will have to specify the paths to the different programs on that system (or add them to your $PATH).
 
 <br>
+<br>
 
-## Data processing pipeline
+# Data processing pipeline
 
 Now let's get started processing the data!
 
 <br>
 
-#### Examine the raw fastq files
+## Examine the raw fastq files
 
-##### fastq file structure
+### fastq file structure
 
 A FASTQ file normally contains four lines per sequence.
 
@@ -304,7 +304,7 @@ done
 
 <br>
 
-##### Evaluate the overall data quality
+### Evaluate the overall data quality
 
 With a new batch of data, it is always to good idea to start out by getting an overview of the data quality and look for any signs of quality issues. The [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) program provides a useful set of diagnostics, so we'll run it on each on our fastq files to check their quality. In the interest of time, we will only look at three of our fastqs. We'll loop over each of these and call FastQC on the forward file only (it only takes the path to the input and the path to where you want the output as parameters). When working with your own data, always make sure to look both at the forward and reverse files because sometimes issues can arise in only one of the read directions.
 
@@ -348,7 +348,7 @@ knitr::include_graphics(c("../img/Bioanalyzer_Batch1.png","../img/Bioanalyzer_Ba
 <br>
 <br>
 
-#### Adapter clipping
+## Adapter clipping
 
 When the insert length of a library fragment is shorter than the read length, the sequencer will read into the adapter sequence (as shown below). This means that the end of the read will not be from our actual sample, but will be adapter sequence, which may lead to lower alignment performance and even biases in the result if not removed.  
 

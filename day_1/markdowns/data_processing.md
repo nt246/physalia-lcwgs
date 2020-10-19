@@ -3,25 +3,32 @@ Tutorial 1: Data processing - from .fastq to .bam
 
   - [Case study for practicals](#case-study-for-practicals)
       - [Today’s data](#todays-data)
-          - [References](#references)
-      - [Initial preparation](#initial-preparation)
-          - [1. Make sure you’re up to speed on basic shell
-            scripting](#make-sure-youre-up-to-speed-on-basic-shell-scripting)
-          - [2. Copy the working directories with the needed input
-            files](#copy-the-working-directories-with-the-needed-input-files)
-          - [3. Orient yourself to the formatting of our fastq table and
-            fastq
-            list](#orient-yourself-to-the-formatting-of-our-fastq-table-and-fastq-list)
-          - [4. Make sure you’re familiar with `for loops` and how to
-            assign and call variables in
-            bash](#make-sure-youre-familiar-with-for-loops-and-how-to-assign-and-call-variables-in-bash)
-          - [5. Practice using bash `for loops` to iterate over target
-            samples](#practice-using-bash-for-loops-to-iterate-over-target-samples)
-          - [6. Define paths to the project directory and
-            programs](#define-paths-to-the-project-directory-and-programs)
-      - [Data processing pipeline](#data-processing-pipeline)
-          - [Examine the raw fastq files](#examine-the-raw-fastq-files)
-          - [Adapter clipping](#adapter-clipping)
+  - [Initial preparation](#initial-preparation)
+      - [1. Make sure you’re up to speed on basic shell
+        scripting](#make-sure-youre-up-to-speed-on-basic-shell-scripting)
+      - [2. Copy the working directories with the needed input
+        files](#copy-the-working-directories-with-the-needed-input-files)
+      - [3. Orient yourself to the formatting of our fastq table and
+        fastq
+        list](#orient-yourself-to-the-formatting-of-our-fastq-table-and-fastq-list)
+      - [4. Make sure you’re familiar with `for loops` and how to assign
+        and call variables in
+        bash](#make-sure-youre-familiar-with-for-loops-and-how-to-assign-and-call-variables-in-bash)
+      - [5. Practice using bash `for loops` to iterate over target
+        samples](#practice-using-bash-for-loops-to-iterate-over-target-samples)
+          - [See a solution](#see-a-solution)
+      - [6. Define paths to the project directory and
+        programs](#define-paths-to-the-project-directory-and-programs)
+          - [Set the project directory as a variable named
+            `BASEDIR`](#set-the-project-directory-as-a-variable-named-basedir)
+          - [Specify the paths to required programs as
+            variables](#specify-the-paths-to-required-programs-as-variables)
+  - [Data processing pipeline](#data-processing-pipeline)
+      - [Examine the raw fastq files](#examine-the-raw-fastq-files)
+          - [fastq file structure](#fastq-file-structure)
+          - [Evaluate the overall data
+            quality](#evaluate-the-overall-data-quality)
+      - [Adapter clipping](#adapter-clipping)
           - [OPTIONAL: Quality trimming](#optional-quality-trimming)
           - [Build reference index files](#build-reference-index-files)
           - [Map to the reference, sort, and quality
@@ -35,7 +42,7 @@ Tutorial 1: Data processing - from .fastq to .bam
       - [Estimate read depth in your bam
         files](#estimate-read-depth-in-your-bam-files)
 
-<br>
+<br> <br>
 
 In this tutorial, you will learn how to go from raw sequencing files in
 `fastq` format through alignment files in `bam` format that we can use
@@ -58,8 +65,6 @@ rates and a suite of other traits (Conover et al. 2005). You will be
 exploring patterns of genomic variation across the species range, which
 spans one of the steepest thermal gradient in the world.
 
-<br>
-
 ### Today’s data
 
 Today, we will work with subsets of two different fastq files from each
@@ -70,7 +75,7 @@ from the MAQU and PANY populations shown in this map:
 
 <br>
 
-![](../img/Silverside_Sample_Map.png)
+<img src="../img/Silverside_Sample_Map.png" width="49%" height="20%" />
 
 <br>
 
@@ -88,33 +93,37 @@ section of chromosome 24 for all the exercises in this course.
 
 <br>
 
-#### References
+<span style='font-size:75%'> **References:**
 
-Conover, D. O., Arnott, S. A., Walsh, M. R., & Munch, S. B. (2005).
-Darwinian fishery science: lessons from the Atlantic silverside (Menidia
-menidia). Canadian Journal of Fisheries and Aquatic Sciences, 62(4),
-730–737. <http://doi.org/10.1139/f05-069>
+<span style='font-size:75%'> Conover, D. O., Arnott, S. A., Walsh, M.
+R., & Munch, S. B. (2005). Darwinian fishery science: lessons from the
+Atlantic silverside (Menidia menidia). Canadian Journal of Fisheries and
+Aquatic Sciences, 62(4), 730–737. <http://doi.org/10.1139/f05-069>
 
-Therkildsen, N. O., & Palumbi, S. R. (2017). Practical low-coverage
-genomewide sequencing of hundreds of individually barcoded samples for
-population and evolutionary genomics in nonmodel species. Molecular
-Ecology Resources, 17(2), 194–208.
+<span style='font-size:75%'> Therkildsen, N. O., & Palumbi, S. R.
+(2017). Practical low-coverage genomewide sequencing of hundreds of
+individually barcoded samples for population and evolutionary genomics
+in nonmodel species. Molecular Ecology Resources, 17(2), 194–208.
 <http://doi.org/10.1111/1755-0998.12593>
 
-Therkildsen, N. O., Wilder, A. P., Conover, D. O., Munch, S. B.,
-Baumann, H., & Palumbi, S. R. (2019). Contrasting genomic shifts
-underlie parallel phenotypic evolution in response to fishing. Science,
-365(6452), 487–490. <http://doi.org/10.1126/science.aaw7271>
+<span style='font-size:75%'> Therkildsen, N. O., Wilder, A. P., Conover,
+D. O., Munch, S. B., Baumann, H., & Palumbi, S. R. (2019). Contrasting
+genomic shifts underlie parallel phenotypic evolution in response to
+fishing. Science, 365(6452), 487–490.
+<http://doi.org/10.1126/science.aaw7271>
 
-Wilder, A. P., Palumbi, S. R., Conover, D. O., and Therkildsen, N. O.
-2020. Footprints of local adaptation span hundreds of linked genes in
-the Atlantic silverside genome. Evolution Letters 9:177
+<span style='font-size:75%'> Wilder, A. P., Palumbi, S. R., Conover, D.
+O., and Therkildsen, N. O. 2020. Footprints of local adaptation span
+hundreds of linked genes in the Atlantic silverside genome. Evolution
+Letters 9:177. <https://doi.org/10.1002/evl3.189>
+
+</span>
 
 <br> <br>
 
-## Initial preparation
+# Initial preparation
 
-#### 1\. Make sure you’re up to speed on basic shell scripting
+## 1\. Make sure you’re up to speed on basic shell scripting
 
 We’ll be working almost exclusively through the command line, so if you
 have not used shell scripting before or are getting rusty on it, it may
@@ -126,7 +135,7 @@ before proceeding to the next step.
 
 <br>
 
-#### 2\. Copy the working directories with the needed input files
+## 2\. Copy the working directories with the needed input files
 
 Let’s first get set up and retrieve a copy the data we will be working
 on. First let’s create an `exercises` directory, and copy the `day1`
@@ -178,7 +187,7 @@ following subdirectories:
 
 <br>
 
-#### 3\. Orient yourself to the formatting of our fastq table and fastq list
+## 3\. Orient yourself to the formatting of our fastq table and fastq list
 
 When we get data files back from the sequencing center, the files often
 have obscure names, so we need a data table that let’s us link those
@@ -254,7 +263,7 @@ cumbersome. Let’s automate the sample lookup with our first `for loop`.
 
 <br>
 
-#### 4\. Make sure you’re familiar with `for loops` and how to assign and call variables in bash
+## 4\. Make sure you’re familiar with `for loops` and how to assign and call variables in bash
 
 In low-coverage whole genome sequencing datasets, we’ll typically have
 data from hundreds of individuals, so we need an efficient way to
@@ -293,7 +302,7 @@ value in its place, rather than treat it as text or an external command.
 
 <br>
 
-#### 5\. Practice using bash `for loops` to iterate over target samples
+## 5\. Practice using bash `for loops` to iterate over target samples
 
 First, let’s just look up the sample IDs. For each prefix in our
 `fastq_list.txt` will use `grep` to extract the relevant line from the
@@ -324,7 +333,7 @@ done
 **Exercise:** Now change the `for loop` so it also outputs which
 population each fastq file has data for.
 
-##### See a solution
+#### See a solution
 
 <details>
 
@@ -347,7 +356,7 @@ done
 
 <br>
 
-#### 6\. Define paths to the project directory and programs
+## 6\. Define paths to the project directory and programs
 
 We need to make sure the server knows where to find the programs we’ll
 be running and our input and output directories. This will always need
@@ -355,7 +364,7 @@ to be specified every time we run our scripts in a new login session.
 
 <br>
 
-##### Set the project directory as a variable named `BASEDIR`
+### Set the project directory as a variable named `BASEDIR`
 
 > Hint: Use `pwd` to check the path to where you copied your day1 folder
 > to and change the `~/exercises/day1/` part in the following line if
@@ -368,7 +377,7 @@ BASEDIR=~/exercises/day1/ # Note that no spaces are allowed! And don't put a sla
 
 <br>
 
-##### Specify the paths to required programs as variables
+### Specify the paths to required programs as variables
 
 When running these scripts on the Physalia server, run the following:
 
@@ -388,17 +397,17 @@ JAVA=java
 will have to specify the paths to the different programs on that system
 (or add them to your $PATH).
 
-<br>
+<br> <br>
 
-## Data processing pipeline
+# Data processing pipeline
 
 Now let’s get started processing the data\!
 
 <br>
 
-#### Examine the raw fastq files
+## Examine the raw fastq files
 
-##### fastq file structure
+### fastq file structure
 
 A FASTQ file normally contains four lines per sequence.
 
@@ -439,7 +448,7 @@ done
 
 <br>
 
-##### Evaluate the overall data quality
+### Evaluate the overall data quality
 
 With a new batch of data, it is always to good idea to start out by
 getting an overview of the data quality and look for any signs of
@@ -511,7 +520,7 @@ Library fragment size distributions
 
 <br> <br>
 
-#### Adapter clipping
+## Adapter clipping
 
 When the insert length of a library fragment is shorter than the read
 length, the sequencer will read into the adapter sequence (as shown
