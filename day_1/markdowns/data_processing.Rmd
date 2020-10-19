@@ -3,7 +3,7 @@ title: "Tutorial 1: Data processing - from .fastq to .bam"
 output: 
   github_document:
     toc:  true
-    toc_depth: 4
+    toc_depth: 2
 ---
 
 ```{r setup, include=FALSE}
@@ -198,7 +198,10 @@ done
 
 <br>
 
-**Exercise:** Now change the `for loop` so it also outputs which population each fastq file has data for.
+### Exercise 
+Now change the `for loop` so it also outputs which population each fastq file has data for.
+
+<br>
 
 #### See a solution
 <details>
@@ -235,7 +238,7 @@ We need to make sure the server knows where to find the programs we'll be runnin
 
 ```{bash, eval = FALSE}
 
-BASEDIR=~/exercises/day1/ # Note that no spaces are allowed! And don't put a slash after day1
+BASEDIR=~/exercises/day1 # Note that no spaces are allowed! And don't put a slash after day1
 
 ```
 
@@ -333,7 +336,10 @@ If you're not able to download your own files, you can have a look at our's [her
 
 <br>
 
-**Question:** Do you notice anything different about the fastQC reports from the three different fastq files?
+#### Question: 
+Do you notice anything different about the fastQC reports from the three different fastq files?
+
+<br>
 
 The libraries for these samples were prepared in different batches. Below are representative Bioanalyzer traces for each of the batches. Which sample do you think came from which batch?
 
@@ -353,6 +359,7 @@ knitr::include_graphics(c("../img/Bioanalyzer_Batch1.png","../img/Bioanalyzer_Ba
 When the insert length of a library fragment is shorter than the read length, the sequencer will read into the adapter sequence (as shown below). This means that the end of the read will not be from our actual sample, but will be adapter sequence, which may lead to lower alignment performance and even biases in the result if not removed.  
 
 ![](https://www.ecseq.com/support/ngs/img/fragmentsize.png)
+
 <br>
 
 We saw in our FastQC report that we have substantial adapter content in some of our libraries, so will will need to clip that off. Here, we use [Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic) to clip the adapter sequence off the ends of reads where they appear. This step requires us to input the known adapter sequences that we used when preparing the libraries (`ADAPTERS`). In this exercise, the libraries were prepared using Illumina's Nextera adapters (sequences listed in NexteraPE_NT.fa). 
@@ -417,7 +424,8 @@ Input Read Pairs:`
 
 This will show how many reads were removed from our filtering. 
 
-**Question:** The first three samples are the samples for which we examined the FastQC outputs. Do you expect different amount of sequence getting removed from each of these? Is that what you see? Why/Why not?
+#### Question
+The first three samples are the samples for which we examined the FastQC outputs. Do you expect different amount of sequence getting removed from each of these? Is that what you see? Why/Why not?
 
 <br>
 
@@ -426,6 +434,8 @@ Discuss first, then you can check here for a hint
 <details>
   <summary>Click here to view the R code</summary>
   
+<br>
+
 The output from Trimmomatic only shows how many full reads get removed, not how much the reads within the file get truncated. In the library with lots of adapter, many of the reads will now be shorter, but as long as they're still longer than our threshold of 40bp, they will not get removed. If we wanted to know how much sequence we lost from each fastq, counting the number of bases lost is more informative than the number of sequences. It is also always a good idea to check the adapter clipped fastq files with FastQC to make sure that you did in fact get rid of the adapter sequence. We don't have time to do this in class, but if you're interested, you can use the fastqc loop above and just change it to run on the files in your `adapter_clipped` folder.
 
 </details>
@@ -434,7 +444,7 @@ The output from Trimmomatic only shows how many full reads get removed, not how 
 <br>
 
 
-#### OPTIONAL: Quality trimming
+## OPTIONAL: Quality trimming
 As we saw in our FastQC output, the base call quality score tends to drop off towards the ends of the reads. As we'll learn more about tomorrow, probabilistic analysis frameworks, like `angsd` and others based on genotype likelihoods, can take the basecall quality into account and that way give less weight to a basecall that is less certain.
 
 However, as a conservative measure, we may want to just trim off the rest of the read if the quality score drops too low over multiple bases. We can do this with the `SLIDINGWINDOW` module in [Trimmomatic](http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf). We won't have time to do that in this practical, but if you're interested, you can modify the Trimmomatic code above to also trim off low-quality bases.
@@ -442,7 +452,7 @@ However, as a conservative measure, we may want to just trim off the rest of the
 <br>
 <br>
 
-#### Build reference index files 
+## Build reference index files 
 
 There are lots of different programs developed for mapping short reads to a reference sequence. We will use the program [bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml). This program requires a set of reference index files to be able to perform the sequence alignment. So we will start by indexing our reference.
 
@@ -463,7 +473,7 @@ $BOWTIEBUILD $REFERENCE $REFBASENAME
 <br>
 <br>
 
-#### Map to the reference, sort, and quality filter
+## Map to the reference, sort, and quality filter
 
 In this step, we align the short reads within each fastq file to the reference genome using `bowtie2`. The resulting alignment file, in `sam` format, will be converted to a binary format `bam` for more efficient storage. Each mapped read will have a mapping quality, which indicates how confident that mapper is that a read is mapped in the correct position. The [bowtie2 manual](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) defines it as "a non-negative integer Q = -10 log10 p, where p is an estimate of the probability that the alignment does not correspond to the read's true point of origin." Accordingly, a mapping quality (or MAPQ) of 10 or less indicates that there is at least a 1 in 10 chance that the read truly originated elsewhere, and a MAPQ of 20 indicates at least a 1 in 100 chance.
 
@@ -541,7 +551,7 @@ Have a look at the output printed to the screen. How many of our reads are mappi
 <br>
 <br>
 
-#### Examine the bam files
+## Examine the bam files
 
 SAM stands for Sequence Alignment/Map format. BAM is the binary format for sam files (which takes up much less space). It is a TAB-delimited text format consisting of a header section, which is optional, and an alignment section. If present, the header must be prior to the alignments. Header lines start with ‘@’, while alignment lines do not. Each alignment line has 11 mandatory fields for essential alignment information such as mapping position, and variable number of optional fields for flexible or aligner specific information. BAM is the binary version of the SAM format. 
 
@@ -574,7 +584,7 @@ $SAMTOOLS view $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'_minq20_sorted.bam' | head 
 <br>
 <br>
 
-#### Merge samples that were sequenced in multiple batches
+## Merge samples that were sequenced in multiple batches
 
 We have now mapped the two separate sets of fastq files for each sample (the separate sets generated in independent sequencing runs), so we also have two bam files for each sample. If the two sequencing runs were performed with aliquots of the same library, we will need to merge the bam files before we remove duplicate sequences because the two sequencing lanes would have been sequencing the same set of molecules (so each may contain duplicate fragments also sequenced in the other). For most downstream analysis, it's also a lot more convenient to only have a single bam file per individual.
 
@@ -596,7 +606,7 @@ Since we'll also be working on bam files rather than fastq files downstream from
 
 <br>
 
-##### The following R code is just provided for your reference. You DON'T need to run it - the output is already generated in your `scripts` and `sample_lists` folders
+#### The following R code is just provided for your reference. You DON'T need to run it - the output is already generated in your `scripts` and `sample_lists` folders
 
 <details>
   <summary>Click here to view the R code</summary>
@@ -658,7 +668,7 @@ for (i in 1:length(duplicated_samples)){
 <br>
 <br>
 
-##### Run the merging script
+### Run the merging script
 
 To execute the merging, run the bash script with the following command:
 
@@ -702,7 +712,9 @@ $SAMTOOLS view $BASEDIR/bam/985_PANY_1_lane1_pe_bt2_mme_physalia_testdata_chr24_
 
 <details>
   <summary>Click here</summary>
-  
+
+<br>
+
 Because there may be particular issues associated each sequencing lane (in particular the base call quality score calibration may vary), so for some downstream analysis, we need to keep track of what data were sequenced in what lane. By mapping the fastq files separately, we were able to add read platform unit `PU` information to the read group tag in the bam file while mapping with `bowtie2` (see the script). This way we can continue to keep track of which read came from which lane, and could even filter our bam file based on this later on, if we ended up wanting to compare data from different lanes for troubleshooting or other reasons. 
 
 </details>
@@ -710,13 +722,13 @@ Because there may be particular issues associated each sequencing lane (in parti
 <br>
 <br>
 
-#### Deduplicate and clip overlapping read pairs	
+## Deduplicate and clip overlapping read pairs	
 
 Here, we remove the PCR duplicates and trim the overlapping part of each read pair in pair-end data. It is important to deduplicate after merging, because PCR duplicates for the same sample may exist in different lanes. We use the [Picard Tools MarkDuplicates](https://gatk.broadinstitute.org/hc/en-us/articles/360037052812-MarkDuplicates-Picard-).	
 
 We also want to clip overlapping reads. We will use the [BamUtil clipOverlap](https://genome.sph.umich.edu/wiki/BamUtil:_clipOverlap)	
 
-![](https://i.stack.imgur.com/7dkOV.png)
+![](../img/clip_overlap.png)
 
 <br>	
 
@@ -749,7 +761,7 @@ Use `head` to look at the top lines of the dupstat report for each sample (in `$
 <br>
 <br>
 
-#### Indel realignment (optional)
+## Indel realignment (optional)
 
 Unlike other variant detector programs like the [GATK Haplotype Caller](https://gatk.broadinstitute.org/hc/en-us/articles/360037225632-HaplotypeCaller) or [Freebayes](https://github.com/ekg/freebayes), [angsd](http://www.popgen.dk/angsd/index.php/ANGSD) does not realign reads during its analysis. Because it can be difficult to distinguish indels from SNPs at the end of reads if each alignment is considered separately, indels may interfere with genotype likelihood estimation. We there recommend running your bam files through a program that realigns reads around indels prior to running `angsd`. The [GATK IndelRealigner](https://github.com/broadinstitute/gatk-docs/blob/master/gatk3-tutorials/(howto)_Perform_local_realignment_around_indels.md) takes all the aligned sequences from all samples in to account to validate the indels discovered from the mapping process and then realigns each read locally. We don't have time to run it today, but the code is provided here if you want to run it on your own (GATK3 is not installed on the AWS server).
 
@@ -879,7 +891,11 @@ total_presence_summary %>%
 You can see that there is a lot of variation among the different depth statistics. Which of them do you think are most relevant to report? Why?
 
 <br>
-<br>
 
 If you're interested, you can go back and compare the depth distribution to in the raw mapped files.
+
+<br>
+<br>
+
+## END OF DAY 1
 

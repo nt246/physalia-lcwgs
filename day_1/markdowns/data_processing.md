@@ -16,31 +16,24 @@ Tutorial 1: Data processing - from .fastq to .bam
         bash](#make-sure-youre-familiar-with-for-loops-and-how-to-assign-and-call-variables-in-bash)
       - [5. Practice using bash `for loops` to iterate over target
         samples](#practice-using-bash-for-loops-to-iterate-over-target-samples)
-          - [See a solution](#see-a-solution)
       - [6. Define paths to the project directory and
         programs](#define-paths-to-the-project-directory-and-programs)
-          - [Set the project directory as a variable named
-            `BASEDIR`](#set-the-project-directory-as-a-variable-named-basedir)
-          - [Specify the paths to required programs as
-            variables](#specify-the-paths-to-required-programs-as-variables)
   - [Data processing pipeline](#data-processing-pipeline)
       - [Examine the raw fastq files](#examine-the-raw-fastq-files)
-          - [fastq file structure](#fastq-file-structure)
-          - [Evaluate the overall data
-            quality](#evaluate-the-overall-data-quality)
       - [Adapter clipping](#adapter-clipping)
-          - [OPTIONAL: Quality trimming](#optional-quality-trimming)
-          - [Build reference index files](#build-reference-index-files)
-          - [Map to the reference, sort, and quality
-            filter](#map-to-the-reference-sort-and-quality-filter)
-          - [Examine the bam files](#examine-the-bam-files)
-          - [Merge samples that were sequenced in multiple
-            batches](#merge-samples-that-were-sequenced-in-multiple-batches)
-          - [Deduplicate and clip overlapping read
-            pairs](#deduplicate-and-clip-overlapping-read-pairs)
-          - [Indel realignment (optional)](#indel-realignment-optional)
+      - [OPTIONAL: Quality trimming](#optional-quality-trimming)
+      - [Build reference index files](#build-reference-index-files)
+      - [Map to the reference, sort, and quality
+        filter](#map-to-the-reference-sort-and-quality-filter)
+      - [Examine the bam files](#examine-the-bam-files)
+      - [Merge samples that were sequenced in multiple
+        batches](#merge-samples-that-were-sequenced-in-multiple-batches)
+      - [Deduplicate and clip overlapping read
+        pairs](#deduplicate-and-clip-overlapping-read-pairs)
+      - [Indel realignment (optional)](#indel-realignment-optional)
       - [Estimate read depth in your bam
         files](#estimate-read-depth-in-your-bam-files)
+      - [END OF DAY 1](#end-of-day-1)
 
 <br> <br>
 
@@ -330,8 +323,12 @@ done
 
 <br>
 
-**Exercise:** Now change the `for loop` so it also outputs which
-population each fastq file has data for.
+### Exercise
+
+Now change the `for loop` so it also outputs which population each fastq
+file has data for.
+
+<br>
 
 #### See a solution
 
@@ -372,7 +369,7 @@ to be specified every time we run our scripts in a new login session.
 
 ``` bash
 
-BASEDIR=~/exercises/day1/ # Note that no spaces are allowed! And don't put a slash after day1
+BASEDIR=~/exercises/day1 # Note that no spaces are allowed! And don't put a slash after day1
 ```
 
 <br>
@@ -497,8 +494,12 @@ format.
 
 <br>
 
-**Question:** Do you notice anything different about the fastQC reports
-from the three different fastq files?
+#### Question:
+
+Do you notice anything different about the fastQC reports from the three
+different fastq files?
+
+<br>
 
 The libraries for these samples were prepared in different batches.
 Below are representative Bioanalyzer traces for each of the batches.
@@ -528,7 +529,9 @@ below). This means that the end of the read will not be from our actual
 sample, but will be adapter sequence, which may lead to lower alignment
 performance and even biases in the result if not removed.
 
-![](https://www.ecseq.com/support/ngs/img/fragmentsize.png) <br>
+![](https://www.ecseq.com/support/ngs/img/fragmentsize.png)
+
+<br>
 
 We saw in our FastQC report that we have substantial adapter content in
 some of our libraries, so will will need to clip that off. Here, we use
@@ -609,9 +612,11 @@ only sequences Input Read Pairs:`
 
 This will show how many reads were removed from our filtering.
 
-**Question:** The first three samples are the samples for which we
-examined the FastQC outputs. Do you expect different amount of sequence
-getting removed from each of these? Is that what you see? Why/Why not?
+#### Question
+
+The first three samples are the samples for which we examined the FastQC
+outputs. Do you expect different amount of sequence getting removed from
+each of these? Is that what you see? Why/Why not?
 
 <br>
 
@@ -620,6 +625,8 @@ Discuss first, then you can check here for a hint
 <details>
 
 <summary>Click here to view the R code</summary>
+
+<br>
 
 The output from Trimmomatic only shows how many full reads get removed,
 not how much the reads within the file get truncated. In the library
@@ -637,7 +644,7 @@ on the files in your `adapter_clipped` folder.
 
 <br> <br>
 
-#### OPTIONAL: Quality trimming
+## OPTIONAL: Quality trimming
 
 As we saw in our FastQC output, the base call quality score tends to
 drop off towards the ends of the reads. As we’ll learn more about
@@ -656,7 +663,7 @@ low-quality bases.
 
 <br> <br>
 
-#### Build reference index files
+## Build reference index files
 
 There are lots of different programs developed for mapping short reads
 to a reference sequence. We will use the program
@@ -679,7 +686,7 @@ $BOWTIEBUILD $REFERENCE $REFBASENAME
 
 <br> <br>
 
-#### Map to the reference, sort, and quality filter
+## Map to the reference, sort, and quality filter
 
 In this step, we align the short reads within each fastq file to the
 reference genome using `bowtie2`. The resulting alignment file, in `sam`
@@ -772,7 +779,7 @@ anything that seems weird to you about the stats reported?
 
 <br> <br>
 
-#### Examine the bam files
+## Examine the bam files
 
 SAM stands for Sequence Alignment/Map format. BAM is the binary format
 for sam files (which takes up much less space). It is a TAB-delimited
@@ -823,7 +830,7 @@ $SAMTOOLS view $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'_minq20_sorted.bam' | head 
 
 <br> <br>
 
-#### Merge samples that were sequenced in multiple batches
+## Merge samples that were sequenced in multiple batches
 
 We have now mapped the two separate sets of fastq files for each sample
 (the separate sets generated in independent sequencing runs), so we also
@@ -870,7 +877,7 @@ well, but for today, we’ll just use the list that we’ve already added to
 
 <br>
 
-##### The following R code is just provided for your reference. You DON’T need to run it - the output is already generated in your `scripts` and `sample_lists` folders
+#### The following R code is just provided for your reference. You DON’T need to run it - the output is already generated in your `scripts` and `sample_lists` folders
 
 <details>
 
@@ -929,7 +936,7 @@ for (i in 1:length(duplicated_samples)){
 
 <br> <br>
 
-##### Run the merging script
+### Run the merging script
 
 To execute the merging, run the bash script with the following command:
 
@@ -980,6 +987,8 @@ before mapping?
 
 <summary>Click here</summary>
 
+<br>
+
 Because there may be particular issues associated each sequencing lane
 (in particular the base call quality score calibration may vary), so for
 some downstream analysis, we need to keep track of what data were
@@ -995,7 +1004,7 @@ reasons.
 
 <br> <br>
 
-#### Deduplicate and clip overlapping read pairs
+## Deduplicate and clip overlapping read pairs
 
 Here, we remove the PCR duplicates and trim the overlapping part of each
 read pair in pair-end data. It is important to deduplicate after
@@ -1006,7 +1015,7 @@ MarkDuplicates](https://gatk.broadinstitute.org/hc/en-us/articles/360037052812-M
 We also want to clip overlapping reads. We will use the [BamUtil
 clipOverlap](https://genome.sph.umich.edu/wiki/BamUtil:_clipOverlap)
 
-![](https://i.stack.imgur.com/7dkOV.png)
+![](../img/clip_overlap.png)
 
 <br>
 
@@ -1048,7 +1057,7 @@ between our samples?
 
 <br> <br>
 
-#### Indel realignment (optional)
+## Indel realignment (optional)
 
 Unlike other variant detector programs like the [GATK Haplotype
 Caller](https://gatk.broadinstitute.org/hc/en-us/articles/360037225632-HaplotypeCaller)
@@ -1195,7 +1204,11 @@ total_presence_summary %>%
 depth statistics. Which of them do you think are most relevant to
 report? Why?
 
-<br> <br>
+<br>
 
 If you’re interested, you can go back and compare the depth distribution
 to in the raw mapped files.
+
+<br> <br>
+
+## END OF DAY 1
