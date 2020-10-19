@@ -20,14 +20,28 @@ Please make sure to follow these preparatory instructions below before running t
 Briefly, you need to set the path to the software and various data that will be used.
 Also, you will have to create two folders on your working directory, one for your results and one for your intermediate data.
 
+First make sure you are in your home directory
 ```
-NGS=/programs/angsd0.930/
-DIR=/workdir/arne/physalia_lcwgs_data/data_practicals/
-DATA=$DIR/BAMS/
-REF=$DIR/Ref.fa
+cd ~
+```
 
+Then create a folder for this session and go into this folder:
+```
+mkdir day3
+cd day3
+```
+When you are in the `~/day3` folder, you can create the subfolders for data and results:
+```
 mkdir Results
 mkdir Data
+```
+
+And then we set all the paths:
+```
+DIR=/home/ubuntu/Share/data
+DATA=$DIR/BAMS
+REF=$DIR/Ref.fa
+ANC=$DIR/outgrp_ref.fa
 ```
 
 --------------------------------------------------
@@ -43,7 +57,7 @@ In general it is good practice to perform LD pruning or at least thinning to red
 For the PCA method you should use only inferred variant sites (SNPs). SNPs can be inferred based on genotype likelihoods (see SNP_calling day 2) at the same time as inferring the covariance matrix (`-doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1`) by providing the `-SNP_pval` option. SNPs should be restricted to more common variants with minor allele frequencies of at least 5% using the `-minMAF 0.05` option. However, this way, you will focus on all SNPs and not only an LD-pruned subset.
 
 ```
-# $NGS/angsd/angsd -b ALL_bams.txt -anc $REF -out Results/MME_ANGSD_PCA \
+# angsd -b ALL_bams.txt -anc $REF -out Results/MME_ANGSD_PCA \
 #	-minMapQ 20 -minQ 20 -doMaf 1 -minMaf 0.05 -SNP_pval 2e-6 \
 #	-GL 1 -doGlf 2 -doMajorMinor 1 -doPost 1 \
 #	-doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1 -P 4
@@ -61,7 +75,7 @@ Alternatively, you can provide a list of variant sites using the `-sites` option
 Using the list of LD-pruned variant sites and the code shown above, we can estimate a covariance matrix using single-read sampling for LD-pruned SNPs using ANGSD. 
 
 ```
-$NGS/angsd/angsd -b ALL_bams.txt -anc $REF -out Results/MME_ANGSD_PCA_LDpruned \
+angsd -b ALL_bams.txt -anc $REF -out Results/MME_ANGSD_PCA_LDpruned \
 	-minMapQ 20 -minQ 20 -doMaf 1 -minMaf 0.05 -SNP_pval 2e-6 \
 	-GL 1 -doGlf 2 -doMajorMinor 1 -doPost 1 \
 	-doCounts 1 -doCov 1 -sites LDpruned_snps.list
@@ -186,7 +200,7 @@ Q: What is the difference in the PCA pattern?
 For this, we will only estimate the covariance matrix using single read sampling in ANGSD:
 
 ```
-$NGS/angsd/angsd -b ALL_bams.txt -anc $REF -out Results/MME_ANGSD_PCA \
+angsd -b ALL_bams.txt -anc $REF -out Results/MME_ANGSD_PCA \
 	-minMapQ 20 -minQ 20 -doMaf 1 -minMaf 0.05 -SNP_pval 2e-6 \
 	-GL 1 -doGlf 2 -doMajorMinor 1 -doPost 1 \
 	-doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1 -P 4
