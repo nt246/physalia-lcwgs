@@ -11,6 +11,12 @@ Linkage disequilibrium estimation
       - [Prepare the input files](#prepare-the-input-files)
       - [Run ngsLD](#run-ngsld)
   - [Visualize LD blocks](#visualize-ld-blocks)
+      - [Transfer the input file and the script to your local
+        computer](#transfer-the-input-file-and-the-script-to-your-local-computer)
+      - [Install required R packages on your local
+        computer](#install-required-r-packages-on-your-local-computer)
+      - [Run `LD_blocks.sh` on your local
+        computer](#run-ld_blocks.sh-on-your-local-computer)
   - [LD pruning](#ld-pruning)
       - [Run LD pruning](#run-ld-pruning)
       - [Generate an LD-pruned SNP
@@ -55,8 +61,13 @@ to be specified every time we run our scripts in a new login session.
 
 ``` bash
 
+## Copy the shared project directory to your home directory
+cp ~/Share/day3/ ~/exercises/ -r
+## Define BASEDIR as your project directory
 BASEDIR=~/exercises/day3/ # Note that no spaces are allowed! And don't put a slash after day1
-#BASEDIR=/workdir/physalia-lcwgs/day_3/ # Note that no spaces are allowed! And don't put a slash after day1
+#BASEDIR=/workdir/physalia-lcwgs/day_3/
+cd $BASEDIR
+ls
 ```
 
 <br>
@@ -67,7 +78,7 @@ When running these scripts on the Physalia server, run the following:
 
 ``` bash
 
-NGSLD=
+NGSLD=~/Share/ngsLD/
 #NGSLD=/workdir/programs/ngsLD/
 ```
 
@@ -150,6 +161,35 @@ page](https://github.com/fgvieira/ngsLD).
 
 ## Visualize LD blocks
 
+For this exercise and this exercise only, you will run the script on
+your local computer because the R version on AWS is not up to date.
+
+#### Transfer the input file and the script to your local computer
+
+First, on your computer, use the `cd` command to switch to a directory
+where you would like to receive these files.
+
+Then, edit the pem file name, user name, IP address of the following
+script and run it.
+
+``` bash
+# scp -i "~/c2.pem" user2@54.245.175.86:$BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.ld ./
+# scp -i "~/c2.pem" user2@54.245.175.86:$BASEDIR/scripts/LD_blocks.sh ./
+```
+
+#### Install required R packages on your local computer
+
+Run the following script in R. You might need to upgrade your base R to
+a version \> 4.0.
+
+``` r
+install.packages("LDheatmap")
+install.packages("reshape2")
+install.packages("gtools")
+```
+
+#### Run `LD_blocks.sh` on your local computer
+
 We will use a script slightly modified from the original `LD_blocks.sh`
 script provided by ngsLD to generate a plot of LD blocks in our data. It
 takes three argument in the following order:
@@ -158,18 +198,17 @@ takes three argument in the following order:
 2.  starting position
 3.  ending position
 
-<!-- end list -->
+Run the following script in command line.
 
 ``` bash
-cd $BASEDIR/ngsld/
-cat $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.ld | bash $BASEDIR/scripts/LD_blocks.sh \
+cat MME_ANGSD_PCA_subsampled.ld | bash LD_blocks.sh \
 Mme_chr24_2558528-4558528 \
 200000 \
 1400000
 ```
 
-You can either use `scp` to transfer the resulting plot to your
-computer, or see the [plot that we have
+Examine the pdf file that the script has outputted. If you have not got
+the code to work, see the [plot that we have
 generated](https://github.com/nt246/physalia-lcwgs/blob/main/day_3/ngsld/LD_blocks.r2.pdf).
 
 Do you notice any interesting pattern in this plot of LD blocks? What do
@@ -208,7 +247,8 @@ process and how many were lost?
 #### Generate an LD-pruned SNP list
 
 We will use R to generate an LD-pruned SNP list in a format that can be
-used by ANGSD
+used by ANGSD for downstream analyses. This can be run on the AWS
+server.
 
 ``` r
 library(tidyverse)

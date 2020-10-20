@@ -26,8 +26,13 @@ We need to make sure the server knows where to find the programs we'll be runnin
 
 ```{bash, eval = FALSE}
 
+## Copy the shared project directory to your home directory
+cp ~/Share/day3/ ~/exercises/ -r
+## Define BASEDIR as your project directory
 BASEDIR=~/exercises/day3/ # Note that no spaces are allowed! And don't put a slash after day1
-#BASEDIR=/workdir/physalia-lcwgs/day_3/ # Note that no spaces are allowed! And don't put a slash after day1
+#BASEDIR=/workdir/physalia-lcwgs/day_3/
+cd $BASEDIR
+ls
 
 ```
 
@@ -39,7 +44,7 @@ When running these scripts on the Physalia server, run the following:
 
 ```{bash, eval = FALSE}
 
-NGSLD=
+NGSLD=~/Share/ngsLD/
 #NGSLD=/workdir/programs/ngsLD/
 
 ```
@@ -96,21 +101,47 @@ Note: this step may take a few minutes to run. In the meantime, you can take a l
 
 ## Visualize LD blocks
 
+For this exercise and this exercise only, you will run the script on your local computer because the R version on AWS is not up to date. 
+
+#### Transfer the input file and the script to your local computer
+
+First, on your computer, use the `cd` command to switch to a directory where you would like to receive these files. 
+
+Then, edit the pem file name, user name, IP address of the following script and run it.
+
+```{bash eval=F}
+# scp -i "~/c2.pem" user2@54.245.175.86:$BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.ld ./
+# scp -i "~/c2.pem" user2@54.245.175.86:$BASEDIR/scripts/LD_blocks.sh ./
+```
+
+#### Install required R packages on your local computer
+
+Run the following script in R. You might need to upgrade your base R to a version > 4.0.
+
+```{r eval=F}
+install.packages("LDheatmap")
+install.packages("reshape2")
+install.packages("gtools")
+```
+
+#### Run `LD_blocks.sh` on your local computer
+
 We will use a script slightly modified from the original `LD_blocks.sh` script provided by ngsLD to generate a plot of LD blocks in our data. It takes three argument in the following order:
 
 1. chromosome / linkage group / scaffold name
 2. starting position
 3. ending position
 
+Run the following script in command line.
+
 ```{bash eval=F}
-cd $BASEDIR/ngsld/
-cat $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.ld | bash $BASEDIR/scripts/LD_blocks.sh \
+cat MME_ANGSD_PCA_subsampled.ld | bash LD_blocks.sh \
 Mme_chr24_2558528-4558528 \
 200000 \
 1400000
 ```
 
-You can either use `scp` to transfer the resulting plot to your computer, or see the [plot that we have generated](https://github.com/nt246/physalia-lcwgs/blob/main/day_3/ngsld/LD_blocks.r2.pdf).
+Examine the pdf file that the script has outputted. If you have not got the code to work, see the [plot that we have generated](https://github.com/nt246/physalia-lcwgs/blob/main/day_3/ngsld/LD_blocks.r2.pdf).
 
 Do you notice any interesting pattern in this plot of LD blocks? What do you think is causing this pattern and why?
 
@@ -136,7 +167,7 @@ Check the LD pruning result. How many SNPs survived the LD pruning process and h
 
 #### Generate an LD-pruned SNP list
 
-We will use R to generate an LD-pruned SNP list in a format that can be used by ANGSD
+We will use R to generate an LD-pruned SNP list in a format that can be used by ANGSD for downstream analyses. This can be run on the AWS server. 
 
 ```{r eval=FALSE}
 library(tidyverse)
