@@ -169,12 +169,12 @@ your local computer because the R version on AWS is not up to date.
 First, on your computer, use the `cd` command to switch to a directory
 where you would like to receive these files.
 
-Then, edit the pem file name, user name, IP address of the following
-script and run it.
+Then, edit the pem file path and name, user name, IP address of the
+following script and run it.
 
 ``` bash
-# scp -i "~/c2.pem" user2@54.245.175.86:$BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.ld ./
-# scp -i "~/c2.pem" user2@54.245.175.86:$BASEDIR/scripts/LD_blocks.sh ./
+# scp -i "c2.pem" user2@34.220.201.184:~/exercises/day3/ngsld/MME_ANGSD_PCA_subsampled.ld ./
+# scp -i "c2.pem" user2@34.220.201.184:~/exercises/day3/scripts/LD_blocks.sh ./
 ```
 
 #### Install required R packages on your local computer

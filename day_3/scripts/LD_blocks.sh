@@ -10,7 +10,7 @@ if [[ $START_POS -ge $END_POS ]]; then
 fi
 
 # Extract sites from input file
-TMP_FILE=`mktemp --suffix .LD_blocks`
+TMP_FILE=`mktemp`
 awk -v chr=$CHR -v min=$START_POS -v max=$END_POS 'BEGIN{print "snp1\tsnp2\tdist\tr2p\tD\tDp\tr2"} {split($1,pos1,":"); split($2,pos2,":")} pos1[1]==chr && pos1[2]>=min && pos1[2]<=max && pos2[1]==chr && pos2[2]>=min && pos2[2]<=max' | cut -f 1-7 > $TMP_FILE
 N=$((`cat $TMP_FILE | wc -l`-1))
 if [[ $N -le 0 ]]; then
