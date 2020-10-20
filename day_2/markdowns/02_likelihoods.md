@@ -34,7 +34,7 @@ The GATK model refers to the first GATK paper, SAMtools is somehow more sophisti
 For most applications and data, GATK and SAMtools models should give similar results.
 
 Let's assume to work with PANY samples only.
-A possible command line to estimate allele frequencies might be:
+A possible command line to calculate genotype likelihoods might be:
 ```
 angsd -b $DIR/PANY_bams.txt -ref $REF -out Results/PANY \
         -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
@@ -46,7 +46,7 @@ where we specify:
 * -GL 2: genotype likelihood model as in GATK
 * -doGlf 4: output in text format
 
-Ignore the various warning messages
+Ignore the various warning messages. If it is too slow, the add `-nThreads 10` at the end of the command line. This command should take around 2 minutes to run.
 
 ![stage1A](../files/stage1A.png)
 
@@ -62,6 +62,14 @@ ls Results/PANY.*
 less -S Results/PANY.arg
 less -S Results/PANY.glf.gz
 ```
+
+**BONUS QUESTION**
+Try to output files in binary format. Which option should you use? Can you open these files?
+Look at the file sizes of text vs binary format. Which one is smaller? Which one would you use?
+
+**BONUS QUESTION**
+Try to change some filtering options and record the number of entries in the final output file.
+
 
 You have learnt how to calculate and read genotype likelihood files.
 Now you are going to learn how to perform genotype calling with ANGSD.

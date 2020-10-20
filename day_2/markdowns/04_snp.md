@@ -130,13 +130,13 @@ However, various cutoffs and a dedicated filtering should be perform to assess r
 
 Try varying the cutoff for SNP calling and record how many sites are predicted to be variable for each scenario.
 Identify which sites are not predicted to be variable anymore with a more stringent cutoff (e.g. between a pair of scenario), and plot their allele frequencies.
-Use the previously calculated genotype likelihoods as input file (use ```-glf ? -fai ? -nInd ?```).
+Use the previously calculated genotype likelihoods as input file (add proper values for ```-glf ? -fai ? -nInd ?```).
 ```
 # iterate over some cutoffs (you can change these)
 for PV in 0.05 1e-2 1e-4 1e-6
 do
         if [ $PV == 0.05 ]; then echo SNP_pval NR_SNPs; fi
-        angsd -glf Results/PANY.glf.gz -nInd 15 -fai $REF.fai -out Results/PANY.$PV \
+        angsd -glf ? -nInd 15 -fai ? -out Results/PANY.$PV \
                 -doMajorMinor 1 -doMaf 1 -skipTriallelic 1 \
                 -SNP_pval $PV &> /dev/null
         echo $PV `zcat Results/PANY.$PV.mafs.gz | tail -n+2 | wc -l`
@@ -171,7 +171,7 @@ Which frequencies are more difficult to estimate and therefore affect SNP callin
 **EXERCISE**
 
 Estimate derived allele frequencies for all populations of interest using a likelihood approach, without relying on genotype calls.
-What is the difference compared to what previously estimated?
+What is the difference compared to what previously estimated by counting genotypes?
 
 ----------------------------------
 

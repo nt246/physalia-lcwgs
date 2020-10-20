@@ -29,7 +29,7 @@ angsd -doGeno
         NB geno_maxDepth requires -doCounts
 ```
 
-Therefore, if we set `-doGeno 2`, genotypes are coded as 0,1,2, as the number of alternate alleles.
+Therefore, if we set `-doGeno 2`, genotypes are coded as 0,1,2, as the number of alternate/minor alleles.
 If we want to print the major and minor alleles as well then we set `-doGeno 3`.
 
 To calculate the posterior probability of genotypes we need to define a model.
@@ -70,6 +70,7 @@ angsd -glf Results/PANY.glf.gz -fai $REF.fai -nInd 15 -out Results/PANY \
 	-doMajorMinor 1 -doGeno 3 -doPost 2 -doMaf 1
 ```
 Let's ignore the `-doMaf` option now. We will discuss it later.
+This command should take 1 minute to run.
 
 Have a look at the output file:
 ```
@@ -81,6 +82,10 @@ The columns are: chromosome, position, major allele, minor allele, genotypes is 
 How many sites have at least one missing genotype?
 ```
 zcat Results/PANY.geno.gz | grep -1 - | wc -l
+```
+How many sites do we have?
+```
+zcat Results/PANY.geno.gz | | wc -l
 ```
 Why is that?
 
@@ -107,6 +112,10 @@ Setting this threshold depends on the mean sequencing depth of your data, as wel
 For some analyses you need to work only with high quality genotypes (e.g. measure of proportion of shared SNPs for gene flow estimate), while for others you can be more relaxed (e.g. estimate of overall nucleotide diversity).
 We will show later how to accurately estimate summary statistics with low-depth data.
 
+**BONUS QUESTION**
+Try to set the threshold on -postCutoff to 0.50. How many sites do you retrieve? Why? Which value would you choose?
+
+
 ![stage2A](../files/stage2A.png)
 
 --------------------------------
@@ -124,7 +133,8 @@ using the option `-doPost 1`.
 In ANGSD we can restrict our analyses on a subset of positions of interest using the `-sites` option.
 The file with these positions need to be formatted as (chromosome positions).
 ```
-echo Mme_chr24 4000001 > Data/snp.txt
+echo Mme_chr24:2558528-4558528 48 > Data/snp.txt
+echo Mme_chr24:2558528-4558528 61 >> Data/snp.txt
 ```
 We need to index this file in order for ANGSD to process it.
 ```
@@ -146,11 +156,8 @@ ls -d -1 $DIR/*_bams.txt
 ```
 We retain only these populations: Jekyll Island (JIGA), Patchogue (PANY), Minas Basin (MBNS), Magdalen Island (MBNS).
 
-We are calculating the **derived** allele frequencies based on assigned genotypes.
-Note that we are interested in calculating the **derived** allele frequency, so we need to specify a putative ancestral sequence.
-This is specififed by the variable `$ANC`.
-Alternatively, for this exercise, you can assume that our reference sequence represents the ancestral sequence too.
-Please finally note that we want to relax out filtering to make sure to have results.
+We are calculating the **derived** allele frequencies based on assigned genotypes for each population at these two positions.
+We have to specify a putative ancestral sequence, with the variable `$ANC`.
 
 Write the code that performs the following genotype calling for our variants of interest in all populations.
 Also, you can directly call genotypes without generating the genotype likelihood files, by starting from bam files directly.
@@ -161,7 +168,7 @@ As an indication, you can follow these guidelines:
 - filter our reads with a mapping quality score less than 20
 - use ony sites where you have at least five samples with data (-mindInd)
 - do not set any filtering based on min and max depth
-- use -doMajorMinor 1 and -doMaf 1 options
+- use -doMajorMinor 5 (try to understand why) and -doMaf 1 options
 - set genotypes as missing if the highest genotype probability is less than 0.50
 - use option `-sites Data/snp.txt` to restrict the analysis only on selected sites
 but feel free to choose some parameters yourself.
@@ -171,12 +178,12 @@ but feel free to choose some parameters yourself.
 ```
 
 Once done, open the output files and calculate the derived allele frequency by counting genotypes.
-What is the derived allele frequency for each population?
+What is the derived allele frequency for each population for each site?
 
 Can you comment these results?
-Do you see any allele frequency differentiation in the derived state?
+Do you see any allele frequency differentiation in the derived state by counting genotypes?
 
-Are your results in agreement with this?
+If you don't obtain an output, it means that for these loci there is no data. Try to run the calculation on the whole data set and pick one site with data for counting genotypes, if you wish so.
 
 ----------------------------
 
