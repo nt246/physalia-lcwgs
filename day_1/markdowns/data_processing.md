@@ -2,6 +2,7 @@ Tutorial 1: Data processing - from .fastq to .bam
 ================
 
   - [Case study for practicals](#case-study-for-practicals)
+      - [Today’s data](#todays-data)
   - [Initial preparation](#initial-preparation)
       - [1. Make sure you’re up to speed on basic shell
         scripting](#make-sure-youre-up-to-speed-on-basic-shell-scripting)
@@ -507,7 +508,17 @@ Which sample do you think came from which batch?
 
 <br>
 
-<img src="../img/Bioanalyzer_Batch1.png" title="Library fragment size distributions" alt="Library fragment size distributions" width="49%" height="20%" style="display: block; margin: auto;" /><img src="../img/Bioanalyzer_Batch2.png" title="Library fragment size distributions" alt="Library fragment size distributions" width="49%" height="20%" style="display: block; margin: auto;" />
+<div class="figure" style="text-align: center">
+
+<img src="../img/Bioanalyzer_Batch1.png" alt="Library fragment size distributions" width="49%" height="20%" /><img src="../img/Bioanalyzer_Batch2.png" alt="Library fragment size distributions" width="49%" height="20%" />
+
+<p class="caption">
+
+Library fragment size distributions
+
+</p>
+
+</div>
 
 <br> <br>
 
@@ -1130,17 +1141,25 @@ After all the filtering steps, we want to know what final depth of
 coverage we have for each samples for downstream analysis. We will use
 [samtools depth](http://www.htslib.org/doc/samtools-depth.html) to first
 compute the read depth at each bp position in the genome. Then we will
-pull the output file to our local machines and computes depth summary
-stats in R.
+pull the output file to our local machines and compute depth summary
+stats in R. This is just one way to summarize the depth. There are other
+programs available to provide summaries of the depth in a bam file,
+including [samtools
+coverage](http://www.htslib.org/doc/samtools-coverage.html),
+[Mosdepth](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6030888/) and
+[Indexcov](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5737511/).
 
 <br>
 
 ``` bash
+
 BAMLIST=$BASEDIR/sample_lists/merged_bam_list.txt # Path to a list of unique sample prefixes for merged bam files.  
 REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files 
+
 for SAMPLEBAM in `cat $BAMLIST`; do 
     ## Count per position depth per sample
-    samtools depth -aa $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam' | cut -f 3 | gzip > $SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam.depth.gz'
+    samtools depth -aa $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam' | cut -f 3 | gzip > $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam.depth.gz'
+
 done
 ```
 
@@ -1150,8 +1169,10 @@ Now we’ll process the data in R
 
 ``` r
 library(tidyverse)
+
 basedir <- "~/exercises/day1/" # Make sure to edit this to match your $BASEDIR
 bam_list <- read_lines(paste0(basedir, "/sample_lists/merged_bam_list.txt"))
+
 for (i in 1:length(bam_list)){
   
   bamfile = bam_list[i]
@@ -1177,6 +1198,9 @@ for (i in 1:length(bam_list)){
   }
 }
 print(output)
+
+output %>%
+  mutate(across(where(is.numeric), round, 3))
 
 # Plot the depth distribution
 tibble(total_depth = total_depth, position = 1:length(total_depth))  %>%
