@@ -47,6 +47,7 @@ DIR=/home/ubuntu/Share/data
 DATA=$DIR/BAMS
 REF=$DIR/Ref.fa
 ANC=$DIR/outgrp_ref.fa
+NGSadmix=/
 ```
 
 
@@ -195,7 +196,7 @@ We provide the path to the input file using the `-beagle` option, which also tel
 python ~/Software/pcangsd/pcangsd.py -beagle Results/MME_ANGSD_PCA_LDpruned.beagle.gz -o Results/PCAngsd_LDpruned_covmat
 ```
 
-***Optional*
+**Optional**
 We can perform the principal components analysis and plot PC1 vs PC2 the same way we did before.
 
 ```
@@ -244,27 +245,20 @@ Do the inferred population structures differ between the two approaches? How dif
 
 
 
+--------------------------------------------------
+
+
 ### Optional: Compare the results to a PCA based on all SNPs
 
 
-While it is best practice to perform a PCA based on an LD-pruned SNP dataset, PCAs are often performed based on full SNP datasets. 
+While it is best practice to perform a PCA based on an LD-pruned SNP dataset, PCA are often performed based on full SNP datasets. 
 If you are interested and have time, you could compare the PCA for LD-pruned SNPs to one that was performed for all SNPs in the dataset without LD-pruning.
 
-Q: What is the difference in the PCA pattern? 
-
 For this, we will only estimate the covariance matrix using single read sampling in ANGSD. 
-We can infer SNPs can be inferred based on genotype likelihoods (see day 2) at the same time as inferring the covariance matrix (`-doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1`) by providing the `-SNP_pval` option. SNPs should be restricted to more common variants with minor allele frequencies of at least 5% using the `-minMAF 0.05` option. However, this way, you will focus on all SNPs and not only an LD-pruned subset.
+SNPs can be inferred based on genotype likelihoods (see day 2) at the same time as inferring the covariance matrix (`-doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1`) by providing the `-SNP_pval` option. SNPs should be restricted to more common variants with minor allele frequencies of at least 5% using the `-minMAF 0.05` option.
 
 ```
-# angsd -b ALL_bams.txt -anc $REF -out Results/MME_ANGSD_PCA \
-#	-minMapQ 20 -minQ 20 -doMaf 1 -minMaf 0.05 -SNP_pval 2e-6 \
-#	-GL 1 -doGlf 2 -doMajorMinor 1 -doPost 1 \
-#	-doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1 -P 4
-```
-
-
-```
-angsd -b ALL_bams.txt -anc $REF -out Results/MME_ANGSD_PCA \
+angsd -b $DIR/ALL_bams.txt -anc $REF -out Results/MME_ANGSD_PCA \
 	-minMapQ 20 -minQ 20 -doMaf 1 -minMaf 0.05 -SNP_pval 2e-6 \
 	-GL 1 -doGlf 2 -doMajorMinor 1 -doPost 1 \
 	-doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1 -P 4
@@ -272,10 +266,12 @@ angsd -b ALL_bams.txt -anc $REF -out Results/MME_ANGSD_PCA \
 
 Again, we perform the principal components analysis using the `eigen` function in R:
 ```
+R
+
 library(tidyverse) #load the tidyverse package for formatting and plotting
 
 #Load the covariance matrix
-cov <- as.matrix(read.table("/workdir/arne/physalia_lcwgs_data/data_practicals/Results/MME_ANGSD_PCA.covMat", header = F))
+cov <- as.matrix(read.table("~/day3/Results/MME_ANGSD_PCA.covMat", header = F))
 
 #We will also add a column with population assingments
 pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA"
@@ -296,10 +292,16 @@ pca = ggplot(data = df, aes(x=V2, y=V3, fill = pop, colour = pop)) +
   ylab("Principal component 2")
 
 #Save plot as pdf
-ggsave(filename = "/workdir/arne/physalia_lcwgs_data/data_practicals/Results/pca_plot.pdf", plot = pca)
+ggsave(filename = "~/day3/Results/pca_plot_allSNPs.pdf", plot = pca)
 ```
 
-Q: How do population relationships differ between the on LD-pruned PCA and the full-dataset PCA? And can you guess which individuals carry which inversion karyotype? 
+**Q**: How do population relationships differ between the on LD-pruned PCA and the full-dataset PCA? Why do the population relationships differ?
+
+
+As you can see the separation between the populations, particularly between JIGA and the other populations, is a lot stronger, without much variation within populations. The reason for that is that JIGA has a different karyotype for the inversion 24 compared to MAQU, MBNS and PANY. Variation along PC2 represents genetic variation within each inversion karyotype.
+
+**Q**: What's with the lonely PANY individual that is intermediate between the two main clusters?
+
 
 
 
@@ -312,6 +314,10 @@ Q: How do population relationships differ between the on LD-pruned PCA and the f
 In some cases we also want to infer genome-wide admixture proportions for each individuals. Similar to PCA, there are different ways of inferring admixture proportions from genotype likelihoods. Here, we will use [ngsAdmix](http://www.popgen.dk/software/index.php/NgsAdmix) and will also present a way of inferring admixture proportions with PCAngsd.
 Similar to the PCA, we want to use an LD-pruned SNP dataset for this analysis to reduce the impact of non-independent SNPs on the ancestry inference. 
 
+
+
+
+
 ### ngsAdmix
 
 ngsAdmix uses a genotype likelihood file in beagle format (same as for PCAngsd) as input, which is specified using the `-likes` option. 
@@ -319,29 +325,44 @@ In addition, there are a range of parameters that can be adjusted. Here we only 
 In reality, it is advisable to compare different numbers of ancestry clusters by iterating over different values of K. 
 
 ```
-/programs/NGSadmix/NGSadmix -likes Results/MME_ANGSD_PCA.beagle.gz -K 2 -o Results/MME_ngsAdmix_K2_out
+NGSadmix -likes Results/MME_ANGSD_PCA_LDpruned.beagle.gz -K 2 -o Results/MME_LDpruned_ngsAdmix_K2_out
 ```
 
 In case the analysis is not converging, one can also increase the maximum number of EM iterations using the `-maxiter` option. 
 
 ngsAdmix produces three different outputs files:
 
-* A run log containing the log likelihood of the admixture estimates: .log file
-* A file containing the allele frequencies of all ancestral populations (in this case two ancestral clusters): .fopt file
-* A file containing the admixture proportions for each individual: .qopt file
+* A run log containing the log likelihood of the admixture estimates: `.log file`
+* A file containing the allele frequencies of all ancestral populations (in this case two ancestral clusters): `.fopt file`
+* A file containing the admixture proportions for each individual: `.qopt file`
 
-We are mostly interested in the admixture proportions and the log likelihood of the estimates. The log likelihoods can be compared between runs with different values of K to select the most likely number of ancestral clusters. 
+We are mostly interested in the admixture proportions and the log likelihood of the estimates. The log likelihoods can be compared between runs with different values of K to select the most likely number of ancestral clusters (However, this should always be interpreted in a biologically meaningful context)
 
-You can plot admixture proportions in R e.g. following this Rscript:
+**Question:** 
+What is the likelihood for `-K 2`?
+
+<details>
+
+<summary>Click here to expand</summary>
+
 ```
-Rscript plot_ngsAdmix.R
+cat Results/MME_LDpruned_ngsAdmix_K2_out.log
 ```
-Description of the script:
+
+</details>
+
+
+
+
+
+Furthermore, we can plot admixture proportions in R:
 ```
+R
+
 library(tidyverse) #load the tidyverse package for formatting and plotting
 
 #Load the covariance matrix
-cov = read_table("/workdir/arne/physalia_lcwgs_data/data_practicals/Results/MME_ngsAdmix_K2_out.qopt", col_names = F)
+admix = read_table("~/day3/Results/MME_LDpruned_ngsAdmix_K2_out.qopt", col_names = F)
 
 #We will also add a column with population assingments
 pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA"
@@ -349,17 +370,17 @@ pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","
          ,"MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS"
          ,"MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU")
 
-cov.id = as.data.frame(cbind(pop, cov))
-names(cov.id) = c("pop","q1","q2")
-barplot(t(as.matrix(subset(cov.id, select=q1:q2))), col=c("firebrick","royalblue"), border=NA)
+admix.id = as.data.frame(cbind(pop, admix))
+names(admix.id) = c("pop","q1","q2")
 
-#Save plot as pdf
-ggsave(filename = "/workdir/arne/physalia_lcwgs_data/data_practicals/Results/pca_pcangsd_plot.pdf", plot = pca)
+pdf("~/day3/Results/NGSadmix_LDpruned_K2_plot.pdf")
+plot = barplot(t(as.matrix(subset(admix.id, select=q1:q2))), col=c("firebrick","royalblue"), border=NA)
+dev.off() 
 ```
 
-If you want, you can try changing the value for `-K` and compare the infferred log ikelihoods and admixture proportions. Which value of K has the stronger support?
+**Optional** If you want, you can try changing the value for `-K` and compare the infferred log ikelihoods and admixture proportions. Which value of K has the stronger support?
 ```
-/programs/NGSadmix/NGSadmix -likes Results/MME_ANGSD_PCA.beagle.gz -K 3 -o Results/MME_ngsAdmix_K3_out
+NGSadmix -likes Results/MME_ANGSD_PCA_LDpruned.beagle.gz -K 3 -o Results/MME_LDpruned_ngsAdmix_K2_out
 ```
 
 
@@ -373,6 +394,11 @@ Other than ngsAdmix, PCAngsd can automatically infer the most likely number of a
 However, one can also set the number of clusters using the `-admix_K` option. 
 
 ```
-python3 /programs/pcangsd-0.98/pcangsd.py -beagle Results/MME_ANGSD_PCA.beagle.gz -admix -admix_K 2 -o Results/MME_PCAngsd_K2_out
-
+python ~/Software/pcangsd/pcangsd.py -beagle Results/MME_ANGSD_PCA_LDpruned.beagle.gz -admix -admix_K 2 -o Results/MME_PCAngsd_K2_out
 ```
+
+
+
+
+
+
