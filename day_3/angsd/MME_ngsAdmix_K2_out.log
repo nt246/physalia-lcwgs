@@ -1,9 +1,0 @@
-Input: lname=Results/MME_ANGSD_PCA.beagle.gz nPop=2, fname=(null) qname=(null) outfiles=Results/MME_ngsAdmix_K2_out
-Setup: seed=1602533484 nThreads=1 method=1
-Convergence: maxIter=2000 tol=0.000010 tolLike50=0.100000 dymBound=0
-Filters: misTol=0.050000 minMaf=0.050000 minLrt=0.000000 minInd=0
-Input file has dim: nsites=865 nind=60
-Input file has dim (AFTER filtering): nsites=640 nind=60
-	[ALL done] cpu-time used =  1.07 sec
-	[ALL done] walltime used =  1.00 sec
-best like=-37047.882686 after 450 iterations
