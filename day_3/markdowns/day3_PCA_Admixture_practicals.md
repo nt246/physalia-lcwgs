@@ -347,6 +347,16 @@ What is the likelihood for `-K 2`?
 
 ```
 cat Results/MME_LDpruned_ngsAdmix_K2_out.log
+
+Input: lname=Results/MME_ANGSD_PCA_LDpruned.beagle.gz nPop=2, fname=(null) qname=(null) outfiles=Results/MME_LDpruned_ngsAdmix_K2_out
+Setup: seed=1603211682 nThreads=1 method=1
+Convergence: maxIter=2000 tol=0.000010 tolLike50=0.100000 dymBound=0
+Filters: misTol=0.050000 minMaf=0.050000 minLrt=0.000000 minInd=0
+Input file has dim: nsites=247 nind=60
+Input file has dim (AFTER filtering): nsites=245 nind=60
+	[ALL done] cpu-time used =  0.11 sec
+	[ALL done] walltime used =  0.00 sec
+best like=-11324.127798 after 93 iterations
 ```
 
 </details>
@@ -380,8 +390,27 @@ dev.off()
 
 **Optional** If you want, you can try changing the value for `-K` and compare the infferred log ikelihoods and admixture proportions. Which value of K has the stronger support?
 ```
-NGSadmix -likes Results/MME_ANGSD_PCA_LDpruned.beagle.gz -K 3 -o Results/MME_LDpruned_ngsAdmix_K2_out
+NGSadmix -likes Results/MME_ANGSD_PCA_LDpruned.beagle.gz -K 3 -o Results/MME_LDpruned_ngsAdmix_K3_out
 ```
+<details>
+
+<summary>Click here to expand</summary>
+
+```
+cat Results/MME_LDpruned_ngsAdmix_K3_out.log
+
+Input: lname=Results/MME_ANGSD_PCA_LDpruned.beagle.gz nPop=3, fname=(null) qname=(null) outfiles=Results/MME_LDpruned_ngsAdmix_K3_out
+Setup: seed=1603212799 nThreads=1 method=1
+Convergence: maxIter=2000 tol=0.000010 tolLike50=0.100000 dymBound=0
+Filters: misTol=0.050000 minMaf=0.050000 minLrt=0.000000 minInd=0
+Input file has dim: nsites=247 nind=60
+Input file has dim (AFTER filtering): nsites=245 nind=60
+	[ALL done] cpu-time used =  1.02 sec
+	[ALL done] walltime used =  1.00 sec
+best like=-11077.337705 after 750 iterations
+```
+
+</details>
 
 
 ### Alternative approach: PCAngsd
@@ -396,6 +425,9 @@ However, one can also set the number of clusters using the `-admix_K` option.
 ```
 python ~/Software/pcangsd/pcangsd.py -beagle Results/MME_ANGSD_PCA_LDpruned.beagle.gz -admix -admix_K 2 -o Results/MME_PCAngsd_K2_out
 ```
+
+**Optional**
+If you want to, you can plot these results as well and compare them to the estimates with NGSadmix.
 
 
 
