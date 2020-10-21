@@ -145,8 +145,6 @@ We have to load the covariance matrix into R and then we can optionally provide 
 ```
 R
 
-library(tidyverse) #load the tidyverse package for formatting and plotting
-
 #Load the covariance matrix
 cov <- as.matrix(read.table("~/exercises/day3/Results/MME_ANGSD_PCA_LDpruned.covMat", header = F))
 
@@ -156,23 +154,23 @@ pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","
          ,"MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS"
          ,"MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU")
 
+col <- c("firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick"
+         ,"goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1"
+         ,"lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue"
+         ,"royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue")
+
+
 mme.pca <- eigen(cov) #perform the pca using the eigen function. 
 ```
 
 We can then extract the eigenvectors from the pca object and format them into a dataframe for plotting, e.g. using `ggplot()`.
 ```
 eigenvectors = mme.pca$vectors #extract eigenvectors 
-pca.vectors = as_tibble(cbind(pop, eigenvectors)) #combine with our population assignments
-df = type_convert(pca.vectors) #check all columns and convert if necessary (automatic)
+pca.vectors = as.data.frame(cbind(pop,col, eigenvectors)) #combine with our population assignments
 
-#plot PC1 vs PC2 using ggplot
-pca = ggplot(data = df, aes(x=V2, y=V3, fill = pop, colour = pop)) +
-  geom_point(size = 5, shape = 21) +
-  xlab("Principal component 1") +
-  ylab("Principal component 2")
-
-#Save plot as pdf
-ggsave(filename = "~/exercises/day3/Results/pca_LDpruned_plot.pdf", plot = pca)
+pdf("~/exercises/day3/Results/pca_LDpruned_plot.pdf")
+plot(pca.vectors$V3, pca.vectors$V4, col=pca.vectors$col)
+dev.off() 
 ```
 
 Additionally, we can extract the eigenvalues for each eigenvector, and can then estimate the variance explained for each eigenvector (e.g. here for PC1 to PC4): 
@@ -211,8 +209,6 @@ We can perform the principal components analysis and plot PC1 vs PC2 the same wa
 ```
 R
 
-library(tidyverse) #load the tidyverse package for formatting and plotting
-
 #Load the covariance matrix
 cov <- as.matrix(read.table("~/exercises/day3/Results/PCAngsd_LDpruned_covmat.cov", header = F))
 
@@ -222,26 +218,26 @@ pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","
          ,"MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS"
          ,"MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU")
 
+col <- c("firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick"
+         ,"goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1"
+         ,"lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue"
+         ,"royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue")
+	 
+	 
 mme.pca <- eigen(cov) #perform the pca using the eigen function. 
 
-eigenvectors <- (mme.pca$vectors) #extract eigenvectors 
-pca.vectors <- as_tibble(cbind(pop, eigenvectors)) #combine with our population assignments
-df = type_convert(pca.vectors) #check all columns and convert if necessary (automatic)
+eigenvectors = mme.pca$vectors #extract eigenvectors 
+pca.vectors = as.data.frame(cbind(pop,col, eigenvectors)) #combine with our population assignments
 
-#plot PC1 vs PC2 using ggplot
-pca = ggplot(data = df, aes(x=V2, y=V3, fill = pop, colour = pop)) +
-  geom_point(size = 5, shape = 21) +
-  xlab("Principal component 1") +
-  ylab("Principal component 2")
+pdf("~/exercises/day3/Results/pca_LDpruned_pcangsd_plot.pdf")
+plot(pca.vectors$V3, pca.vectors$V4, col=pca.vectors$col)
+dev.off() 
 
 pca.eigenval.sum = sum(mme.pca$values) #sum of eigenvalues
 varPC1 <- (mme.pca$values[1]/pca.eigenval.sum)*100 #Variance explained by PC1
 varPC2 <- (mme.pca$values[2]/pca.eigenval.sum)*100 #Variance explained by PC2
 varPC3 <- (mme.pca$values[3]/pca.eigenval.sum)*100 #Variance explained by PC3
 varPC4 <- (mme.pca$values[4]/pca.eigenval.sum)*100 #Variance explained by PC4
-
-#Save plot as pdf
-ggsave(filename = "~/exercises/day3/Results/pca_LDpruned_pcangsd_plot.pdf", plot = pca)
 ```
 
 <br>
@@ -279,8 +275,6 @@ Again, we perform the principal components analysis using the `eigen` function i
 ```
 R
 
-library(tidyverse) #load the tidyverse package for formatting and plotting
-
 #Load the covariance matrix
 cov <- as.matrix(read.table("~/exercises/day3/Results/MME_ANGSD_PCA.covMat", header = F))
 
@@ -290,20 +284,20 @@ pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","
          ,"MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS"
          ,"MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU")
 
+col <- c("firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick"
+         ,"goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1"
+         ,"lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue"
+         ,"royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue")
+	 
+	 
 mme.pca <- eigen(cov) #perform the pca using the eigen function. 
 
-eigenvectors <- (mme.pca$vectors) #extract eigenvectors 
-pca.vectors <- as_tibble(cbind(pop, eigenvectors)) #combine with our population assignments
-df = type_convert(pca.vectors) #check all columns and convert if necessary (automatic)
+eigenvectors = mme.pca$vectors #extract eigenvectors 
+pca.vectors = as.data.frame(cbind(pop,col, eigenvectors)) #combine with our population assignments
 
-#plot PC1 vs PC2 using ggplot
-pca = ggplot(data = df, aes(x=V2, y=V3, fill = pop, colour = pop)) +
-  geom_point(size = 5, shape = 21) +
-  xlab("Principal component 1") +
-  ylab("Principal component 2")
-
-#Save plot as pdf
-ggsave(filename = "~/exercises/day3/Results/pca_plot_allSNPs.pdf", plot = pca)
+pdf("~/exercises/day3/Results/pca_allSNPs_plot.pdf")
+plot(pca.vectors$V3, pca.vectors$V4, col=pca.vectors$col)
+dev.off() 
 ```
 
 <br>
