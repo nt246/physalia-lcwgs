@@ -1,11 +1,14 @@
 Tutorial 3b: Population structure and Admixture
 ================
 
+<br>
+
 In this session you will learn how to use low-coverage whole genome data to do:
 
 * Principal Components Analysis (PCA)
 * Admixture analysis
 
+<br>
 
 # Today’s data
 
