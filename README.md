@@ -7,5 +7,7 @@ Files for the the Physalia course on Population genomic inference from low-cover
 
 * [Tutorial 2: Genotype and SNP calling](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/00_introduction.md)
 
+* [Tutorial 3a: Linkage disequilibrium](https://github.com/nt246/physalia-lcwgs/blob/main/day_3/markdowns/ld.md)
 
+* [Tutorial 3b: Population structure](https://github.com/nt246/physalia-lcwgs/blob/main/day_3/markdowns/day3_PCA_Admixture_practicals.md)
 
