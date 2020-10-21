@@ -381,6 +381,17 @@ We can plot the results along our region of interest, including our inversion br
 ```
 R
 
+pbs = read.table("/Users/arnejacobs/Downloads/JIGA.pbs.fst.txt", header = T)
+pbs$PBS1[which(pbs$PBS1<0)]=0
+pbs$PBS2[which(pbs$PBS2<0)]=0
+pbs$PBS0[which(pbs$PBS0<0)]=0
+
+head(pbs)
+
+pdf("~/exercises/day3/Results/pbs_plot.pdf")
+plot(pbs$midPos, pbs$PBS2, cex=1)
+abline(v=1000000, col="red", lwd=3, lty=2)
+dev.off() 
 ```
 
 It will also print out the maximum PBS value observed as this value will be used in the next part.
