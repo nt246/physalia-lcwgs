@@ -11,7 +11,7 @@ In this session you will learn how to use low-coverage whole genome data to do:
 
 As outlined in the previous exercises, we have low-coverage NGS data for 60 Atlantic silversides from the following 4 populations:
 
-<img src="https://github.com/nt246/physalia-lcwgs/blob/main/day_3/img/Silverside_Sample_Map.png?raw=true" height="24" width="48">
+<img src="https://github.com/nt246/physalia-lcwgs/blob/main/day_3/img/Silverside_Sample_Map.png?raw=true" height="200">
 
 These populations have been previously studied in [Therkildsen et al. 2019](https://science.sciencemag.org/content/365/6452/487) and [Wilder et al. 2020](https://onlinelibrary.wiley.com/doi/10.1002/evl3.189), and cover the entire distribution range of Atlantic silverside.
 
