@@ -320,6 +320,8 @@ ggsave(filename = "~/exercises/day3/Results/pca_plot_allSNPs.pdf", plot = pca)
 
 As you can see the separation between the populations, particularly between JIGA and the other populations, is a lot stronger, without much variation within populations. The reason for that is that JIGA has a different karyotype for the inversion 24 compared to MAQU, MBNS and PANY. Variation along PC2 represents genetic variation within each inversion karyotype.
 
+</details>
+
 <br>
 
 **Q**: What's with the lonely PANY individual that is intermediate between the two main clusters?
