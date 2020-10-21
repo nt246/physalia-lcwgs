@@ -1,3 +1,7 @@
+Tutorial 4: Summary statistics
+================
+
+<br>
 
 Here you will learn how to perform a scan for positive selection by calculating several summary statistics in windows from low-depth NGS data.
 
@@ -7,26 +11,53 @@ Specifically, you will learn how to estimate:
 2. population genetic differentiation
 3. nucleotide diversity
 
-Please make sure to follow the preparatory instructions on the main page before running these examples.
-```
-NGS=/programs/angsd0.930/
-DIR=/workdir/arne/physalia_lcwgs_data/data_practicals/
-DATA=$DIR/BAMS/
-REF=$DIR/Ref.fa
-ANC=$DIR/outgrp_ref.fa
+<br>
 
+# Initial preparation
+
+Please make sure to follow these preparatory instructions below before running these examples. You need to set the path to the software and various data that will be used. Also, you will have to create two new folders in your `day3` working directory, one for your results and one for your intermediate data.
+
+First go to the day3 directory you created for the previous exercise create subdirectories for data and results:
+```
 mkdir Results
 mkdir Data
 ```
 
-As reference, these are the labelling for each population:
-- JIGA: Jekyll Island, Georgia
-- PANY: Patchogue, New York
-- MBNS: Minas Basin, Nova Scotia
-- MAQU: Magdalen Island, Quebec
+Then use `pwd` to check where your `day3` directory is located and use its path to set your `BASEDIR`.
 
-Here we see how to compute the 2D-SFS, FST, PBS, and other summary statistics from low-depth data using ANGSD.
+```
+BASEDIR=~/exercises/day3/    # Edit if this is not the path to your day3 directory. Remember that ~ is equivalent to /home/USER 
+```
+
+And then we set all the rest of the paths:
+```
+DIR=/home/ubuntu/Share/data
+DATA=$DIR/BAMS
+REF=$DIR/Ref.fa
+ANC=$DIR/outgrp_ref.fa
+NGSadmix=/
+```
+
+# Today’s data
+
+As outlined in the previous exercises, we are working with low-coverage NGS data for 60 Atlantic silversides from the following 4 populations:
+
+<img src="https://github.com/nt246/physalia-lcwgs/blob/main/day_3/img/Silverside_Sample_Map.png?raw=true" height="400">
+
+These populations have been previously studied in [Therkildsen et al. 2019](https://science.sciencemag.org/content/365/6452/487) and [Wilder et al. 2020](https://onlinelibrary.wiley.com/doi/10.1002/evl3.189), and cover the entire distribution range of the species.
+
+Our NGS data are in bam format and span a 2Mb region on chromosome 24. The interesting aspect about chromosome 24 is that it harbours a large polymorphic inversion that differs in its frequency across populations. 
+The test dataset spans one breakpoint of this inversion (1Mb up and downstream).
+
+Here we see how to compute the 2D-SFS, FST, PBS, and other summary statistics from low-depth data using ANGSD to understand patterns of divergence and differentiation across the genome.
+
 Our final goal is to detect signatures of selection in our data.
+
+
+
+<br>
+
+
 
 -----------------------------
 
@@ -45,7 +76,7 @@ Finally, an estimate of the SFS is computed.
 These steps can be accomplished in ANGSD using `-doSaf 1/2` options and the program `realSFS`.
 
 ```
-$NGS/angsd/angsd -doSaf
+angsd -doSaf
 ...
 -doSaf		0
 	1: perform multisample GL estimation
@@ -71,7 +102,7 @@ We cycle across all populations and compute SAF files. By specifying an outgroup
 for POP in JIGA PANY MBNS MAQU
 do
         echo $POP
-        $NGS/angsd/angsd -b $DIR/$POP'_bams.txt' -ref $REF -anc $ANC -out Results/$POP \
+        angsd -b $DIR/$POP'_bams.txt' -ref $REF -anc $ANC -out Results/$POP \
                 -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
                 -minMapQ 20 -minQ 20 -minInd 5 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
                 -GL 1 -doSaf 1
