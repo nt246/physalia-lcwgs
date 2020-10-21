@@ -111,11 +111,14 @@ done
 Please ignore various warning messages.
 
 ```
-$NGS/angsd/misc/realSFS print Results/PANY.saf.idx | less -S  
+realSFS print Results/PANY.saf.idx | less -S  
 ```
 These values represent the sample allele frequency likelihoods at each site, as seen during the lecture.
 So the first value (after the chromosome and position columns) is the likelihood of having 0 copies of the derived allele, the second indicates the probability of having 1 copy and so on.
 Note that these values are in log format and scaled so that the maximum is 0.
+
+
+
 
 **QUESTION**
 Can you spot any site which is likely to be variable (i.e. polymorphic)?
@@ -163,7 +166,7 @@ Therefore, this command will estimate the SFS for each population separately:
 for POP in JIGA PANY MBNS MAQU
 do
         echo $POP
-        $NGS/angsd/misc/realSFS Results/$POP.saf.idx > Results/$POP.sfs
+        realSFS Results/$POP.saf.idx > Results/$POP.sfs
 done
 ```
 The output will be saved in `Results/POP.sfs` files.
@@ -175,7 +178,7 @@ cat Results/JIGA.sfs
 The first value represents the expected number of sites with derived allele frequency equal to 0, the second column the expected number of sites with frequency equal to 1 and so on.
 
 
-**QUESTION**
+**QUESTIONS**
 
 How many values do you expect?
 
@@ -191,17 +194,46 @@ However, for practical reasons, here we could not use large genomic regions.
 Also, as we will see later, this region is not really a proxy for neutral evolution so the SFS is not expected to behave neutrally for some populations.
 Nevertheless, these SFS should be a reasonable prior to be used for estimation of summary statistics.
 
-Optionally, one can even plot the SFS for each pop using this simple R script.
+
+<br>
+
+Optionally, one can even plot the SFS for each pop using this simple R script:.
 ```
-Rscript $NGS/Scripts/plotSFS.R Results/JIGA.sfs-Results/PANY.sfs-Results/MBNS.sfs-Results/MAQU.sfs JIGA-PANY-MBNS-MAQU 0 Results/ALL.sfs.pdf
-evince Results/ALL.sfs.pdf
+R
+
+sfs<-scan("~/exercises/day3/Results/JIGA.sfs")
+pdf("~/exercises/day3/Results/JIGA_sfs.pdf")
+barplot(sfs)
+dev.off()
+
+sfs<-scan("~/exercises/day3/Results/PANY.sfs")
+pdf("~/exercises/day3/Results/PANY_sfs.pdf")
+barplot(sfs)
+dev.off()
+
+sfs<-scan("~/exercises/day3/Results/MBNS.sfs")
+pdf("~/exercises/day3/Results/MBNS_sfs.pdf")
+barplot(sfs)
+dev.off()
+
+sfs<-scan("~/exercises/day3/Results/MAQU.sfs")
+pdf("~/exercises/day3/Results/MAQU_sfs.pdf")
+barplot(sfs)
+dev.off()
 ```
+
+<br>
+
+**QUESTIONS**
 
 Do they behave like expected?
 
 Which population has more SNPs?
 
 Which population has a higher proportion of common (not rare) variants?
+
+
+<br>
 
 
 ---------------------------------------
@@ -213,7 +245,7 @@ If you do not have an outgroup genome, you can compute the folded site frequency
 for POP in JIGA PANY MBNS MAQU
 do
         echo $POP
-        $NGS/angsd/angsd -b $DIR/$POP'_bams.txt' -ref $REF -anc $REF -out Results/$POP.folded \
+        angsd -b $DIR/$POP'_bams.txt' -ref $REF -anc $REF -out Results/$POP.folded \
                 -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
                 -minMapQ 20 -minQ 20 -minInd 5 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
                 -GL 1 -doSaf 1
@@ -225,9 +257,12 @@ and then compute the overall folded SFS by specifying the `-fold 1` option as pa
 for POP in JIGA PANY MBNS MAQU
 do
         echo $POP
-        $NGS/angsd/misc/realSFS Results/$POP.folded.saf.idx -fold 1 > Results/$POP.folded.sfs
+        realSFS Results/$POP.folded.saf.idx -fold 1 > Results/$POP.folded.sfs
 done
 ```
+
+How does the folded spectrum differ from the unfolded SFS?
+
 
 
 ---------------------------------------
@@ -245,6 +280,8 @@ This command may take some time.
 The output file has one line for each boostrapped replicate.
 
 
+
+<br>
 
 
 
@@ -264,28 +301,25 @@ POP2=JIGA
 for POP in MAQU MBNS
 do
         echo $POP
-        $NGS/angsd/misc/realSFS Results/$POP.saf.idx Results/$POP2.saf.idx > Results/$POP.$POP2.sfs
+        realSFS Results/$POP.saf.idx Results/$POP2.saf.idx > Results/$POP.$POP2.sfs
 done
 
 # we also need the comparison between MAQU and MBNS 
-$NGS/angsd/misc/realSFS Results/MAQU.saf.idx Results/MBNS.saf.idx > Results/MAQU.MBNS.sfs
+realSFS Results/MAQU.saf.idx Results/MBNS.saf.idx > Results/MAQU.MBNS.sfs
 ```
 
 The output file is a flatten matrix, where each value is the count of sites with the corresponding joint frequency ordered as [0,0] [0,1] and so on.
 ```
-less -S Results/JIGA.MAQU.sfs
-```
-You can plot it, but you need to define how many samples (individuals) you have per population.
-```
-Rscript $DIR/Scripts/plot2DSFS.R Results/JIGA.MAQU.sfs 10 10
-evince Results/JIGA.MAQU.sfs.pdf
+less -S Results/MAQU.JIGA.sfs
 ```
 
 You can even estimate SFS with higher order of magnitude.
 This command may take some time and you should skip it if not interested.
 ```
-# $NGS/angsd/misc/realSFS Results/JIGA.saf.idx Results/MBNS.saf.idx Results/MAQU.saf.idx > Results/JIGA.MBNS.MAQU.sfs
+#realSFS Results/JIGA.saf.idx Results/MBNS.saf.idx Results/MAQU.saf.idx > Results/JIGA.MBNS.MAQU.sfs
 ```
+
+<br>
 
 ------------------------------------
 
@@ -303,29 +337,24 @@ The 2D-SFS will be used as prior information for the joint allele frequency prob
 From these probabilities we will calculate the FST and population branch statistic (PBS) using JIGA as target population and MAQU and MBNS as reference populations.
 Our goal is to detect selection in JIGA in terms of allele frequency differentiation compared to MAQY and MBNS. 
 
-**Question**
-Based on the knowledge from the practicals of day 3, what pattern of selection (PBS) do you expect in JIGA? And would you expect any pronounced differentiation between MAQU and MBNS?
-
-
-
 Specifically, we are computing a slinding windows scan, with windows of 10kbp and a step of 1kbp.
 This can be achieved using the following commands.
 
 1) This command will compute per-site FST indexes (please note the order of files). The `-whichFst 1` option is preferred Fst estimator for small sample sizes, as it is the case for our test dataset.
 ```
-$NGS/angsd/misc/realSFS fst index Results/MAQU.saf.idx Results/MBNS.saf.idx Results/JIGA.saf.idx -sfs Results/MAQU.MBNS.sfs -sfs Results/JIGA.MAQU.sfs -sfs Results/JIGA.MBNS.sfs -fstout Results/JIGA.pbs -whichFst 1
+realSFS fst index Results/MAQU.saf.idx Results/MBNS.saf.idx Results/JIGA.saf.idx -sfs Results/MAQU.MBNS.sfs -sfs Results/MAQU.JIGA.sfs -sfs Results/MBNS.JIGA.sfs -fstout Results/JIGA.pbs -whichFst 1
 ```
 and you can have a look at their values:
 ```
-$NGS/angsd/misc/realSFS fst print Results/JIGA.pbs.fst.idx | less -S
+realSFS fst print Results/JIGA.pbs.fst.idx | less -S
 ```
 where columns are: chromosome, position, (a), (a+b) values for the three FST comparisons, where FST is defined as a/(a+b).
 Note that FST on multiple SNPs is calculated as sum(a)/sum(a+b).
 
 
-2) The next command will perform a sliding-window analysis:
+2) The next command will perform a sliding-window analysis, where we define the window size using the `-win` option and the step size using the `-step` option. (If you want non-sliding windows then you set `-step` equal to `-win`. Here we are choosing a window size of 10kb with a step size of 1kb.
 ```
-$NGS/angsd/misc/realSFS fst stats2 Results/JIGA.pbs.fst.idx -win 10000 -step 1000 > Results/JIGA.pbs.fst.txt
+realSFS fst stats2 Results/JIGA.pbs.fst.idx -win 10000 -step 1000 > Results/JIGA.pbs.fst.txt
 ```
 
 Have a look at the output file:
@@ -336,31 +365,31 @@ The header is:
 ```
 region  chr     midPos  Nsites  Fst01   Fst02   Fst12   PBS0    PBS1    PBS2
 ```
-Where are interested in the column `PBS2` which gives the PBS values assuming our population (coded here as 2) being the target population.
+
+
+<br>
+
+Where are interested in the column `PBS2` which gives the PBS values assuming our JIGA population (coded here as 2) being the target population.
 Note that negative PBS and FST values are equivalent to 0.
 
 We are also provided with the individual FST values.
+
 You can see that high values of PBS2 are indeed associated with high values of both Fst02 and Fst12 but not Fst01.
-We can plot the results along with the gene annotation.
+
+
+We can plot the results along our region of interest, including our inversion breakpoint annotation 
 ```
-Rscript $DIR/Scripts/plotPBS.R Results/MAQU.pbs.fst.txt Results/MAQU.pbs.pdf
+R
+
 ```
 
 It will also print out the maximum PBS value observed as this value will be used in the next part.
 This script will also plot the PBS variation in JIGA as a control comparison.
-```
-evince Results/MAQU.pbs.pdf
-```
+
+
 
 **QUESTION**
 In which part of our test sequence does JIGA display signatures of selection?
-
-
-
-**EXERCISE**
-
-Calculate PBS assuming PANY as target population.
-
 
 
 
@@ -379,7 +408,7 @@ This can be achieved using the following pipeline.
 First we compute the allele frequency posterior probabilities and associated statistics (-doThetas) using the SFS as prior information (-pest)
 ```
 POP=JIGA
-$NGS/angsd/angsd -b $DIR/$POP'_bams.txt' -ref $REF -anc $ANC -out Results/$POP \
+angsd -b $DIR/$POP'_bams.txt' -ref $REF -anc $ANC -out Results/$POP \
 	-uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
 	-minMapQ 20 -minQ 20 -minInd 5 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
 	-GL 1 -doSaf 1 \
@@ -390,9 +419,9 @@ Then we need to index these files and perform a sliding windows analysis using a
 ```
 POP=JIGA
 # estimate for the whole region
-$NGS/angsd/misc/thetaStat do_stat Results/$POP.thetas.idx
+thetaStat do_stat Results/$POP.thetas.idx
 # perform a sliding-window analysis
-$NGS/angsd/misc/thetaStat do_stat Results/$POP.thetas.idx -win 10000 -step 1000 -outnames Results/$POP.thetas.windows
+thetaStat do_stat Results/$POP.thetas.idx -win 10000 -step 1000 -outnames Results/$POP.thetas.windows
 ```
 
 Look at the results:
