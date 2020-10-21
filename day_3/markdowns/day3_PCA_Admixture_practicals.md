@@ -186,7 +186,7 @@ varPC4 <- (mme.pca$values[4]/pca.eigenval.sum)*100 #Variance explained by PC4
 
 <br>
 
-**Question**
+#### Question
 How strongly are the four different populations separated? And how much variation do the first to PCs explain? 
 
 <br>
@@ -246,7 +246,7 @@ ggsave(filename = "~/exercises/day3/Results/pca_LDpruned_pcangsd_plot.pdf", plot
 
 <br>
 
-**Question**
+#### Question
 Do the inferred population structures differ between the two approaches? How different are the inferred variances explained by PC1 and PC2? 
 
 **DISCLAIMER:** The inferred patterns and differences between the results will be strongly impacted by the small size of our test region. 
@@ -308,7 +308,9 @@ ggsave(filename = "~/exercises/day3/Results/pca_plot_allSNPs.pdf", plot = pca)
 
 <br>
 
-**Q**: How do population relationships differ between the on LD-pruned PCA and the full-dataset PCA? Why do the population relationships differ?
+#### Question: 
+
+How do population relationships differ between the on LD-pruned PCA and the full-dataset PCA? Why do the population relationships differ?
 
 <br>
 
@@ -323,8 +325,11 @@ As you can see the separation between the populations, particularly between JIGA
 </details>
 
 <br>
+<br>
 
-**Q**: What's with the lonely PANY individual that is intermediate between the two main clusters?
+#### Question: 
+
+What's with the lonely PANY individual that is intermediate between the two main clusters?
 
 <br>
 
@@ -361,7 +366,8 @@ We are mostly interested in the admixture proportions and the log likelihood of 
 
 <br>
 
-**Question:** 
+#### Question:
+
 What is the likelihood for `-K 2`?
 
 <details>
