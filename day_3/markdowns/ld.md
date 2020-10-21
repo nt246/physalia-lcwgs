@@ -264,10 +264,11 @@ provided in ngsLD. This script takes the LD estimation output (in our
 case `MME_ANGSD_PCA.ld`) as its input. Some important parameters
 include:
 
-  - `--max_kb_dist INT`: Maximum distance between nodes (input file 3rd
-    column) to assume they are connected
+  - `--max_kb_dist INT`: Maximum distance between nodes (ie. SNPs, input
+    file 3rd column) to assume they are connected
   - `--min_weight FLOAT`: Minimum weight (in –weight\_field) of an edge
-    to assume nodes are connected
+    to assume nodes are connected (the weight refers to the LD estimate
+    between two SNPs)
   - `--out FILE`: Path to output file \[STDOUT\]
 
 <br>
