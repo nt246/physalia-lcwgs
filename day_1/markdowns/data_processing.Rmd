@@ -239,7 +239,7 @@ We need to make sure the server knows where to find the programs we'll be runnin
 
 ```{bash, eval = FALSE}
 
-BASEDIR=~/exercises/day1/ # Note that no spaces are allowed! And don't put a slash after day1
+BASEDIR=~/exercises/day1/ # Note that no spaces are allowed!
 
 ```
 

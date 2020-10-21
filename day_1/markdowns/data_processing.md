@@ -370,7 +370,7 @@ to be specified every time we run our scripts in a new login session.
 
 ``` bash
 
-BASEDIR=~/exercises/day1/ # Note that no spaces are allowed! And don't put a slash after day1
+BASEDIR=~/exercises/day1/ # Note that no spaces are allowed!
 ```
 
 <br>

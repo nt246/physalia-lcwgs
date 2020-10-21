@@ -3,13 +3,18 @@ Tutorial 3b: Population structure and Admixture
 
 In this session you will learn how to use low-coverage whole genome data to do:
 
-* Principal Components Analysis
+* Principal Components Analysis (PCA)
 * Admixture analysis
 
 
 # Today’s data
 
-We have low-coverage NGS data for 60 Atlantic silversides from 4 populations as shown during day 1. These populations have been previously studied in [Therkildsen et al. 2019](https://science.sciencemag.org/content/365/6452/487) and [Wilder et al. 2020](https://onlinelibrary.wiley.com/doi/10.1002/evl3.189), and cover the entire distribution range of Atlantic silverside.
+As outlined in the previous exercises, we have low-coverage NGS data for 60 Atlantic silversides from the following 4 populations:
+
+![]("../img/Silverside_Sample_Map.png")
+
+These populations have been previously studied in [Therkildsen et al. 2019](https://science.sciencemag.org/content/365/6452/487) and [Wilder et al. 2020](https://onlinelibrary.wiley.com/doi/10.1002/evl3.189), and cover the entire distribution range of Atlantic silverside.
+
 Our NGS data are in bam format and span a 2Mb region on chromosome 24. The interesting aspect about chromosome 24 is that it harbours a large polymorphic inversion that differs in its frequency across populations. 
 The test dataset spans one breakpoint of this inversion (1Mb up and downstream).
 
