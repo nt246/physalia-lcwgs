@@ -154,23 +154,18 @@ pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","
          ,"MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS"
          ,"MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU")
 
-col <- c("firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick"
-         ,"goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1"
-         ,"lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue"
-         ,"royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue")
-
-
 mme.pca <- eigen(cov) #perform the pca using the eigen function. 
 ```
 
 We can then extract the eigenvectors from the pca object and format them into a dataframe for plotting, e.g. using `ggplot()`.
 ```
 eigenvectors = mme.pca$vectors #extract eigenvectors 
-pca.vectors = as.data.frame(cbind(pop,col, eigenvectors)) #combine with our population assignments
+pca.vectors = as.data.frame(cbind(pop, eigenvectors)) #combine with our population assignments
+df = type_convert(pca.vectors)
 
-pdf("~/exercises/day3/Results/pca_LDpruned_plot.pdf")
-plot(pca.vectors$V3, pca.vectors$V4, col=pca.vectors$col)
-dev.off() 
+pca = ggplot(data = df, aes(x=V2, y=V3)) + geom_point()
+
+ggsave(filename = "~/exercises/day3/Results/pca_LDpruned_plot.pdf", plot = pca)
 ```
 
 Additionally, we can extract the eigenvalues for each eigenvector, and can then estimate the variance explained for each eigenvector (e.g. here for PC1 to PC4): 
@@ -217,21 +212,16 @@ pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","
          ,"PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY"
          ,"MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS"
          ,"MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU")
-
-col <- c("firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick"
-         ,"goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1"
-         ,"lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue"
-         ,"royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue")
-	 
 	 
 mme.pca <- eigen(cov) #perform the pca using the eigen function. 
 
 eigenvectors = mme.pca$vectors #extract eigenvectors 
-pca.vectors = as.data.frame(cbind(pop,col, eigenvectors)) #combine with our population assignments
+pca.vectors = as.data.frame(cbind(pop, eigenvectors)) #combine with our population assignments
+df = type_convert(pca.vectors)
 
-pdf("~/exercises/day3/Results/pca_LDpruned_pcangsd_plot.pdf")
-plot(pca.vectors$V3, pca.vectors$V4, col=pca.vectors$col)
-dev.off() 
+pca = ggplot(data = df, aes(x=V2, y=V3)) + geom_point()
+
+ggsave(filename = "~/exercises/day3/Results/pca_LDpruned_pcangsd_plot.pdf", plot = pca)
 
 pca.eigenval.sum = sum(mme.pca$values) #sum of eigenvalues
 varPC1 <- (mme.pca$values[1]/pca.eigenval.sum)*100 #Variance explained by PC1
@@ -283,21 +273,16 @@ pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","
          ,"PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY"
          ,"MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS"
          ,"MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU")
-
-col <- c("firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick"
-         ,"goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1"
-         ,"lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue"
-         ,"royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue")
-	 
 	 
 mme.pca <- eigen(cov) #perform the pca using the eigen function. 
 
 eigenvectors = mme.pca$vectors #extract eigenvectors 
-pca.vectors = as.data.frame(cbind(pop,col, eigenvectors)) #combine with our population assignments
+pca.vectors = as.data.frame(cbind(pop, eigenvectors)) #combine with our population assignments
+df = type_convert(pca.vectors)
 
-pdf("~/exercises/day3/Results/pca_allSNPs_plot.pdf")
-plot(pca.vectors$V3, pca.vectors$V4, col=pca.vectors$col)
-dev.off() 
+pca = ggplot(data = df, aes(x=V2, y=V3)) + geom_point()
+
+ggsave(filename = "~/exercises/day3/Results/pca_allSNPs_plot.pdf", plot = pca) 
 ```
 
 <br>
