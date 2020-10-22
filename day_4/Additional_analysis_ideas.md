@@ -69,6 +69,7 @@ types of analysis based on genotype likelihoods.
 
 [HMMploidy](https://github.com/SamueleSoraggi/HMMploidy) under development
 
+<br>
 
 ### Miscellaneous
 
