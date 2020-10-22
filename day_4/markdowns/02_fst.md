@@ -64,12 +64,12 @@ pbs$PBS1[which(pbs$PBS1<0)]=0
 pbs$PBS2[which(pbs$PBS2<0)]=0
 pbs$PBS0[which(pbs$PBS0<0)]=0
 
-head(pbs)
+pbs.plot = ggplot(data = pbs, aes(x=midPos, y=PBS2)) + 
+  geom_point() + 
+  geom_vline(xintercept=1000000, colour = "firebrick")
 
-pdf("Results/pbs_plot.pdf")
-plot(pbs$midPos, pbs$PBS2, cex=1)
-abline(v=1000000, col="red", lwd=3, lty=2)
-dev.off() 
+
+ggsave(filename = "~/exercises/day3/Results/pbs_plot.pdf", plot = pbs.plot)
 
 q() # close R
 ```
