@@ -71,7 +71,7 @@ We only want to focus on variant sites in our population structure analyses. As 
 Here is some example code to illustrate how we would do this. WE ARE NOT RUNNING THIS CODE TODAY - JUST READ OVER IT, DON'T COPY AND RUN IT.
 
 ```
-# angsd -b $DIR'ALL_bams.txt' -anc $REF -out $BASEDIR'/Results/MME_SNPs' \
+# angsd -b $DIR'/ALL_bams.txt' -anc $REF -out $BASEDIR'/Results/MME_SNPs' \
 #	-minMapQ 20 -minQ 20 -doMaf 1 -minMaf 0.05 -SNP_pval 2e-6 \
 #	-GL 1 -doGlf 2 -doMajorMinor 1 -doPost 1
 ```
