@@ -64,3 +64,17 @@ types of analysis based on genotype likelihoods.
 [angsd](http://www.popgen.dk/angsd/index.php/Association)
 
 <br>
+
+### Ploidy inference
+
+[HMMploidy](https://github.com/SamueleSoraggi/HMMploidy) under development
+
+
+### Miscellaneous
+
+[ngsTools](https://github.com/mfumagalli/ngsTools)
+
+
+
+
+

@@ -11,3 +11,7 @@ Files for the the Physalia course on Population genomic inference from low-cover
 
 * [Tutorial 3b: Population structure](https://github.com/nt246/physalia-lcwgs/blob/main/day_3/markdowns/day3_PCA_Admixture_practicals.md)
 
+* [Tutorial 4: Natural selection](https://github.com/nt246/physalia-lcwgs/blob/main/day_4/markdowns/01_sfs.md)
+
+
+
