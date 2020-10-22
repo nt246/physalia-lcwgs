@@ -211,14 +211,14 @@ We will use R to generate an LD-pruned SNP list in a format that can be used by 
 ```{r eval=FALSE}
 
 
+library(tidyverse)
 basedir="~/exercises/day3/"
-
-pruned_position <- as.integer(gsub("Mme_chr24_2558528-4558528:", "", readLines(paste0(basedir, "ngsld/MME_ANGSD_PCA_subsampled_unlinked.id"))))
-
-snp_list <- read.table(paste0(basedir, "angsd/MME_ANGSD_PCA.mafs.gz"), stringsAsFactors = F, header = T)[,1:4]
-
-pruned_snp_list <- snp_list[snp_list$position %in% pruned_position, ]
-  
-write.table(pruned_snp_list, paste0(basedir, "ngsld/LDpruned_snps.list"), col.names = F, row.names = F, quote = F, sep = "\t")
+pruned_position <- read_lines(paste0(basedir, "ngsld/MME_ANGSD_PCA_subsampled_unlinked.id")) %>%
+  str_remove("Mme_chr24_2558528-4558528:") %>%
+  as.integer()
+pruned_snp_list <- read_tsv(paste0(basedir, "angsd/MME_ANGSD_PCA.mafs.gz")) %>%
+  dplyr::select(1:4) %>%
+  filter(position %in% pruned_position)
+write_tsv(pruned_snp_list, paste0(basedir, "ngsld/LDpruned_snps.list"), col_names = F)
 
 ```
