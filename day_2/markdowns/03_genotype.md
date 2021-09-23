@@ -84,10 +84,17 @@ How many sites have at least one missing genotype?
 zcat Results/PANY.geno.gz | grep -1 - | wc -l
 ```
 How many sites do we have?
+
+<details>
+
+<summary> click here for help </summary>
+
 ```
 zcat Results/PANY.geno.gz | | wc -l
 ```
 Why is that?
+
+</details>
 
 You can control how to set missing genotype when their confidence is low with `-postCutoff`.
 For instance, we can set as missing genotypes when their (highest) genotype posterior probability is below 0.95:
@@ -98,10 +105,17 @@ angsd -glf Results/PANY.glf.gz -fai $REF.fai -nInd 15 -out Results/PANY \
 
 How many sites do we have in total?
 How many sites have at least one missing genotype now?
+
+<details>
+
+<summary> click here for help </summary>
+
 ```
 zcat Results/PANY.geno.gz | wc -l
 zcat Results/PANY.geno.gz | grep -1 - | wc -l
 ```
+
+</details>
 
 Why are there some many sites with missing genotypes?
 

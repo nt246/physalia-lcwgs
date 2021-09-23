@@ -131,6 +131,11 @@ However, various cutoffs and a dedicated filtering should be perform to assess r
 Try varying the cutoff for SNP calling and record how many sites are predicted to be variable for each scenario.
 Identify which sites are not predicted to be variable anymore with a more stringent cutoff (e.g. between a pair of scenario), and plot their allele frequencies.
 Use the previously calculated genotype likelihoods as input file (add proper values for ```-glf ? -fai ? -nInd ?```).
+
+<details>
+
+<summary> click here for help </summary>
+
 ```
 # iterate over some cutoffs (you can change these)
 for PV in 0.05 1e-2 1e-4 1e-6
@@ -142,6 +147,8 @@ do
         echo $PV `zcat Results/PANY.$PV.mafs.gz | tail -n+2 | wc -l`
 done
 ```
+
+</details>
 
 A possible output is (your numbers may be different):
 ```
