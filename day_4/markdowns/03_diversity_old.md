@@ -8,26 +8,40 @@ The procedure is similar to what done for PBS, and the SFS is again used as a pr
 From these quantities, expectations of various diversity indexes are compute.
 This can be achieved using the following pipeline.
 
-First, calculate `theta` estimates for each site.
+%![thetas1](../files/thetas1.png)
+
+First we compute the allele frequency posterior probabilities and associated statistics (-doThetas) using the SFS as prior information (-pest)
 ```
 POP=JIGA
-realSFS saf2theta Results/$POP.saf.idx -sfs Results/$POP.sfs -outname Results/$POP
+angsd -b $DIR/$POP'_bams.txt' -ref $REF -anc $ANC -out Results/$POP \
+	-uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
+	-minMapQ 20 -minQ 20 -minInd 5 -setMinDepth 5 -setMaxDepth 60 -doCounts 1 \
+	-GL 1 -doSaf 1 \
+	-doThetas 1 -pest Results/$POP.sfs
 ```
 
-It is possible to extract the logscale persite thetas using the ./thetaStat print program.
 ```
-thetaStat print Results/$POP.thetas.idx 2>/dev/null | head 
-```
-
-Then we need to a sliding windows analysis using a window length of 10kbp and a step size of 1kbp.
-```
-thetaStat do_stat Results/$POP.thetas.idx -win 10000 -step 1000 -outnames Results/$POP.thetas.windows.gz
+POP=JIGA
+realSFS saf2theta Results/JIGA.saf.idx -sfs Results/JIGA.sfs -outname Results/JIGA
 ```
 
-Look at the results.
-The output in the pestPG file are the sum of the per site estimates for a region.
+![thetas2](../files/thetas2.png)
+
+Then we need to index these files and perform a sliding windows analysis using a window length of 10kbp and a step size of 1kbp.
 ```
-less -S Results/$POP.thetas.windows.gz.pestPG
+POP=JIGA
+# estimate for the whole region
+thetaStat do_stat Results/$POP.thetas.idx
+# perform a sliding-window analysis
+thetaStat do_stat Results/$POP.thetas.idx -win 10000 -step 1000 -outnames Results/$POP.thetas.windows
+```
+
+Look at the results:
+```
+cat Results/JIGA.thetas.idx.pestPG
+```
+```
+less -S Results/JIGA.thetas.windows.pestPG
 ```
 
 The output contains many different columns: 
@@ -40,8 +54,6 @@ but we will only focus on a few here:
 
 `Chr` and `WinCenter` provide the chromosome and basepair coordinates for each window and `nSites` tells us how many genotyped sites (variant and invariant) are present in each 10kb. `tW` and `tP` are estimates of theta, namely Watterson's theta and pairwise theta. `tP` can be used to estimate the window-based pairwise nucleotide diversity (π), when we divide `tP` by the number of sites within the corresponding window (`-nSites`). 
 Furthermore, the output also contains multiple neutrality statistics. As we used an outgroup to polarise the spectrum, we can theoretically look at all of these. When you only have a folded spectrum, you can't correctly estimate many of these neutrality statistics, such as Fay's H (`fayH`). However, Tajima's D (`Tajima`) can be estimated using the folded or unfolded spectrum.   
-
-More info can be found [here](http://popgen.dk/angsd/index.php/Thetas,Tajima,Neutrality_tests).
 
 **QUESTION**
 Do regions with increased PBS values in JIGA (PBS02) correspond to regions with low Tajima's D and reduced nucleotide diversity? If so, this would be additional evidence for positive selection in JIGA. 
