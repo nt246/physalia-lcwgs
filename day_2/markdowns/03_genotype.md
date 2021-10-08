@@ -85,7 +85,7 @@ zcat Results/PANY.geno.gz | grep -1 - | wc -l
 ```
 How many sites do we have?
 ```
-zcat Results/PANY.geno.gz | | wc -l
+zcat Results/PANY.geno.gz | wc -l
 ```
 Why is that?
 
