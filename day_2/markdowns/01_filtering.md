@@ -7,7 +7,7 @@ First, we will learn **how to build a command line in ANGSD**.
 
 To see a full list of options in ANGSD type:
 ```
-angsd
+angsd --help
 ```
 and you should see something like
 ```
@@ -132,14 +132,19 @@ This is achieved by the ```-minInd``` option.
 
 ![stage0A](../files/stage0A.png)
 
-A possible command line would contain the following filtering:
-```
+<details>
+
+<summary> click kere for a possible command line for filtering </summary>
+
+```bash
 ...
 # angsd -b ALL.bams -ref $REF -out Results/ALL \
 #        -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
 #        -minMapQ 20 -minQ 20 -minInd 5 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
 ...
 ```
+</details>
+
 which corresponds to the following scenario:
 
 Parameter | Meaning |

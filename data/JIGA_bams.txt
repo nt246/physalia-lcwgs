@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /home/ubuntu/Share/data/BAMS/JIGA_01.bam
 /home/ubuntu/Share/data/BAMS/JIGA_02.bam
 /home/ubuntu/Share/data/BAMS/JIGA_03.bam
@@ -13,3 +14,20 @@
 /home/ubuntu/Share/data/BAMS/JIGA_13.bam
 /home/ubuntu/Share/data/BAMS/JIGA_14.bam
 /home/ubuntu/Share/data/BAMS/JIGA_15.bam
+=======
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/JIGA_01.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/JIGA_02.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/JIGA_03.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/JIGA_04.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/JIGA_05.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/JIGA_06.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/JIGA_07.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/JIGA_08.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/JIGA_09.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/JIGA_10.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/JIGA_11.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/JIGA_12.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/JIGA_13.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/JIGA_14.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/JIGA_15.bam
+>>>>>>> 34f07ec7137d979f9b218be30ba5a10d9a6c8af6

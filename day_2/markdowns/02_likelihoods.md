@@ -35,12 +35,19 @@ For most applications and data, GATK and SAMtools models should give similar res
 
 Let's assume to work with PANY samples only.
 A possible command line to calculate genotype likelihoods might be:
+
+<details>
+
+<summary> click here to show it </summary>
+
 ```
 angsd -b $DIR/PANY_bams.txt -ref $REF -out Results/PANY \
         -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
         -minMapQ 20 -minQ 20 -minInd 5 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
         -GL 2 -doGlf 4
 ```
+
+</details>
 
 where we specify:
 * -GL 2: genotype likelihood model as in GATK
@@ -58,10 +65,21 @@ What's the information inside them?
 ls Results/PANY.*
 ```
 
-```
+<details>
+
+<summary> click here for help </summary>
+
+```bash
 less -S Results/PANY.arg
 less -S Results/PANY.glf.gz
 ```
+
+Have a look at .glf.gz file. The first two columns are the reference sequence (e.g. chromososome) and position. Then you have 10 likelihoods for all possible genotypes in the order AA,AC,AG,AT,CC,CG,CT,GG,GT,TT. This set of 10 likelihoods is repeated sequentially starting from the left of the file for each individual in the row order of individuals in the BAM file. The values are log-scaled likelihood ratios, all scaled by the most likely genotype.
+
+Since the likelihoods have been scaled to the most likely and log-transformed, the most likely genotype will have a value of 0.
+
+</details>
+
 
 **BONUS QUESTION**
 Try to output files in binary format. Which option should you use? Can you open these files?
@@ -69,7 +87,6 @@ Look at the file sizes of text vs binary format. Which one is smaller? Which one
 
 **BONUS QUESTION**
 Try to change some filtering options and record the number of entries in the final output file.
-
 
 You have learnt how to calculate and read genotype likelihood files.
 Now you are going to learn how to perform genotype calling with ANGSD.

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /home/ubuntu/Share/data/BAMS/MAQU_01.bam
 /home/ubuntu/Share/data/BAMS/MAQU_02.bam
 /home/ubuntu/Share/data/BAMS/MAQU_03.bam
@@ -13,3 +14,20 @@
 /home/ubuntu/Share/data/BAMS/MAQU_13.bam
 /home/ubuntu/Share/data/BAMS/MAQU_14.bam
 /home/ubuntu/Share/data/BAMS/MAQU_15.bam
+=======
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MAQU_01.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MAQU_02.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MAQU_03.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MAQU_04.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MAQU_05.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MAQU_06.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MAQU_07.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MAQU_08.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MAQU_09.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MAQU_10.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MAQU_11.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MAQU_12.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MAQU_13.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MAQU_14.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MAQU_15.bam
+>>>>>>> 34f07ec7137d979f9b218be30ba5a10d9a6c8af6

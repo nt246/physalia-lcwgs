@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /home/ubuntu/Share/data/BAMS/MBNS_01.bam
 /home/ubuntu/Share/data/BAMS/MBNS_02.bam
 /home/ubuntu/Share/data/BAMS/MBNS_03.bam
@@ -13,3 +14,20 @@
 /home/ubuntu/Share/data/BAMS/MBNS_13.bam
 /home/ubuntu/Share/data/BAMS/MBNS_14.bam
 /home/ubuntu/Share/data/BAMS/MBNS_15.bam
+=======
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MBNS_01.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MBNS_02.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MBNS_03.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MBNS_04.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MBNS_05.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MBNS_06.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MBNS_07.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MBNS_08.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MBNS_09.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MBNS_10.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MBNS_11.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MBNS_12.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MBNS_13.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MBNS_14.bam
+/workdir/arne/physalia_lcwgs_data/data_practicals/BAMS/MBNS_15.bam
+>>>>>>> 34f07ec7137d979f9b218be30ba5a10d9a6c8af6

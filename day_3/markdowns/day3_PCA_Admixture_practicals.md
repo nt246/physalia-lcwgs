@@ -71,7 +71,7 @@ We only want to focus on variant sites in our population structure analyses. As 
 Here is some example code to illustrate how we would do this. WE ARE NOT RUNNING THIS CODE TODAY - JUST READ OVER IT, DON'T COPY AND RUN IT.
 
 ```
-# angsd -b $DIR'ALL_bams.txt' -anc $REF -out $BASEDIR'/Results/MME_SNPs' \
+# angsd -b $DIR'/ALL_bams.txt' -anc $REF -out $BASEDIR'/Results/MME_SNPs' \
 #	-minMapQ 20 -minQ 20 -doMaf 1 -minMaf 0.05 -SNP_pval 2e-6 \
 #	-GL 1 -doGlf 2 -doMajorMinor 1 -doPost 1
 ```
@@ -154,23 +154,18 @@ pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","
          ,"MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS"
          ,"MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU")
 
-col <- c("firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick"
-         ,"goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1"
-         ,"lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue"
-         ,"royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue")
-
-
 mme.pca <- eigen(cov) #perform the pca using the eigen function. 
 ```
 
 We can then extract the eigenvectors from the pca object and format them into a dataframe for plotting, e.g. using `ggplot()`.
 ```
 eigenvectors = mme.pca$vectors #extract eigenvectors 
-pca.vectors = as.data.frame(cbind(pop,col, eigenvectors)) #combine with our population assignments
+pca.vectors = as.data.frame(cbind(pop, eigenvectors)) #combine with our population assignments
+df = type_convert(pca.vectors)
 
-pdf("~/exercises/day3/Results/pca_LDpruned_plot.pdf")
-plot(pca.vectors$V3, pca.vectors$V4, col=pca.vectors$col)
-dev.off() 
+pca = ggplot(data = df, aes(x=V2, y=V3)) + geom_point()
+
+ggsave(filename = "~/exercises/day3/Results/pca_LDpruned_plot.pdf", plot = pca)
 ```
 
 Additionally, we can extract the eigenvalues for each eigenvector, and can then estimate the variance explained for each eigenvector (e.g. here for PC1 to PC4): 
@@ -217,21 +212,16 @@ pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","
          ,"PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY"
          ,"MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS"
          ,"MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU")
-
-col <- c("firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick"
-         ,"goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1"
-         ,"lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue"
-         ,"royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue")
-	 
 	 
 mme.pca <- eigen(cov) #perform the pca using the eigen function. 
 
 eigenvectors = mme.pca$vectors #extract eigenvectors 
-pca.vectors = as.data.frame(cbind(pop,col, eigenvectors)) #combine with our population assignments
+pca.vectors = as.data.frame(cbind(pop, eigenvectors)) #combine with our population assignments
+df = type_convert(pca.vectors)
 
-pdf("~/exercises/day3/Results/pca_LDpruned_pcangsd_plot.pdf")
-plot(pca.vectors$V3, pca.vectors$V4, col=pca.vectors$col)
-dev.off() 
+pca = ggplot(data = df, aes(x=V2, y=V3)) + geom_point()
+
+ggsave(filename = "~/exercises/day3/Results/pca_LDpruned_pcangsd_plot.pdf", plot = pca)
 
 pca.eigenval.sum = sum(mme.pca$values) #sum of eigenvalues
 varPC1 <- (mme.pca$values[1]/pca.eigenval.sum)*100 #Variance explained by PC1
@@ -283,21 +273,16 @@ pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","
          ,"PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY"
          ,"MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS"
          ,"MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU")
-
-col <- c("firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick","firebrick"
-         ,"goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1","goldenrod1"
-         ,"lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue","lightblue"
-         ,"royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue","royalblue")
-	 
 	 
 mme.pca <- eigen(cov) #perform the pca using the eigen function. 
 
 eigenvectors = mme.pca$vectors #extract eigenvectors 
-pca.vectors = as.data.frame(cbind(pop,col, eigenvectors)) #combine with our population assignments
+pca.vectors = as.data.frame(cbind(pop, eigenvectors)) #combine with our population assignments
+df = type_convert(pca.vectors)
 
-pdf("~/exercises/day3/Results/pca_allSNPs_plot.pdf")
-plot(pca.vectors$V3, pca.vectors$V4, col=pca.vectors$col)
-dev.off() 
+pca = ggplot(data = df, aes(x=V2, y=V3)) + geom_point()
+
+ggsave(filename = "~/exercises/day3/Results/pca_allSNPs_plot.pdf", plot = pca) 
 ```
 
 <br>
@@ -343,7 +328,7 @@ ngsAdmix uses a genotype likelihood file in beagle format (same as for PCAngsd) 
 In addition, there are a range of parameters that can be adjusted. Here we only set the number of ancestry clusters using the `-K` option to K=2. In reality, it is advisable to compare different numbers of ancestry clusters by iterating over different values of K. 
 
 ```
-NGSadmix -likes $BASEDIR'/Results/MME_ANGSD_PCA_LDpruned.beagle.gz/ -K 2 -o $BASEDIR'Results/MME_LDpruned_ngsAdmix_K2_out'
+NGSadmix -likes $BASEDIR'/Results/MME_ANGSD_PCA_LDpruned.beagle.gz/ -K 2 -o $BASEDIR'/Results/MME_LDpruned_ngsAdmix_K2_out'
 ```
 
 <br>
@@ -459,6 +444,8 @@ However, one can also set the number of clusters using the `-admix_K` option.
 <br>
 
 ```
+cd $BASEDIR
+
 python ~/Software/pcangsd/pcangsd.py -beagle Results/MME_ANGSD_PCA_LDpruned.beagle.gz -admix -admix_K 2 -o Results/MME_PCAngsd_K2_out
 ```
 

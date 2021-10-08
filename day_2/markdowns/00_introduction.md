@@ -23,13 +23,13 @@ mkdir day2
 cd day
 ```
 and you should be in `~/day2`.
+
 Also, you will have to create two folders on your working directory, one for your results and one for your intermediate data.
 ```
 mkdir Results
 mkdir Data
 ```
-
-Let's set all paths
+Let's set all environment variables
 ```
 DIR=/home/ubuntu/Share/data
 DATA=$DIR/BAMS
