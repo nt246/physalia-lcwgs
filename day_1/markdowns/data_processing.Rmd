@@ -69,21 +69,15 @@ We'll be working almost exclusively through the command line, so if you have not
 
 ## 2. Copy the working directories with the needed input files
 
-Let's first get set up and retrieve a copy the data we will be working on. First let's create an `exercises` directory, and copy the `day1` directory from `~/Share`. 
+Let's first get set up and retrieve a copy the data we will be working on. You can do this by copying the `day1` directory from `~/Share` to your home directory. 
 
 ```{bash, eval = FALSE}
 
-mkdir exercises
-cd exercises
-
-cp -r ~/Share/day1 .
+cp -r ~/Share/day1 ~
 
 # Go into your new day1 directory and examine its contents
-cd day1
+cd ~/day1
 ls
-
-# Check the path to your copy of the day1 directory - you will need to enter this as your BASEDIR variable below
-pwd
 
 ```
 
@@ -179,7 +173,7 @@ First, let's just look up the sample IDs. For each prefix in our `fastq_list.txt
 
 ```{bash, eval = FALSE}
 
-BASEDIR=~/exercises/day1/ # Path to the base directory / project directory.
+BASEDIR=~/day1/ # Path to the base directory / project directory.
 
 SAMPLELIST=$BASEDIR/sample_lists/fastq_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the fastq table.
 
@@ -235,11 +229,9 @@ We need to make sure the server knows where to find the programs we'll be runnin
 
 ### Set the project directory as a variable named `BASEDIR`
 
-> Hint: Use `pwd` to check the path to where you copied your day1 folder to and change the `~/exercises/day1/` part in the following line if that is not the correct path to your base directory
-
 ```{bash, eval = FALSE}
 
-BASEDIR=~/exercises/day1/ # Note that no spaces are allowed!
+BASEDIR=~/day1/ # Note that no spaces are allowed!
 
 ```
 
@@ -253,12 +245,13 @@ When running these scripts on the Physalia server, run the following:
 
 FASTQC=fastqc
 TRIMMOMATIC=trimmomatic
-PICARD=~/Share/picard-2.23.8/picard.jar
+PICARD=~/Share/picard/build/libs/picard.jar
 SAMTOOLS=samtools
 BOWTIEBUILD=bowtie2-build
 BOWTIE=bowtie2
 BAMUTIL=bam
 JAVA=java
+GATK=~/Share/GenomeAnalysisTK-3.7-0/GenomeAnalysisTK.jar
 
 ```
 
@@ -286,8 +279,6 @@ A FASTQ file normally contains four lines per sequence.
   * Line 4 encodes the quality of each base in the sequence in Line 2 (i.e. the probability of sequencing error in log scale). For most current sequencers, these base qualities are encoded in the [Phred33 format](https://drive5.com/usearch/manual/quality_score.html), but always check to make sure how your quality scores are encoded. 
 
 Now read the code below, guess what it does, and run it on your own. Does it do what you expect it to do? Inspect the output and try to identify the group of four lines for each read. 
-
-> Hint: make sure that you have changed the `BASEDIR` path to your own base directory.
 
 <br>
 
@@ -430,10 +421,8 @@ The first three samples are the samples for which we examined the FastQC outputs
 
 <br>
 
-Discuss first, then you can check here for a hint
-
 <details>
-  <summary>Click here to view the R code</summary>
+  <summary>Discuss first, then you can click here for a hint</summary>
   
 <br>
 
@@ -619,7 +608,7 @@ Since we'll also be working on bam files rather than fastq files downstream from
 
 library(tidyverse)
 
-basedir <- "~/exercises/day1/"
+basedir <- "~/day1/"
 refname <- "mme_physalia_testdata_chr24"
 
 fastq_list <- read_lines(paste0(basedir, "sample_lists/fastq_list.txt"))
@@ -735,6 +724,12 @@ We also want to clip overlapping reads. We will use the [BamUtil clipOverlap](ht
 knitr::include_graphics("../img/clip_overlap.png") 
 ```
 
+Please note that the deduplication step is rather memory-consuming and only ~15 students can run it at the same time. It should only take about a minute to run though, so if you see the following error messages, please wait for a minute and try to rerun your code.
+
+```
+Killed
+Exiting due to ERROR:
+```
 
 <br>	
 
@@ -769,18 +764,13 @@ Use `head` to look at the top lines of the dupstat report for each sample (in `$
 
 ## Indel realignment (optional)
 
-Unlike other variant detector programs like the [GATK Haplotype Caller](https://gatk.broadinstitute.org/hc/en-us/articles/360037225632-HaplotypeCaller) or [Freebayes](https://github.com/ekg/freebayes), [angsd](http://www.popgen.dk/angsd/index.php/ANGSD) does not realign reads during its analysis. Because it can be difficult to distinguish indels from SNPs at the end of reads if each alignment is considered separately, indels may interfere with genotype likelihood estimation. We there recommend running your bam files through a program that realigns reads around indels prior to running `angsd`. The [GATK IndelRealigner](https://github.com/broadinstitute/gatk-docs/blob/master/gatk3-tutorials/(howto)_Perform_local_realignment_around_indels.md) takes all the aligned sequences from all samples in to account to validate the indels discovered from the mapping process and then realigns each read locally. We don't have time to run it today, but the code is provided here if you want to run it on your own (GATK3 is not installed on the AWS server).
+Unlike other variant detector programs like the [GATK Haplotype Caller](https://gatk.broadinstitute.org/hc/en-us/articles/360037225632-HaplotypeCaller) or [Freebayes](https://github.com/ekg/freebayes), [angsd](http://www.popgen.dk/angsd/index.php/ANGSD) does not realign reads during its analysis. Because it can be difficult to distinguish indels from SNPs at the end of reads if each alignment is considered separately, indels may interfere with genotype likelihood estimation. We there recommend running your bam files through a program that realigns reads around indels prior to running `angsd`. The [GATK IndelRealigner](https://github.com/broadinstitute/gatk-docs/blob/master/gatk3-tutorials/(howto)_Perform_local_realignment_around_indels.md) takes all the aligned sequences from all samples in to account to validate the indels discovered from the mapping process and then realigns each read locally. This is not a mandatory step and tends to be very time-consuming if you have a large dataset, but the code is provided here if you want to give it a try (it takes ~3 minutes). We will not use these output for the rest of this course though.
 
 
 <details>
   <summary>Click here to see the GATK IndelRealigner code</summary>
 
 ```{bash, eval = FALSE}
-## Use an older version of Java
-#export JAVA_HOME=/usr/local/jdk1.8.0_121
-#export PATH=$JAVA_HOME/bin:$PATH
-
-
 BAMLIST=$BASEDIR/sample_lists/bam_list_dedup_overlapclipped.list # Path to a list of merged, deduplicated, and overlap clipped bam files. Full paths should be included. This file has to have a suffix of ".list"
 REFERENCE=$BASEDIR/reference/mme_physalia_testdata_chr24.fa # Path to reference fasta file and file name
 REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files
@@ -792,14 +782,7 @@ done
 ## Loop over each sample
 cd $BASEDIR/bam/
 for SAMPLEBAM in `cat $BAMLIST`; do
-
-if [ -e $SAMPLEBAM'.bai' ]; then
-	echo "the file already exists"
-else
-	## Index bam files
 	$SAMTOOLS index $SAMPLEBAM
-fi
-
 done
 
 ## Realign around in-dels
@@ -830,7 +813,7 @@ $JAVA -Xmx40g -jar $GATK \
 
 ## Estimate read depth in your bam files
 
-After all the filtering steps, we want to know what final depth of coverage we have for each samples for downstream analysis. We will use [samtools depth](http://www.htslib.org/doc/samtools-depth.html) to first compute the read depth at each bp position in the genome. Then we will pull the output file to our local machines and compute depth summary stats in R. This is just one way to summarize the depth. There are other programs available to provide summaries of the depth in a bam file, including [samtools coverage](http://www.htslib.org/doc/samtools-coverage.html), [Mosdepth](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6030888/) and [Indexcov](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5737511/).
+After all the filtering steps, we want to know what final depth of coverage we have for each samples for downstream analysis. Here, we will use [samtools depth](http://www.htslib.org/doc/samtools-depth.html) to first compute the read depth at each bp position in the genome. Then we will pull the output file to our local machines and compute depth summary stats in R. This is just one way to summarize the depth. There are other programs available to provide summaries of the depth in a bam file, including [samtools coverage](http://www.htslib.org/doc/samtools-coverage.html), [Mosdepth](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6030888/) and [Indexcov](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5737511/).
 
 <br>	
 
@@ -854,7 +837,7 @@ Now we'll process the data in R
 ```{r eval = FALSE}
 library(tidyverse)
 
-basedir <- "~/exercises/day1/" # Make sure to edit this to match your $BASEDIR
+basedir <- "~/day1/" # Make sure to edit this to match your $BASEDIR
 bam_list <- read_lines(paste0(basedir, "/sample_lists/merged_bam_list.txt"))
 
 for (i in 1:length(bam_list)){
