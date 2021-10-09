@@ -1022,10 +1022,7 @@ messages, please wait for a minute and try to rerun your code.
 <br>
 
 MarkDuplicates has very verbose output - take a look at it to make sure
-the programs ran and didn’t throw an error. It is also memory intensive
-so if too many people are running it simutaneously, some people may
-experience an issue. If that is the case, wait for a minute and run it
-again.
+the programs ran and didn’t throw an error.
 
 Next, look at the output from the clipOverlap. Was there a substantial
 difference in how much sequence got clipped in the three samples, and
