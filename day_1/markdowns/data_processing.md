@@ -268,7 +268,7 @@ bash before, it might be helpful to look over a tutorial, e.g. [this one
 from Software
 Carpentry](https://swcarpentry.github.io/shell-novice/05-loop/index.html).
 
-Some key extracts from that tutorial here:
+Here is a key extract inspired from that tutorial:
 
 The basic syntax of a `for loop` is as follows
 
@@ -280,11 +280,11 @@ for thing in list_of_things; do    # ; is equivalent to an end-of-line. We can a
 done
 ```
 
-When the shell sees the keyword for, it knows to repeat a command (or
+When the shell sees the keyword `for`, it knows to repeat a command (or
 group of commands) once for each item in a list. Each time the loop runs
 (called an iteration), an item in the list is assigned in sequence to
 the variable, and the commands inside the loop are executed, before
-moving on to the next item in the list. Inside the loop, we call for the
+moving on to the next item in the list. Inside the loop, we call the
 variable’s value by putting `$` in front of it. The `$` tells the shell
 interpreter to treat the variable as a variable name and substitute its
 value in its place, rather than treat it as text or an external command.
@@ -294,12 +294,12 @@ value in its place, rather than treat it as text or an external command.
 ## 5. Practice using bash `for loops` to iterate over target samples
 
 First, let’s just look up the sample IDs. For each prefix in our
-`fastq_list.txt` will use `grep` to extract the relevant line from the
-fastq table, use `cut` to extract the column with sample ID, and then
-`echo` to print the sample ID
+`fastq_list.txt`, we will use `grep` to extract the relevant line from
+the fastq table, use `cut` to extract the column with sample ID, and
+then `echo` to print the sample ID
 
 ``` bash
-BASEDIR=~/day1/ # Path to the base directory / project directory.
+BASEDIR=~/day1 # Path to the base directory / project directory.
 
 SAMPLELIST=$BASEDIR/sample_lists/fastq_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the fastq table.
 
@@ -359,7 +359,7 @@ to be specified every time we run our scripts in a new login session.
 ### Set the project directory as a variable named `BASEDIR`
 
 ``` bash
-BASEDIR=~/day1/ # Note that no spaces are allowed!
+BASEDIR=~/day1 # Note that no spaces are allowed!
 ```
 
 <br>
@@ -440,11 +440,11 @@ quality issues. The
 program provides a useful set of diagnostics, so we’ll run it on each on
 our fastq files to check their quality. In the interest of time, we will
 only look at three of our fastqs. We’ll loop over each of these and call
-FastQC on the forward file only (it only takes the path to the input and
-the path to where you want the output as parameters). When working with
-your own data, always make sure to look both at the forward and reverse
-files because sometimes issues can arise in only one of the read
-directions.
+FastQC on the forward file only (the program only takes the path to the
+input and the path to where you want the output as parameters). When
+working with your own data, always make sure to look both at the forward
+and reverse files because sometimes issues can arise in only one of the
+read directions.
 
 <br>
 
@@ -464,14 +464,14 @@ done
 If the program ran, you should now see the output (in html format and a
 zip file with various files) in your `day1/fastqc` directory. To view
 the .html, use `scp` (as described
-[here](https://github.com/nt246/physalia-lcwgs/blob/main/server_log_in.md))
+[here](https://github.com/nt246/physalia-lcwgs/blob/main/server_connection.pdf))
 or FileZilla to transfer the html output files to your local machine and
 open them in a web browser.
 
 If you’re not able to download your own files, you can have a look at
-our’s
+ours
 [here](https://github.com/nt246/physalia-lcwgs/tree/main/day_1/fastqc).
-we are keeping them in our GitHub repo, but GitHub doesn’t render .html
+We are keeping them in our GitHub repo, but GitHub doesn’t render .html
 files, so to view the output, click on the output.html file you want to
 view, copy its URL and paste it into [this handy
 viewer](https://htmlpreview.github.io/) to see it in rendered html
@@ -492,14 +492,7 @@ Which sample do you think came from which batch?
 
 <br>
 
-<div class="figure" style="text-align: center">
-
-<img src="../img/Bioanalyzer_Batch1.png" alt="Library fragment size distributions" width="49%" height="20%" /><img src="../img/Bioanalyzer_Batch2.png" alt="Library fragment size distributions" width="49%" height="20%" />
-<p class="caption">
-Library fragment size distributions
-</p>
-
-</div>
+<img src="../img/Bioanalyzer_Batch1.png" width="49%" height="20%" style="display: block; margin: auto;" /><img src="../img/Bioanalyzer_Batch2.png" width="49%" height="20%" style="display: block; margin: auto;" />
 
 <br> <br>
 
@@ -520,18 +513,20 @@ some of our libraries, so will will need to clip that off. Here, we use
 [Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic) to clip
 the adapter sequence off the ends of reads where they appear. This step
 requires us to input the known adapter sequences that we used when
-preparing the libraries (`ADAPTERS`). In this exercise, the libraries
-were prepared using Illumina’s Nextera adapters (sequences listed in
-NexteraPE\_NT.fa).
+preparing the libraries. In this exercise, the libraries were prepared
+using Illumina’s Nextera adapters (sequences listed in
+`reference/NexteraPE_NT.fa`), and we will read those into the `ADAPTERS`
+variable.
 
 Look over the code below. The first block of text specifies which files
 we are using as input. Then we start looping over our samples. Within
 the loop, the first step is to extract the relevant sample data from our
 sample table and assign those as temporary variables. Then we have two
-`if statements` to call the program with slightly different parameters
+`if statements` to call Trimmomatic with slightly different parameters
 for paired-end and single-end data. Trimmomatic has lots of different
-filtering modules. Here we only clip sequence that match to our adapter
-sequence and remove reads that end up being &lt;40bp after clipping.
+filtering modules that can be useful in different contexts. Here we only
+clip sequence that match to our adapter sequence and remove reads that
+end up being &lt;40bp after clipping.
 
 <br>
 
@@ -577,20 +572,22 @@ done
 
 <br>
 
-Have a look at the output printed to the screen and we’re iterating over
+Have a look at the output printed to the screen as we’re iterating over
 the samples. Note the first time it says
 
 `TrimmomaticPE: Started with arguments:`
 
 Following this, you will see that actual variable names that were added
 to the command in each iteration of our loop (e.g. what
-`$RAWFASTQ_ID$RAWFASTQSUFFIX1` expanded to (was value was assigned to
+`$RAWFASTQ_ID$RAWFASTQSUFFIX1` expanded to (what value was assigned to
 this variable)).
 
 Also examine the section that says
 `ILLUMINACLIP: Using 2 prefix pairs, 8 forward/reverse sequences, 0 forward only sequences, 0 reverse only sequences Input Read Pairs:`
 
 This will show how many reads were removed from our filtering.
+
+<br>
 
 #### Question
 
@@ -627,9 +624,9 @@ on the files in your `adapter_clipped` folder.
 
 As we saw in our FastQC output, the base call quality score tends to
 drop off towards the ends of the reads. As we’ll learn more about
-tomorrow, probabilistic analysis frameworks, like `angsd` and others
-based on genotype likelihoods, can take the basecall quality into
-account and that way give less weight to a basecall that is less
+tomorrow, probabilistic analysis frameworks, like `ANGSD` and others
+based on genotype likelihoods, can take the base call quality into
+account and that way give less weight to a base call that is less
 certain.
 
 However, as a conservative measure, we may want to just trim off the
@@ -827,7 +824,7 @@ parameters
 $SAMTOOLS merge output.bam input1.bam input2.bam   # We replace the output.bam with the name we want to give the output merged bam and the two input names with the names of the bam files we want to merge.
 ```
 
-We could write a for loop to get the separate fastq files for eacch
+We could write a for loop to get the separate fastq files for each
 individual merged. But in this case, we will instead run a shell script
 that has a line that calls `samtools merge` for each individual. You can
 find the script `merge_bams.sh` in the `scripts` folder. Have a look at
@@ -840,13 +837,13 @@ script to automate it. In the interest of time, let’s move forward with
 the merging script we have already generated, but we provide R-code
 below that generates this script from the your fastq-level sample table
 and list, so you don’t need to do this manually if you’re working with
-your own samples. The R-code also write a new sample\_list that
+your own samples.
 
-Since we’ll also be working on bam files rather than fastq files
-downstream from this point, we also need to list bam IDs rather than
-fastq IDs in the sample lists that specify which samples we want to loop
-over in a particular pipeline step. The R-code below generates that as
-well, but for today, we’ll just use the list that we’ve already added to
+Since we’ll be working on bam files rather than fastq files downstream
+from this point, we need to list bam IDs rather than fastq IDs in the
+sample lists that specify which samples we want to loop over in a
+particular pipeline step. The R-code below generates that as well, but
+for today, we’ll just use the list that we’ve already added to
 `$BASEDIR/sample_lists`.
 
 <br>
@@ -967,7 +964,7 @@ Click here
 
 Because there may be particular issues associated each sequencing lane
 (in particular the base call quality score calibration may vary), so for
-some downstream analysis, we need to keep track of what data were
+some downstream analyses, we need to keep track of what data were
 sequenced in what lane. By mapping the fastq files separately, we were
 able to add read platform unit `PU` information to the read group tag in
 the bam file while mapping with `bowtie2` (see the script). This way we
@@ -983,8 +980,8 @@ reasons.
 ## Deduplicate and clip overlapping read pairs
 
 Here, we remove the PCR duplicates and trim the overlapping part of each
-read pair in pair-end data. It is important to deduplicate after
-merging, because PCR duplicates for the same sample may exist in
+read pair in pair-end data. It is important to wait to deduplicate until
+after merging, because PCR duplicates for the same sample may exist in
 different lanes. We use the [Picard Tools
 MarkDuplicates](https://gatk.broadinstitute.org/hc/en-us/articles/360037052812-MarkDuplicates-Picard-).
 
@@ -1036,23 +1033,23 @@ does that make sense in light of their FastQC reports?
 
 Use `head` to look at the top lines of the dupstat report for each
 sample (in
-`$BASEDIR/bam/XXX_merged_bt2_mme_physalia_testdata_chr24_minq20_sorted_dupstat.txt`).
-Can you spot where the duplication rate is reported. Does it vary
-between our samples?
+`$BASEDIR/bam/XXX_merged_bt2_mme_physalia_testdata_chr24_minq20_sorted_dupstat.txt`
+\[replace the XXX with the sample \[prefix\]\]). Can you spot where the
+duplication rate is reported. Does it vary between our samples?
 
 <br> <br>
 
 ## Indel realignment (optional)
 
-Unlike other variant detector programs like the [GATK Haplotype
+Unlike other variant detector programs (like the [GATK Haplotype
 Caller](https://gatk.broadinstitute.org/hc/en-us/articles/360037225632-HaplotypeCaller)
-or [Freebayes](https://github.com/ekg/freebayes),
-[angsd](http://www.popgen.dk/angsd/index.php/ANGSD) does not realign
+or [Freebayes](https://github.com/ekg/freebayes)),
+[ANGSD](http://www.popgen.dk/angsd/index.php/ANGSD) does not realign
 reads during its analysis. Because it can be difficult to distinguish
 indels from SNPs at the end of reads if each alignment is considered
 separately, indels may interfere with genotype likelihood estimation. We
-there recommend running your bam files through a program that realigns
-reads around indels prior to running `angsd`. The [GATK
+therefore recommend running your bam files through a program that
+realigns reads around indels prior to running `ANGSD`. The [GATK
 IndelRealigner](https://github.com/broadinstitute/gatk-docs/blob/master/gatk3-tutorials/(howto)_Perform_local_realignment_around_indels.md)
 takes all the aligned sequences from all samples in to account to
 validate the indels discovered from the mapping process and then
@@ -1109,7 +1106,7 @@ $JAVA -Xmx40g -jar $GATK \
 ## Estimate read depth in your bam files
 
 After all the filtering steps, we want to know what final depth of
-coverage we have for each samples for downstream analysis. Here, we will
+coverage we have for each sample for downstream analysis. Here, we will
 use [samtools depth](http://www.htslib.org/doc/samtools-depth.html) to
 first compute the read depth at each bp position in the genome. Then we
 will pull the output file to our local machines and compute depth
@@ -1122,8 +1119,8 @@ coverage](http://www.htslib.org/doc/samtools-coverage.html),
 
 <br>
 
-First, **on Amazon Cloud**, run `samtools depth` to get depth per sample
-per position.
+First, **on the Amazon Cloud system**, run `samtools depth` to get depth
+per sample per position.
 
 ``` bash
 BAMLIST=$BASEDIR/sample_lists/merged_bam_list.txt # Path to a list of unique sample prefixes for merged bam files.  
@@ -1138,20 +1135,23 @@ done
 
 <br>
 
-**On your local computer**, use `scp` to download the bam list and the
-depth files. For example:
+**On your local computer**, use FileZila if you have that installed
+(configuration instructions
+[here](https://github.com/nt246/physalia-lcwgs/blob/main/server_connection.pdf)
+or `scp` from a new Terminal window (where you’re not logged into the
+server) to download the bam list and the depth files. For example:
 
 ``` bash
 ## Edit the follow variables
 USER=user1 ## Replace this with your user name and the correct IP address
 IP=52.39.39.206 ## Replace this with today's IP address
-BASEDIR=~/day1/ ## Replace this with a directory on your computer where you want to store the downloaded files
-KEY=~/keys/c1.pem ## Replace this with the path to your pem file
+BASEDIR=~/day1 ## Replace this with a directory on your computer where you want to store the downloaded files
+KEY=~/keys/c1.pem ## Replace this with the path to where you have saved your pem file on your local computer
 
 ## Create $BASEDIR if it doesn't yet exist and 
 mkdir $BASEDIR
 cd $BASEDIR
-## Downnload the depth files and the bam list
+## Download the depth files and the bam list
 scp -i $KEY -r ${USER}@${IP}:~/day1/bam/*depth.gz ./
 scp -i $KEY -r ${USER}@${IP}:~/day1/sample_lists/merged_bam_list.txt ./
 ```
