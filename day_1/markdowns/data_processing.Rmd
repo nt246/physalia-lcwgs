@@ -115,7 +115,7 @@ For our scripts below to work, the sample table has to be a **tab deliminated** 
 
   * `prefix` the prefix of raw fastq file names
   
-  * `lane_number` lane number; each sequencing lane or batch should be assigned a unique identifier
+  * `lane_number` lane number; each sequencing lane or batch should be assigned a unique identifier. This is important so that if you sequence a library across multiple different sequencing lanes, you can keep track of which lane/batch a particular set of reads came from (important for accounting for sequencing error patterns or batch effects).
   
   * `seq_id` sequence ID; this variable is only relevant when different libraries were prepared out of the same sample and were run in the same lane (e.g. if you wanted to include a replicate). In this case, seq_id should be used to distinguish these separate libraries. If you only have a single library prepared from each of your samples (even if you sequence that same library across multiple lanes), you can just put 1 for all samples in this column.
 
@@ -123,7 +123,7 @@ For our scripts below to work, the sample table has to be a **tab deliminated** 
   
   * `population` population name; the population or other relevant grouping variable that the individual belongs to 
   
-  * `data_type` data type; there can only be two possible entries: `pe` (for paired-end data) or `se` (for single end data). We need this in the table because for some of our processing steps, the commands are slightly different for paired-end and single-end data.
+  * `data_type` data type; there are only two allowed entries here: `pe` (for paired-end data) or `se` (for single end data). We need this in the table because for some of our processing steps, the commands are slightly different for paired-end and single-end data.
 
 It is important to make sure that the combination of sample_id, seq_id, and lane_number is unique for each fastq file. 
 
@@ -136,7 +136,7 @@ Have a look at the list we'll be using in `day1/sample_lists/fastq_list.txt` and
 <br>
 
 ### Activity
-Compare the `fastq_list.txt` to the `fastq_table.txt`. Which populations to the samples we'll be analyzing today originate from?
+Compare the `fastq_list.txt` to the `fastq_table.txt`. Which populations do the samples we'll be analyzing today originate from?
 
 <br>
 

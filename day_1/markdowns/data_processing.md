@@ -196,7 +196,11 @@ order:
 -   `prefix` the prefix of raw fastq file names
 
 -   `lane_number` lane number; each sequencing lane or batch should be
-    assigned a unique identifier
+    assigned a unique identifier. This is important so that if you
+    sequence a library across multiple different sequencing lanes, you
+    can keep track of which lane/batch a particular set of reads came
+    from (important for accounting for sequencing error patterns or
+    batch effects).
 
 -   `seq_id` sequence ID; this variable is only relevant when different
     libraries were prepared out of the same sample and were run in the
@@ -212,7 +216,7 @@ order:
 -   `population` population name; the population or other relevant
     grouping variable that the individual belongs to
 
--   `data_type` data type; there can only be two possible entries: `pe`
+-   `data_type` data type; there are only two allowed entries here: `pe`
     (for paired-end data) or `se` (for single end data). We need this in
     the table because for some of our processing steps, the commands are
     slightly different for paired-end and single-end data.
@@ -239,7 +243,7 @@ header in this file.
 ### Activity
 
 Compare the `fastq_list.txt` to the `fastq_table.txt`. Which populations
-to the samples we’ll be analyzing today originate from?
+do the samples we’ll be analyzing today originate from?
 
 <br>
 
