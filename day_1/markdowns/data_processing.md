@@ -989,14 +989,6 @@ clipOverlap](https://genome.sph.umich.edu/wiki/BamUtil:_clipOverlap)
 
 <img src="../img/clip_overlap.png" width="49%" height="20%" />
 
-Please note that the deduplication step is rather memory-consuming and
-only \~15 students can run it at the same time. It should only take
-about a minute to run though, so if you see the following error
-messages, please wait for a minute and try to rerun your code.
-
-    Killed
-    Exiting due to ERROR:
-
 <br>
 
 ``` bash
@@ -1015,6 +1007,16 @@ for SAMPLEBAM in `cat $BAMLIST`; do
 
 done
 ```
+
+<br>
+
+Please note that the deduplication step is rather memory-consuming and
+only \~15 students can run it at the same time. It should only take
+about a minute to run though, so if you see the following error
+messages, please wait for a minute and try to rerun your code.
+
+    Killed
+    Exiting due to ERROR:
 
 <br>
 
@@ -1116,6 +1118,9 @@ coverage](http://www.htslib.org/doc/samtools-coverage.html),
 
 <br>
 
+First, **on Amazon Cloud**, run `samtools depth` to get depth per sample
+per position.
+
 ``` bash
 BAMLIST=$BASEDIR/sample_lists/merged_bam_list.txt # Path to a list of unique sample prefixes for merged bam files.  
 REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files 
@@ -1129,19 +1134,38 @@ done
 
 <br>
 
-Now we’ll process the data in R
+**On your local computer**, use `scp` to download the bam list and the
+depth files. For example:
+
+``` bash
+## Edit the follow variables
+USER=user1 ## Replace this with your user name and the correct IP address
+IP=52.39.39.206 ## Replace this with today's IP address
+BASEDIR=~/day1/ ## Replace this with a directory on your computer where you want to store the downloaded files
+KEY=~/keys/c1.pem ## Replace this with the path to your pem file
+
+## Create $BASEDIR if it doesn't yet exist and 
+mkdir $BASEDIR
+cd $BASEDIR
+## Downnload the depth files and the bam list
+scp -i $KEY -r ${USER}@${IP}:~/day1/bam/*depth.gz ./
+scp -i $KEY -r ${USER}@${IP}:~/day1/sample_lists/merged_bam_list.txt ./
+```
+
+<br>
+
+Now we’ll process and visualize the data in R
 
 ``` r
 library(tidyverse)
 
 basedir <- "~/day1/" # Make sure to edit this to match your $BASEDIR
-bam_list <- read_lines(paste0(basedir, "/sample_lists/merged_bam_list.txt"))
+bam_list <- read_lines(paste0(basedir, "/merged_bam_list.txt"))
 
 for (i in 1:length(bam_list)){
-  
   bamfile = bam_list[i]
   # Compute depth stats
-  depth <- read_tsv(paste0(basedir, '/bam/', bamfile, "_bt2_mme_physalia_testdata_chr24_minq20_sorted_dedup_overlapclipped.bam.depth.gz"), col_names = F)$X1
+  depth <- read_tsv(paste0(basedir, "/", bamfile, "_bt2_mme_physalia_testdata_chr24_minq20_sorted_dedup_overlapclipped.bam.depth.gz"), col_names = F)$X1
   mean_depth <- mean(depth)
   sd_depth <- sd(depth)
   mean_depth_nonzero <- mean(depth[depth > 0])
@@ -1149,24 +1173,24 @@ for (i in 1:length(bam_list)){
   median <- median(depth)
   presence <- as.logical(depth)
   proportion_of_reference_covered <- mean(presence)
-  
+  output_temp <- tibble(bamfile, mean_depth, sd_depth, mean_depth_nonzero, mean_depth_within2sd, median, proportion_of_reference_covered)
+
   # Bind stats into dataframe and store sample-specific per base depth and presence data
   if (i==1){
-    output <- data.frame(bamfile, mean_depth, sd_depth, mean_depth_nonzero, mean_depth_within2sd, median, proportion_of_reference_covered)
+    output <- output_temp
     total_depth <- depth
     total_presence <- presence
   } else {
-    output <- rbind(output, cbind(bamfile, mean_depth, sd_depth, mean_depth_nonzero, mean_depth_within2sd, median, proportion_of_reference_covered))
+    output <- bind_rows(output, output_temp)
     total_depth <- total_depth + depth
     total_presence <- total_presence + presence
   }
 }
-print(output)
 
 output %>%
   mutate(across(where(is.numeric), round, 3))
 
-# Plot the depth distribution
+# Plot the depth distribution (this may take a few minutes to run)
 tibble(total_depth = total_depth, position = 1:length(total_depth))  %>%
   ggplot(aes(x = position, y = total_depth)) +
   geom_point(size = 0.1)
@@ -1175,8 +1199,12 @@ tibble(total_depth = total_depth, position = 1:length(total_depth))  %>%
 total_depth_summary <- count(tibble(total_depth = total_depth), total_depth)
 total_presence_summary <- count(tibble(total_presence = total_presence), total_presence)
 total_depth_summary %>%
-  ggplot(aes(x = log(total_depth), y = n)) +
+  ggplot(aes(x = total_depth, y = n)) +
   geom_point()
+total_depth_summary %>%
+  ggplot(aes(x = total_depth, y = n)) +
+  geom_point() +
+  coord_cartesian(xlim=c(NA, 20))
 total_presence_summary %>%
   ggplot(aes(x = total_presence, y = n)) +
   geom_col()
