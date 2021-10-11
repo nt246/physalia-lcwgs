@@ -325,7 +325,7 @@ ngsAdmix uses a genotype likelihood file in beagle format (same as for PCAngsd) 
 In addition, there are a range of parameters that can be adjusted. Here we only set the number of ancestry clusters using the `-K` option to K=2. In reality, it is advisable to compare different numbers of ancestry clusters by iterating over different values of K. 
 
 ```
-NGSadmix -likes $BASEDIR'/Results/MME_ANGSD_PCA_LDpruned.beagle.gz/ -K 2 -o $BASEDIR'/Results/MME_LDpruned_ngsAdmix_K2_out'
+NGSadmix -likes $BASEDIR'/Results/MME_ANGSD_PCA_LDpruned.beagle.gz' -K 2 -o $BASEDIR'/Results/MME_LDpruned_ngsAdmix_K2_out'
 ```
 
 <br>
