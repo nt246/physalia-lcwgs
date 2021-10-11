@@ -145,7 +145,7 @@ We have to load the covariance matrix into R and then we can optionally provide 
 ```
 R
 
-#Load the covariance matrix
+#Load the covariance matrix. Don't forget to change the file path if you have downloaded the data to your own computer.
 cov <- as.matrix(read.table("~/exercises/day3/Results/MME_ANGSD_PCA_LDpruned.covMat", header = F))
 
 #We will also add a column with population assingments
@@ -160,12 +160,11 @@ mme.pca <- eigen(cov) #perform the pca using the eigen function.
 We can then extract the eigenvectors from the pca object and format them into a dataframe for plotting, e.g. using `ggplot()`.
 ```
 eigenvectors = mme.pca$vectors #extract eigenvectors 
-pca.vectors = as.data.frame(cbind(pop, eigenvectors)) #combine with our population assignments
-df = type_convert(pca.vectors)
+pca.vectors = as_tibble(cbind(pop, data.frame(eigenvectors))) #combine with our population assignments
 
-pca = ggplot(data = df, aes(x=V2, y=V3)) + geom_point()
+pca = ggplot(data = pca.vectors, aes(x=X1, y=X2, colour = pop)) + geom_point()
 
-ggsave(filename = "~/exercises/day3/Results/pca_LDpruned_plot.pdf", plot = pca)
+ggsave(filename = "~/exercises/day3/Results/pca_LDpruned_plot.pdf", plot = pca) #change file path if data on your own computer
 ```
 
 Additionally, we can extract the eigenvalues for each eigenvector, and can then estimate the variance explained for each eigenvector (e.g. here for PC1 to PC4): 
