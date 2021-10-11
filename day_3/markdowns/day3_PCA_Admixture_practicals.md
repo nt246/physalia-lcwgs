@@ -215,12 +215,11 @@ pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","
 mme.pca <- eigen(cov) #perform the pca using the eigen function. 
 
 eigenvectors = mme.pca$vectors #extract eigenvectors 
-pca.vectors = as.data.frame(cbind(pop, eigenvectors)) #combine with our population assignments
-df = type_convert(pca.vectors)
+pca.vectors = as_tibble(cbind(pop, data.frame(eigenvectors))) #combine with our population assignments
 
-pca = ggplot(data = df, aes(x=V2, y=V3)) + geom_point()
+pca = ggplot(data = pca.vectors, aes(x=X1, y=X2, colour = pop)) + geom_point()
 
-ggsave(filename = "~/exercises/day3/Results/pca_LDpruned_pcangsd_plot.pdf", plot = pca)
+ggsave(filename = "~/exercises/day3/Results/pca_LDpruned_pcangsd_plot.pdf", plot = pca) #change file path if data on your own computer
 
 pca.eigenval.sum = sum(mme.pca$values) #sum of eigenvalues
 varPC1 <- (mme.pca$values[1]/pca.eigenval.sum)*100 #Variance explained by PC1
@@ -276,12 +275,11 @@ pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","
 mme.pca <- eigen(cov) #perform the pca using the eigen function. 
 
 eigenvectors = mme.pca$vectors #extract eigenvectors 
-pca.vectors = as.data.frame(cbind(pop, eigenvectors)) #combine with our population assignments
-df = type_convert(pca.vectors)
+pca.vectors = as_tibble(cbind(pop, data.frame(eigenvectors))) #combine with our population assignments
 
-pca = ggplot(data = df, aes(x=V2, y=V3)) + geom_point()
+pca = ggplot(data = pca.vectors, aes(x=X1, y=X2, colour = pop)) + geom_point()
 
-ggsave(filename = "~/exercises/day3/Results/pca_allSNPs_plot.pdf", plot = pca) 
+ggsave(filename = "~/exercises/day3/Results/pca_allSNPs_plot.pdf", plot = pca) #change file path if data on your own computer
 ```
 
 <br>
