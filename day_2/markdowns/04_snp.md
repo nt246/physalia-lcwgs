@@ -119,6 +119,7 @@ Try to write down this command by yourself and comment the results.
 ```
 
 As a general guidance, `-GL 1`, `-doMaf 1/2` and `-doMajorMinor 1` should be the preferred choice when data uncertainty is high.
+However, when working with multiple populations `-doMajorMinor 1` is not suitable as you need to ensure that each site is polarised in the same way among different populations. Therefore, in these conditions, it is better to use option 4 or 5.
 If interested in analysing very low frequency SNPs, then `-doMaf 2` should be selected.
 When accurate information on reference sequence or outgroup are available, one can use `-doMajorMinor` to 4 or 5.
 Also, detecting variable sites based on their probability of being SNPs is generally a better choice than defining a threshold on the allele frequency.
