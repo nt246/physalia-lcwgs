@@ -126,7 +126,7 @@ These filters will retain only uniquely mapping reads, not tagged as bad, consid
 `-C 50` reduces the effect of reads with excessive mismatches, while `-baq 1` computes base alignment quality as explained here ([BAQ](http://samtools.sourceforge.net/mpileup.shtml)) used to rule out false SNPs close to INDELS.
 
 Also, you may want to remove reads with low mapping quality and sites with low quality or covered by few reads (low depth).
-Under these circumnstances, the assignment of individual genotypes and SNPs is problematic, and can lead to errors.
+Under these circumstances, the assignment of individual genotypes and SNPs is problematic, and can lead to errors.
 We may also want to remove sites where a fraction (half?) of the individuals have no data.
 This is achieved by the ```-minInd``` option.
 
@@ -134,7 +134,7 @@ This is achieved by the ```-minInd``` option.
 
 <details>
 
-<summary> click kere for a possible command line for filtering </summary>
+<summary> click here for a possible command line for filtering </summary>
 
 ```bash
 ...

@@ -33,7 +33,7 @@ A description of these different implementation can be found [here](http://www.p
 The GATK model refers to the first GATK paper, SAMtools is somehow more sophisticated (non-independence of errors), SOAPsnp requires a reference sequence for recalibration of quality scores, SYK is error-type specific.
 For most applications and data, GATK and SAMtools models should give similar results.
 
-Let's assume to work with PANY samples only.
+Let's first assume we will work with PANY samples only.
 A possible command line to calculate genotype likelihoods might be:
 
 <details>
