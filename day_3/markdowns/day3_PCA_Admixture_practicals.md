@@ -143,7 +143,7 @@ We can look at the covariance matrix in R, where we will also perform the PCA us
 We have to load the covariance matrix into R and then we can optionally provide population assignments for each individual (rows in same order as input bam file list `-b $DIR/ALL_bams.txt`). We can start R in the server by typing `R` (end the session by typing `quit()`)
 
 ```
-R
+/usr/bin/R
 
 #Load the covariance matrix. Don't forget to change the file path if you have downloaded the data to your own computer.
 cov <- as.matrix(read.table("~/day3/Results/MME_ANGSD_PCA_LDpruned.covMat", header = F))
@@ -201,7 +201,7 @@ python ~/Software/pcangsd/pcangsd.py -beagle Results/MME_ANGSD_PCA_LDpruned.beag
 We can perform the principal components analysis and plot PC1 vs PC2 the same way we did before.
 
 ```
-R
+/usr/bin/R
 
 #Load the covariance matrix
 cov <- as.matrix(read.table("~/day3/Results/PCAngsd_LDpruned_covmat.cov", header = F))
@@ -261,7 +261,7 @@ angsd -b $DIR/ALL_bams.txt -anc $REF -out $BASEDIR'Results/MME_ANGSD_PCA' \
 
 Again, we perform the principal components analysis using the `eigen` function in R:
 ```
-R
+/usr/bin/R
 
 #Load the covariance matrix
 cov <- as.matrix(read.table("~/day3/Results/MME_ANGSD_PCA.covMat", header = F))
@@ -374,7 +374,7 @@ best like=-11324.127798 after 93 iterations
 
 Furthermore, we can plot admixture proportions in R:
 ```
-R
+/usr/bin/R
 
 library(tidyverse) #load the tidyverse package for formatting and plotting
 
