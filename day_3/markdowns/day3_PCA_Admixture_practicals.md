@@ -40,7 +40,7 @@ mkdir Data
 Then use `pwd` to check where your `day3` directory is located and use its path to set your `BASEDIR`.
 
 ```
-BASEDIR=~/exercises/day3/    # Edit if this is not the path to your day3 directory. Remember that ~ is equivalent to /home/USER 
+BASEDIR=~/day3/    # Edit if this is not the path to your day3 directory. Remember that ~ is equivalent to /home/USER 
 ```
 
 And then we set all the rest of the paths:
@@ -146,7 +146,7 @@ We have to load the covariance matrix into R and then we can optionally provide 
 R
 
 #Load the covariance matrix. Don't forget to change the file path if you have downloaded the data to your own computer.
-cov <- as.matrix(read.table("~/exercises/day3/Results/MME_ANGSD_PCA_LDpruned.covMat", header = F))
+cov <- as.matrix(read.table("~/day3/Results/MME_ANGSD_PCA_LDpruned.covMat", header = F))
 
 #We will also add a column with population assingments
 pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA"
@@ -164,7 +164,7 @@ pca.vectors = as_tibble(cbind(pop, data.frame(eigenvectors))) #combine with our 
 
 pca = ggplot(data = pca.vectors, aes(x=X1, y=X2, colour = pop)) + geom_point()
 
-ggsave(filename = "~/exercises/day3/Results/pca_LDpruned_plot.pdf", plot = pca) #change file path if data on your own computer
+ggsave(filename = "~/day3/Results/pca_LDpruned_plot.pdf", plot = pca) #change file path if data on your own computer
 ```
 
 Additionally, we can extract the eigenvalues for each eigenvector, and can then estimate the variance explained for each eigenvector (e.g. here for PC1 to PC4): 
@@ -204,7 +204,7 @@ We can perform the principal components analysis and plot PC1 vs PC2 the same wa
 R
 
 #Load the covariance matrix
-cov <- as.matrix(read.table("~/exercises/day3/Results/PCAngsd_LDpruned_covmat.cov", header = F))
+cov <- as.matrix(read.table("~/day3/Results/PCAngsd_LDpruned_covmat.cov", header = F))
 
 #We will also add a column with population assingments
 pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA"
@@ -219,7 +219,7 @@ pca.vectors = as_tibble(cbind(pop, data.frame(eigenvectors))) #combine with our 
 
 pca = ggplot(data = pca.vectors, aes(x=X1, y=X2, colour = pop)) + geom_point()
 
-ggsave(filename = "~/exercises/day3/Results/pca_LDpruned_pcangsd_plot.pdf", plot = pca) #change file path if data on your own computer
+ggsave(filename = "~/day3/Results/pca_LDpruned_pcangsd_plot.pdf", plot = pca) #change file path if data on your own computer
 
 pca.eigenval.sum = sum(mme.pca$values) #sum of eigenvalues
 varPC1 <- (mme.pca$values[1]/pca.eigenval.sum)*100 #Variance explained by PC1
@@ -264,7 +264,7 @@ Again, we perform the principal components analysis using the `eigen` function i
 R
 
 #Load the covariance matrix
-cov <- as.matrix(read.table("~/exercises/day3/Results/MME_ANGSD_PCA.covMat", header = F))
+cov <- as.matrix(read.table("~/day3/Results/MME_ANGSD_PCA.covMat", header = F))
 
 #We will also add a column with population assingments
 pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA"
@@ -279,7 +279,7 @@ pca.vectors = as_tibble(cbind(pop, data.frame(eigenvectors))) #combine with our 
 
 pca = ggplot(data = pca.vectors, aes(x=X1, y=X2, colour = pop)) + geom_point()
 
-ggsave(filename = "~/exercises/day3/Results/pca_allSNPs_plot.pdf", plot = pca) #change file path if data on your own computer
+ggsave(filename = "~/day3/Results/pca_allSNPs_plot.pdf", plot = pca) #change file path if data on your own computer
 ```
 
 <br>
@@ -379,7 +379,7 @@ R
 library(tidyverse) #load the tidyverse package for formatting and plotting
 
 #Load the covariance matrix
-admix = read_table("~/exercise/day3/Results/MME_LDpruned_ngsAdmix_K2_out.qopt", col_names = F)
+admix = read_table("~/day3/Results/MME_LDpruned_ngsAdmix_K2_out.qopt", col_names = F)
 
 #We will also add a column with population assingments
 pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA"
@@ -390,7 +390,7 @@ pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","
 admix.id = as.data.frame(cbind(pop, admix))
 names(admix.id) = c("pop","q1","q2")
 
-pdf("~/exercises/day3/Results/NGSadmix_LDpruned_K2_plot.pdf")
+pdf("~/day3/Results/NGSadmix_LDpruned_K2_plot.pdf")
 plot = barplot(t(as.matrix(subset(admix.id, select=q1:q2))), col=c("firebrick","royalblue"), border=NA)
 dev.off() 
 ```
