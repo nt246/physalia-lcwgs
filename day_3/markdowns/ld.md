@@ -309,6 +309,16 @@ We will use R to generate an LD-pruned SNP list in a format that can be
 used by ANGSD for downstream analyses. This can be run on the AWS
 server.
 
+To launch R on the AWS server, run the following command.
+
+``` bash
+
+/usr/bin/R
+```
+
+Once you have launched R, run the following script in R to generate the
+SNP list.
+
 ``` r
 library(tidyverse)
 basedir="~/day3/"
