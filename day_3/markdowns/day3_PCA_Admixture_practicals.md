@@ -144,7 +144,7 @@ We have to load the covariance matrix into R and then we can optionally provide 
 
 ```
 /usr/bin/R
-
+library(tidyverse)
 #Load the covariance matrix. Don't forget to change the file path if you have downloaded the data to your own computer.
 cov <- as.matrix(read.table("~/day3/Results/MME_ANGSD_PCA_LDpruned.covMat", header = F))
 
