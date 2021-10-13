@@ -16,7 +16,7 @@ Linkage disequilibrium estimation
           - [Install required R packages on your local
             computer](#install-required-r-packages-on-your-local-computer)
           - [Run `LD_blocks.sh` on your local
-            computer](#run-ld_blocks.sh-on-your-local-computer)
+            computer](#run-ld_blockssh-on-your-local-computer)
       - [LD pruning](#ld-pruning)
           - [Run LD pruning](#run-ld-pruning)
           - [Generate an LD-pruned SNP
@@ -63,22 +63,16 @@ to be specified every time we run our scripts in a new login session.
 
 ## Set the project directory as a variable named `BASEDIR`
 
-Let’s continue working within the `exercises` directory we created in
-our home directory. We’ll copy today’s data files into a new directory
-named `day3` within the `exercises` directory with the following
-commands
-
-> Hint: Use `pwd` to check the path to where you created your exercises
-> directory, and change the `~/exercises/day3/` and the BASEDIR
-> specification if that is not the correct path to your base directory
+We’ll copy today’s data files into your home directory with the
+following commands
 
 ``` bash
 
 ## Copy the shared project directory to your home directory
-cp ~/Share/day3/ ~/exercises/ -r
+cp -r ~/Share/day3/ ~ 
 
 ## Define BASEDIR as your project directory
-BASEDIR=~/exercises/day3/ # Note that no spaces are allowed! 
+BASEDIR=~/day3/ # Note that no spaces are allowed! 
 
 cd $BASEDIR
 ls
@@ -88,7 +82,7 @@ ls
 
 ## Specify the path to required programs as variables
 
-When running these scripts on the Physalia server, run the following:
+When running these scripts on the AWS server, run the following:
 
 ``` bash
 
@@ -203,8 +197,8 @@ following script and run it.
 
 ``` bash
 
-# scp -i "c2.pem" user2@34.220.201.184:~/exercises/day3/ngsld/MME_ANGSD_PCA_subsampled.ld ./
-# scp -i "c2.pem" user2@34.220.201.184:~/exercises/day3/scripts/LD_blocks.sh ./
+# scp -i "c2.pem" user2@34.220.201.184:~/day3/ngsld/MME_ANGSD_PCA_subsampled.ld ./
+# scp -i "c2.pem" user2@34.220.201.184:~/day3/scripts/LD_blocks.sh ./
 ```
 
 <br>
@@ -220,7 +214,29 @@ install.packages("reshape2")
 install.packages("gtools")
 ```
 
-\<br\<
+<details>
+
+<summary> Click here if you are having trouble installing LDheatmap
+</summary>
+
+If you see the following error message when installing `LDheatmap`
+
+    ERROR: dependency ‘snpStats’ is not available for package ‘LDheatmap’
+
+You can try to install `snpStats` using
+
+``` r
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("snpStats")
+```
+
+Once `snpStats` is installed, you can run
+`install.packages("LDheatmap")` again.
+
+</details>
+
+<br>
 
 ### Run `LD_blocks.sh` on your local computer
 
@@ -295,7 +311,7 @@ server.
 
 ``` r
 library(tidyverse)
-basedir="~/exercises/day3/"
+basedir="~/day3/"
 pruned_position <- read_lines(paste0(basedir, "ngsld/MME_ANGSD_PCA_subsampled_unlinked.id")) %>%
   str_remove("Mme_chr24_2558528-4558528:") %>%
   as.integer()
