@@ -377,7 +377,6 @@ best like=-11324.127798 after 93 iterations
 Furthermore, we can plot admixture proportions in R:
 ```
 /usr/bin/R
-library(tidyverse)
 
 library(tidyverse) #load the tidyverse package for formatting and plotting
 
