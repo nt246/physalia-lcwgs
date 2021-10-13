@@ -202,6 +202,7 @@ We can perform the principal components analysis and plot PC1 vs PC2 the same wa
 
 ```
 /usr/bin/R
+library(tidyverse)
 
 #Load the covariance matrix
 cov <- as.matrix(read.table("~/day3/Results/PCAngsd_LDpruned_covmat.cov", header = F))
@@ -262,6 +263,7 @@ angsd -b $DIR/ALL_bams.txt -anc $REF -out $BASEDIR'Results/MME_ANGSD_PCA' \
 Again, we perform the principal components analysis using the `eigen` function in R:
 ```
 /usr/bin/R
+library(tidyverse)
 
 #Load the covariance matrix
 cov <- as.matrix(read.table("~/day3/Results/MME_ANGSD_PCA.covMat", header = F))
@@ -375,6 +377,7 @@ best like=-11324.127798 after 93 iterations
 Furthermore, we can plot admixture proportions in R:
 ```
 /usr/bin/R
+library(tidyverse)
 
 library(tidyverse) #load the tidyverse package for formatting and plotting
 
