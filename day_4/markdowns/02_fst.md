@@ -16,7 +16,7 @@ Our goal is to detect selection in JIGA in terms of allele frequency differentia
 
 ![stats2_bis](../files/stats2_bis.png)
 
-Specifically, we are computing a slinding windows scan, with windows of 10kbp and a step of 1kbp.
+Specifically, we are computing a sliding windows scan, with windows of 10kbp and a step of 1kbp.
 This can be achieved using the following commands.
 
 1) This command will compute per-site FST indexes (please note the order of files). The `-whichFst 1` option is preferred Fst estimator for small sample sizes, as it is the case for our test dataset.
@@ -57,7 +57,8 @@ You can see that high values of PBS2 are indeed associated with high values of b
 
 We can plot the results along our region of interest, including our inversion breakpoint annotation 
 ```
-R # open R
+/usr/bin/R # open R
+library(tidyverse)
 
 pbs = read.table("Results/JIGA.pbs.fst.txt", header = T)
 pbs$PBS1[which(pbs$PBS1<0)]=0
