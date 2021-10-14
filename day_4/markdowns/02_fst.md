@@ -69,7 +69,7 @@ pbs.plot = ggplot(data = pbs, aes(x=midPos, y=PBS2)) +
   geom_vline(xintercept=1000000, colour = "firebrick")
 
 
-ggsave(filename = "~/exercises/day3/Results/pbs_plot.pdf", plot = pbs.plot)
+ggsave(filename = "~/day4/Results/pbs_plot.pdf", plot = pbs.plot)
 
 q() # close R
 ```
