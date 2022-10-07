@@ -3,13 +3,15 @@ Files for the the [Physalia course on Population genomic inference from low-cove
 
 <br>
 
-Instructors:
+*Instructors*:
 Nina Overgaard Therkildsen, Tyler Linderoth, Arne Jacobs, and Nicolas Lou
 
 <br>
 <br>
 
-* [Server log in and data transfer](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2022.pdf)
+*Quick links*:
+
+* [Server log-in and data transfer](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2022.pdf)
 
 * [Tutorial 1: Data processing](https://github.com/nt246/physalia-lcwgs/blob/main/day_1/markdowns/data_processing.md)
 
