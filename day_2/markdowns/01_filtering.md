@@ -65,7 +65,7 @@ Have a look at our list of BAM files:
 ```
 cat $DIR/ALL_bams.txt
 wc -l $DIR/ALL_bams.txt
-ls $DIR/*_bams.txt
+ls -l $DIR/*_bams.txt
 ```
 
 If the input file is in BAM format, the possible options are:
