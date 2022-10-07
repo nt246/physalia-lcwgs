@@ -1,10 +1,15 @@
 # physalia-lcwgs
-Files for the the [Physalia course on Population genomic inference from low-coverage whole-genome sequencing data](https://www.physalia-courses.org/courses-workshops/course64/), Oct 11-14, 2021
+Files for the the [Physalia course on Population genomic inference from low-coverage whole-genome sequencing data](https://www.physalia-courses.org/courses-workshops/course64/), 10-13 October, 2022
+
+<br>
+
+Instructors:
+Nina Overgaard Therkildsen, Tyler Linderoth, Arne Jacobs, and Nicolas Lou
 
 <br>
 <br>
 
-* [Server log in and data transfer](https://github.com/nt246/physalia-lcwgs/blob/main/server_connection.pdf)
+* [Server log in and data transfer](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2022.pdf)
 
 * [Tutorial 1: Data processing](https://github.com/nt246/physalia-lcwgs/blob/main/day_1/markdowns/data_processing.md)
 
