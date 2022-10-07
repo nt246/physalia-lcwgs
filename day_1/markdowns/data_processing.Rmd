@@ -109,7 +109,7 @@ Your own copy of the `day1` directory will be referred to as `BASEDIR` in many o
 
 When we get data files back from the sequencing center, the files often have obscure names, so we need a data table that let's us link those file names to our sample IDs and other information. Often, part of the fastq file name will be identical among all samples in a run and part of it will reflect some kind of unique sample identifier (either a name you supplied or a name given by the sequencing center). As an example, look in the `day1/raw_fastq` folder and notice how all the files end in either `_1.fastq.gz` or `_2.fastq.gz` (these are the forward and reverse sequences) while the first part of the file names differs (the unique sample identifier). We call the sample identifier the `prefix`.
 
-Our pipeline is set up to link up these `prefix` names with sample details based on a fastq table set up as the example you can find in `day1/sample_lists/fastq_table.tsv`.
+Our pipeline is set up to link up these `prefix` names with sample details based on a fastq table set up as the example you can find in `day1/sample_lists/fastq_table.tsv`. One way to view this file is to type `cat day1/sample_lists/fastq_table.tsv`.
 
 For our scripts below to work, the sample table has to be a **tab deliminated** table with the following six columns, strictly in this order:
 
@@ -131,7 +131,7 @@ It is important to make sure that the combination of sample_id, seq_id, and lane
 
 We'll also use a second file that we call a fastq list. This is simply a list of prefixes for the samples we want to analyze. Our sample table can contain data for all individuals in our study, but at any given time, we may only want to perform an operation on a subset of them. Like today, in the interest of time, we only want to run 6 sets of fastq files through each processing step. 
 
-Have a look at the list we'll be using in `day1/sample_lists/fastq_list.txt` and note that it's just a list of fastq name prefixes, each on a separate line and there should be no header in this file.
+Have a look at the list we'll be using in `day1/sample_lists/fastq_list.txt` (e.g. with the `cat` command), and note that it's just a list of fastq name prefixes, each on a separate line and there should be no header in this file.
 
 <br>
 
@@ -148,11 +148,11 @@ With our small fastq table and fastq list here, we can easily look this up manua
 
 In low-coverage whole genome sequencing datasets, we'll typically have data from hundreds of individuals, so we need an efficient way to process all of these files without having to write a separate line of code for each file. `for loops` are a powerful way to achieve this, and we will be using them in every step of our pipeline, so let's first take a moment to make sure we understand the syntax.
 
-A ‘for loop’ is a bash programming language statement which allows code to be repeatedly executed. If you've never worked with `for loops` in bash before, it might be helpful to look over a tutorial, e.g. [this one from Software Carpentry](https://swcarpentry.github.io/shell-novice/05-loop/index.html).
+A `for loop` is a bash programming language statement which allows code to be repeatedly executed. If you've never worked with `for loops` in bash before, it might be helpful to look over a tutorial, e.g. [this one from Software Carpentry](https://swcarpentry.github.io/shell-novice/05-loop/index.html). Here is a key extract inspired from that tutorial:
 
-Here is a key extract inspired from that tutorial:
+<br>
 
-The basic syntax of a `for loop` is as follows
+The basic syntax of a `for loop` is as follows:
 
 ```{bash, eval = FALSE}
 
@@ -169,11 +169,13 @@ When the shell sees the keyword `for`, it knows to repeat a command (or group of
 <br>
 
 ## 5. Practice using bash `for loops` to iterate over target samples
-First, let's just look up the sample IDs. For each prefix in our `fastq_list.txt`, we will use `grep` to extract the relevant line from the fastq table, use `cut` to extract the column with sample ID, and then `echo` to print the sample ID 
+First, let's just look up the sample IDs. For each prefix in our `fastq_list.txt`, we will use `grep` to extract the relevant line from the fastq table, use `cut` to extract the column with sample ID, and then `echo` to print the sample ID. First, we assign values (in our case paths to files) to variables (to make the for loop syntax more clear). Note that our convention is to write variable names in ALL CAPS to distinguish them from functions.
+
+<br>
 
 ```{bash, eval = FALSE}
 
-BASEDIR=~/day1 # Path to the base directory / project directory.
+BASEDIR=~/day1 # Path to the base directory / project directory. We make this a separate variable so we can run the script no matter where on our system our working directory is located.
 
 SAMPLELIST=$BASEDIR/sample_lists/fastq_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the fastq table.
 
@@ -322,7 +324,7 @@ done
 <br>
 
 
-If the program ran, you should now see the output (in html format and a zip file with various files) in your `day1/fastqc` directory. To view the .html, use `scp` (as described [here](https://github.com/nt246/physalia-lcwgs/blob/main/server_connection.pdf)) or FileZilla to transfer the html output files to your local machine and open them in a web browser.
+If the program ran, you should now see the output (in html format and a zip file with various files) in your `day1/fastqc` directory. To view the .html, use `scp` (as described [here](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2022.pdf)) or FileZilla to transfer the html output files to your local machine and open them in a web browser.
 
 If you're not able to download your own files, you can have a look at ours [here](https://github.com/nt246/physalia-lcwgs/tree/main/day_1/fastqc). We are keeping them in our GitHub repo, but GitHub doesn't render .html files, so to view the output, click on the output.html file you want to view, copy its URL and paste it into [this handy viewer](https://htmlpreview.github.io/) to see it in rendered html format.
 
@@ -582,7 +584,7 @@ We have now mapped the two separate sets of fastq files for each sample (the sep
 
 <br>
 
-We will merge the two bam files for each individual with [samtools merge](http://www.htslib.org/doc/samtools-merge.html) with the following parameters
+We will merge the two bam files for each individual with [samtools merge](http://www.htslib.org/doc/samtools-merge.html) with the following parameters [this is generic example syntax, not code we will run]:
 
 ```{bash, eval = FALSE}
 
@@ -737,8 +739,8 @@ REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files
 for SAMPLEBAM in `cat $BAMLIST`; do
 	
 	## Remove duplicates and print dupstat file
-	# We used to be able to just specify picard.jar on the CBSU server, but now we need to specify the path and version
-	java -Xmx60g -jar $PICARD MarkDuplicates I=$BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted.bam' O=$BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' M=$BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dupstat.txt' VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true
+	java -Xmx60g -jar $PICARD MarkDuplicates -I $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted.bam' -O $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' -M $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dupstat.txt' -VALIDATION_STRINGENCY SILENT -REMOVE_DUPLICATES true
+
 	
 	## Clip overlapping paired end reads (only necessary for paired-end data, so if you're only running se samples, you can comment this step out)
 	$BAMUTIL clipOverlap --in $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' --out $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam' --stats
