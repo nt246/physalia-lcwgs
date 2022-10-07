@@ -20,7 +20,7 @@ cd ~
 and create a folder for this session and enter it
 ```
 mkdir day2
-cd day
+cd day2
 ```
 and you should be in `~/day2`.
 
@@ -31,7 +31,7 @@ mkdir Data
 ```
 Let's set all environment variables
 ```
-DIR=/home/ubuntu/Share/data
+DIR=/home/ubuntu/Share/physalia-lcwgs/data
 DATA=$DIR/BAMS
 REF=$DIR/Ref.fa
 ANC=$DIR/outgrp_ref.fa
