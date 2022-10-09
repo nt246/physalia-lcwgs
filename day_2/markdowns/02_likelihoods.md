@@ -118,7 +118,7 @@ For PANY_04 the 5th likelihood is zero, corresponding to the genotype 'CC'.
 </details>
 
 **QUESTION**
-If you were to carry out what you just did for PANY_09 at site XXX you would see that there GLs are 
+If you were to carry out what you just did for PANY_09 at site Mme_chr24:2558528-4558528 34213 you would see that there GLs are 
 `0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000`. What does this mean?
 
 <details>
