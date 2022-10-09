@@ -65,7 +65,7 @@ Looking at the standard output. What percentage of the sites provided to ANGSD w
 
 <details>
 
-<summary> click here for help </summary>
+<summary> click here for help <\summary>
 
 ```bash
 -> Total number of sites analyzed: 1800717
