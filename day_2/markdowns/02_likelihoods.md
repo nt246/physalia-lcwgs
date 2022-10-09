@@ -42,11 +42,11 @@ A possible command line to calculate genotype likelihoods might be:
 angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
         -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
         -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
-        -GL 2 -doGlf 4
+        -GL 1 -doGlf 4
 ```
 
 where we specify:
-* -GL 2: genotype likelihood model as in GATK
+* -GL 1: genotype likelihood model as in SAMtools
 * -doGlf 4: output in text format
 
 If it is too slow, the add `-nThreads 10` at the end of the command line. This command should take around 2 minutes to run.
@@ -142,6 +142,3 @@ Now you are going to learn how to perform genotype calling with ANGSD.
 [click here](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/03_genotype.md) to move to the next session.
 
 --------------------------------
-
-
-
