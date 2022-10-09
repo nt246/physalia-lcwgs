@@ -27,7 +27,10 @@ and you should be in `~/day2`.
 Also, you will have to create two folders on your working directory, one for your results and one for your intermediate data.
 ```
 mkdir Results
+RESDIR=~/day2/Results
+
 mkdir Data
+DATDIR=~/day2/Data
 ```
 Let's set all environment variables
 ```
