@@ -58,14 +58,13 @@ documentation recommends setting this to 50 for reads mapped with BWA. `-C` and 
 `-minInd X` in conjunction with `-minIndDepth Y` requires at least **X** individuals to be covered by at least **Y** (default 1) reads to keep a site. 
 `-setMinDepth` and `-setMaxDepth` set minimum and maximum total site depth (depth summed across all individuals) limits, respectively.
 
-![stage1A](../files/stage1A.png)
 
 **QUESTION**
 Looking at the standard output. What percentage of the sites provided to ANGSD were actually retained after imposing the filters?
 
 <details>
 
-<summary> click here for help <\summary>
+<summary> click here for help </summary>
 
 ```bash
 -> Total number of sites analyzed: 1800717
@@ -74,7 +73,7 @@ Looking at the standard output. What percentage of the sites provided to ANGSD w
 
 59% of sites were retained.
 
-<\details>
+</details>
 
 ANGSD always dumps a log file with information on how it was run. Check it out:
 
@@ -116,7 +115,7 @@ zcat $RESDIR/PANY.glf.gz | grep -m 1 $'^Mme_chr24:2558528-4558528\t34213\t' | cu
 ```
 For PANY_04 the 5th likelihood is zero, corresponding to the genotype 'CC'.
 
-<\details>
+</details>
 
 **QUESTION**
 If you were to carry out what you just did for PANY_09 at site XXX you would see that there GLs are 
@@ -124,11 +123,11 @@ If you were to carry out what you just did for PANY_09 at site XXX you would see
 
 <details>
 
-<summary> click for answer <\summary>
+<summary> click for answer </summary>
 
 If all GLs are zero this means that there is no data for this individual.
 
-<\details>
+</details>
 
 **BONUS QUESTION**
 Try to output genotype likelihood files in binary format (be sure to change the ouput name to avoid overwriting). Which option should you use? Can you open these files?
