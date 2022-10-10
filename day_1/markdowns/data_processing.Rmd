@@ -27,7 +27,7 @@ Throughout this course, you will be working with data from the Atlantic silversi
 The Atlantic silverside is distributed along the east coast of North America and shows a remarkable degree of local adaptation in growth rates and a suite of other traits (Conover et al. 2005). You will be exploring patterns of genomic variation across the species range, which spans one of the steepest thermal gradient in the world. 
 
 ### Today's data
-Today, we will work with subsets of two different fastq files from each of three Atlantic silversides used in recent studies of fisheries-induced evolution (Therkildsen et al. 2019) and local adaptation (Wilder et al. 2020). The samples we'll use today originate from the MAQU and PANY populations shown in this map:
+Today, we will work with subsets of two different fastq files from each of three Atlantic silversides used in recent studies of fisheries-induced evolution (Therkildsen et al. 2019) and local adaptation (Wilder et al. 2020, Akopyan et al. 2022). The samples we'll use today originate from the MAQU and PANY populations shown in this map:
 
 <br>
 
@@ -39,11 +39,13 @@ knitr::include_graphics("../img/Silverside_Sample_Map.png")
 
 The libraries were prepared as described in Therkildsen and Palumbi (2017) and sequenced with 125bp paired-end reads on an Illumina HiSeq instrument. There are two different fastq files for each individual because our libraries were sequenced in two different sequencing runs, to even out sequence coverage among individuals (as discussed in lecture). 
 
-We will map these raw sequence files to a snippet of the sparkling new Atlantic silverside genome (Tigano et al. nearly submitted!). To minimize computational time, we are just working with a small 2 Mb section of chromosome 24 for all the exercises in this course.
+We will map these raw sequence files to a snippet of the Atlantic silverside genome (Tigano et al. 2021). To minimize computational time, we are just working with a small 2 Mb section of chromosome 24 for all the exercises in this course.
 
 <br>
 
 <span style='font-size:75%'> **References:**
+
+<span style='font-size:75%'> Akopyan, M., Tigano, A., Jacobs, A., Wilder, A. P., Baumann, H., and Therkildsen, N. O. (2022). Comparative linkage mapping uncovers massive chromosomal inversions that suppress recombination between locally adapted fish populations. Molecular Ecology 31:3323-3341. https://onlinelibrary.wiley.com/doi/abs/10.1111/mec.16472
 
 <span style='font-size:75%'> Conover, D. O., Arnott, S. A., Walsh, M. R., & Munch, S. B. (2005). Darwinian fishery science: lessons from the Atlantic silverside (Menidia menidia). Canadian Journal of Fisheries and Aquatic Sciences, 62(4), 730–737. http://doi.org/10.1139/f05-069
 
@@ -51,9 +53,13 @@ We will map these raw sequence files to a snippet of the sparkling new Atlantic 
 
 <span style='font-size:75%'> Therkildsen, N. O., Wilder, A. P., Conover, D. O., Munch, S. B., Baumann, H., & Palumbi, S. R. (2019). Contrasting genomic shifts underlie parallel phenotypic evolution in response to fishing. Science, 365(6452), 487–490. http://doi.org/10.1126/science.aaw7271
 
+<span style='font-size:75%'> Tigano, A., Jacobs, A., Wilder, A. P., Nand, A., Zhan, Ye, Dekker, J., and Therkildsen, N. O. (2021). Chromosome-level assembly of the Atlantic silverside genome reveals extreme levels of sequence diversity and structural genetic variation. Genome Biology and Evolution 13, evab163. https://doi.org/10.1093/gbe/evab098
+
 <span style='font-size:75%'> Wilder, A. P., Palumbi, S. R., Conover, D. O., and Therkildsen, N. O. 2020. Footprints of local adaptation span hundreds of linked genes in the Atlantic silverside genome. Evolution Letters 9:177. https://doi.org/10.1002/evl3.189
 
 </span>
+
+
 
 <br>
 <br>
@@ -111,15 +117,15 @@ When we get data files back from the sequencing center, the files often have obs
 
 Our pipeline is set up to link up these `prefix` names with sample details based on a fastq table set up as the example you can find in `day1/sample_lists/fastq_table.tsv`. One way to view this file is to type `cat day1/sample_lists/fastq_table.tsv`.
 
-For our scripts below to work, the sample table has to be a **tab deliminated** table with the following six columns, strictly in this order:
+For our scripts below to work, the **fastq table** has to be a **tab deliminated** table with the following six columns, strictly in this order:
 
-  * `prefix` the prefix of raw fastq file names
+  * `prefix` the prefix of raw fastq file names (i.e. a part of the file name that is unique to each sample)
   
   * `lane_number` lane number; each sequencing lane or batch should be assigned a unique identifier. This is important so that if you sequence a library across multiple different sequencing lanes, you can keep track of which lane/batch a particular set of reads came from (important for accounting for sequencing error patterns or batch effects).
   
-  * `seq_id` sequence ID; this variable is only relevant when different libraries were prepared out of the same sample and were run in the same lane (e.g. if you wanted to include a replicate). In this case, seq_id should be used to distinguish these separate libraries. If you only have a single library prepared from each of your samples (even if you sequence that same library across multiple lanes), you can just put 1 for all samples in this column.
+  * `seq_id` sequence ID; this variable is only relevant when different libraries were prepared from the same sample and were run in the same lane (e.g. if you wanted to include a replicate). In this case, seq_id should be used to distinguish these separate libraries. If you only have a single library prepared from each of your samples (even if you sequence that same library across multiple lanes), you can just put 1 for all samples in this column.
 
-  * `sample_id` sample ID; a unique identifier for each individual sequenced
+  * `sample_id` sample ID; a unique identifier for each individual sequenced (the name that you want to use to identify your files from a specific individual downstream)
   
   * `population` population name; the population or other relevant grouping variable that the individual belongs to 
   
@@ -129,7 +135,7 @@ It is important to make sure that the combination of sample_id, seq_id, and lane
 
 <br>
 
-We'll also use a second file that we call a fastq list. This is simply a list of prefixes for the samples we want to analyze. Our sample table can contain data for all individuals in our study, but at any given time, we may only want to perform an operation on a subset of them. Like today, in the interest of time, we only want to run 6 sets of fastq files through each processing step. 
+We'll also use a second file that we call a **fastq list**. This is simply a list of prefixes for the samples we want to analyze in a particular run. Our fastq table can contain data for all individuals in our study, but at any given time, we may only want to perform an operation on a subset of them. Like today, in the interest of time, we only want to run 6 sets of fastq files through each processing step. 
 
 Have a look at the list we'll be using in `day1/sample_lists/fastq_list.txt` (e.g. with the `cat` command), and note that it's just a list of fastq name prefixes, each on a separate line and there should be no header in this file.
 
@@ -169,7 +175,7 @@ When the shell sees the keyword `for`, it knows to repeat a command (or group of
 <br>
 
 ## 5. Practice using bash `for loops` to iterate over target samples
-First, let's just look up the sample IDs. For each prefix in our `fastq_list.txt`, we will use `grep` to extract the relevant line from the fastq table, use `cut` to extract the column with sample ID, and then `echo` to print the sample ID. First, we assign values (in our case paths to files) to variables (to make the for loop syntax more clear). Note that our convention is to write variable names in ALL CAPS to distinguish them from functions.
+First, let's just look up the sample IDs. For each prefix in our `fastq_list.txt`, we will use `grep` to extract the relevant line from the `fastq_table.tsv`, use `cut` to extract the column with sample ID, and then `echo` to print the sample ID. First, we assign values (in our case paths to files) to variables (to make the for loop syntax more clear). Note that our convention is to write variable names in ALL CAPS to distinguish them from functions.
 
 <br>
 
@@ -273,9 +279,9 @@ Now let's get started processing the data!
 
 ### fastq file structure
 
-A FASTQ file normally contains four lines per sequence.
+A FASTQ file normally contains four lines per sequence read.
 
-  * Line 1 contains the sequence identifier, with information on the sequencing run and the cluster. The exact content of this line varies depending on how fastq files are generated from the sequencer.
+  * Line 1 contains the sequence read identifier, with information on the sequencing run and the cluster. The exact content of this line varies depending on how fastq files are generated from the sequencer.
   * Line 2 is the raw sequence. 
   * Line 3 often consists of a single `+` symbol. 
   * Line 4 encodes the quality of each base in the sequence in Line 2 (i.e. the probability of sequencing error in log scale). For most current sequencers, these base qualities are encoded in the [Phred33 format](https://drive5.com/usearch/manual/quality_score.html), but always check to make sure how your quality scores are encoded. 
@@ -324,7 +330,7 @@ done
 <br>
 
 
-If the program ran, you should now see the output (in html format and a zip file with various files) in your `day1/fastqc` directory. To view the .html, use `scp` (as described [here](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2022.pdf)) or FileZilla to transfer the html output files to your local machine and open them in a web browser.
+If the program ran, you should now see the output (in html format and a zip file with various files) in your `day1/fastqc` directory. To view the .html, use `scp` (as described [here](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2022.pdf)) or FileZilla (connection instructions also described [here](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2022.pdf)) to transfer the html output files to your local machine and open them in a web browser.
 
 If you're not able to download your own files, you can have a look at ours [here](https://github.com/nt246/physalia-lcwgs/tree/main/day_1/fastqc). We are keeping them in our GitHub repo, but GitHub doesn't render .html files, so to view the output, click on the output.html file you want to view, copy its URL and paste it into [this handy viewer](https://htmlpreview.github.io/) to see it in rendered html format.
 
@@ -358,7 +364,7 @@ When the insert length of a library fragment is shorter than the read length, th
 
 We saw in our FastQC report that we have substantial adapter content in some of our libraries, so will will need to clip that off. Here, we use [Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic) to clip the adapter sequence off the ends of reads where they appear. This step requires us to input the known adapter sequences that we used when preparing the libraries. In this exercise, the libraries were prepared using Illumina's Nextera adapters (sequences listed in `reference/NexteraPE_NT.fa`), and we will read those into the `ADAPTERS` variable.
 
-Look over the code below. The first block of text specifies which files we are using as input. Then we start looping over our samples. Within the loop, the first step is to extract the relevant sample data from our sample table and assign those as temporary variables. Then we have two `if statements` to call Trimmomatic with slightly different parameters for paired-end and single-end data. Trimmomatic has lots of different filtering modules that can be useful in different contexts. Here we only clip sequence that match to our adapter sequence and remove reads that end up being <40bp after clipping.
+Look over the code below. The first block of text specifies which files we are using as input. Then we start looping over our samples. Within the loop, the first step is to extract the relevant sample data from our sample table (= the fastq_table) and assign those as temporary variables. Then we have two `if statements` to call Trimmomatic with slightly different parameters for paired-end and single-end data. Trimmomatic has lots of different filtering modules that can be useful in different contexts. Here, we only clip sequence that match to our adapter sequence and remove reads that end up being <40bp after clipping.
 
 <br>
 
@@ -410,7 +416,7 @@ Have a look at the output printed to the screen as we're iterating over the samp
 
 `TrimmomaticPE: Started with arguments:`
 
-Following this, you will see that actual variable names that were added to the command in each iteration of our loop (e.g. what `$RAWFASTQ_ID$RAWFASTQSUFFIX1` expanded to (what value was assigned to this variable)).
+Following this, you will see what actual variable names were added to the command in each iteration of our loop (i.e. what `$RAWFASTQ_ID$RAWFASTQSUFFIX1` expanded to (what value was assigned to this variable in that iteration of the loop)).
 
 Also examine the section that says
 `ILLUMINACLIP: Using 2 prefix pairs, 8 forward/reverse sequences, 0 forward only sequences, 0 reverse only sequences
@@ -750,7 +756,7 @@ done
 
 <br>
 
-Please note that the deduplication step is rather memory-consuming and only ~15 students can run it at the same time. It should only take about a minute to run though, so if you see the following error messages, please wait for a minute and try to rerun your code.
+Please note that the deduplication step is rather memory-consuming and only ~15 participants can run it at the same time. It should only take about a minute to run though, so if you see the following error messages, please wait for a minute and try to rerun your code.
 
 ```
 Killed
@@ -770,14 +776,14 @@ Use `head` to look at the top lines of the dupstat report for each sample (in `$
 
 ## Indel realignment (optional)
 
-Unlike other variant detector programs (like the [GATK Haplotype Caller](https://gatk.broadinstitute.org/hc/en-us/articles/360037225632-HaplotypeCaller) or [Freebayes](https://github.com/ekg/freebayes)), [ANGSD](http://www.popgen.dk/angsd/index.php/ANGSD) does not realign reads during its analysis. Because it can be difficult to distinguish indels from SNPs at the end of reads if each alignment is considered separately, indels may interfere with genotype likelihood estimation. We therefore recommend running your bam files through a program that realigns reads around indels prior to running `ANGSD`. The [GATK IndelRealigner](https://github.com/broadinstitute/gatk-docs/blob/master/gatk3-tutorials/(howto)_Perform_local_realignment_around_indels.md) takes all the aligned sequences from all samples in to account to validate the indels discovered from the mapping process and then realigns each read locally. This is not a mandatory step and tends to be very time-consuming if you have a large dataset, but the code is provided here if you want to give it a try (it takes ~3 minutes). We will not use these output for the rest of this course though.
+Unlike other variant detector programs (like the [GATK Haplotype Caller](https://gatk.broadinstitute.org/hc/en-us/articles/360037225632-HaplotypeCaller) or [Freebayes](https://github.com/ekg/freebayes)), [ANGSD](http://www.popgen.dk/angsd/index.php/ANGSD) does not realign reads during its analysis. Because it can be difficult to distinguish indels from SNPs at the end of reads if each alignment is considered separately, indels may interfere with genotype likelihood estimation. We therefore recommend running your bam files through a program that realigns reads around indels prior to running `ANGSD`. The [GATK IndelRealigner](https://github.com/broadinstitute/gatk-docs/blob/master/gatk3-tutorials/(howto)_Perform_local_realignment_around_indels.md) takes all the aligned sequences from all samples in to account to validate the indels discovered from the mapping process and then realigns each read locally. This is not a mandatory step and tends to be very time-consuming if you have a large dataset, but the code is provided here if you want to give it a try (it takes ~3 minutes for our small sample dataset). We will not use this output for the rest of this course though.
 
 
 <details>
   <summary>Click here to see the GATK IndelRealigner code</summary>
 
 ```{bash, eval = FALSE}
-BAMLIST=$BASEDIR/sample_lists/bam_list_dedup_overlapclipped.list # Path to a list of merged, deduplicated, and overlap clipped bam files. Full paths should be included. This file has to have a suffix of ".list"
+# BAMLIST=$BASEDIR/sample_lists/bam_list_dedup_overlapclipped.list # Path to a list of merged, deduplicated, and overlap clipped bam files. Full paths should be included. This file has to have a suffix of ".list"
 REFERENCE=$BASEDIR/reference/mme_physalia_testdata_chr24.fa # Path to reference fasta file and file name
 REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files
 
@@ -819,7 +825,7 @@ $JAVA -Xmx40g -jar $GATK \
 
 ## Estimate read depth in your bam files
 
-After all the filtering steps, we want to know what final depth of coverage we have for each sample for downstream analysis. Here, we will use [samtools depth](http://www.htslib.org/doc/samtools-depth.html) to first compute the read depth at each bp position in the genome. Then we will pull the output file to our local machines and compute depth summary stats in R. This is just one way to summarize the depth. There are other programs available to provide summaries of the depth in a bam file, including [samtools coverage](http://www.htslib.org/doc/samtools-coverage.html), [Mosdepth](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6030888/) and [Indexcov](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5737511/).
+After all the filtering steps, we want to know what final depth of coverage we have for each sample for downstream analysis. Here, we will use [samtools depth](http://www.htslib.org/doc/samtools-depth.html) to first compute the read depth at each bp position in the genome. Then we will pull the output file to our local machines and compute depth summary stats in R. This is just one way to summarize the depth (and the base-by-base depth estimates analyzed here are only really practical to work with for snippets of a genome, not full large genomes). There are other programs available to provide summaries of the depth in a bam file, including [samtools coverage](http://www.htslib.org/doc/samtools-coverage.html), [Mosdepth](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6030888/) and [Indexcov](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5737511/).
 
 <br>	
 
@@ -840,7 +846,7 @@ done
 
 <br>	
 
-**On your local computer**, use FileZila if you have that installed (configuration instructions [here](https://github.com/nt246/physalia-lcwgs/blob/main/server_connection.pdf) or `scp` from a new Terminal window (where you're not logged into the server) to download the bam list and the depth files. For example:
+**On your local computer**, use FileZila if you have that installed (configuration instructions [here](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2022.pdf) or `scp` from a new Terminal window (where you're not logged into the server) to download the bam list and the depth files. For example:
 
 ```{bash eval=FALSE}
 ## Edit the follow variables
