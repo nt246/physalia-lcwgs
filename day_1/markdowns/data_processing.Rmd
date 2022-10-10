@@ -682,7 +682,7 @@ bash $BASEDIR/scripts/merge_bam.sh $BASEDIR
 
 Check that your merged bam files get generated. As a sanity check, we can compare the number of lines in our merged and set of unmerged bam files for each sample with [samtools view](http://www.htslib.org/doc/samtools-view.html) and the command `samtools view in.bam | wc -l`
 
-Run on our server, for the merged file for sample 985, the command would like like
+Run on our server, for the merged bam file for sample 985, the command would look like
 
 ```{bash, eval = FALSE}
 
@@ -690,7 +690,7 @@ $SAMTOOLS view $BASEDIR/bam/985_PANY_merged_bt2_mme_physalia_testdata_chr24_minq
 
 ```
 
-Check the line count in the bam files for the two individual fastqs and see if the numbers add up.
+Check the line count in the two unmerged bam files for sample 985 and see if the numbers add up.
 
 ```{bash, eval = FALSE}
 
