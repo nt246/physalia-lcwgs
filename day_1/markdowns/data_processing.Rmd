@@ -783,7 +783,7 @@ Unlike other variant detector programs (like the [GATK Haplotype Caller](https:/
   <summary>Click here to see the GATK IndelRealigner code</summary>
 
 ```{bash, eval = FALSE}
-# BAMLIST=$BASEDIR/sample_lists/bam_list_dedup_overlapclipped.list # Path to a list of merged, deduplicated, and overlap clipped bam files. Full paths should be included. This file has to have a suffix of ".list"
+BAMLIST=$BASEDIR/sample_lists/bam_list_dedup_overlapclipped.list # Path to a list of merged, deduplicated, and overlap clipped bam files. Full paths should be included. This file has to have a suffix of ".list"
 REFERENCE=$BASEDIR/reference/mme_physalia_testdata_chr24.fa # Path to reference fasta file and file name
 REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files
 

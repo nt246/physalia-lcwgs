@@ -406,7 +406,7 @@ GATK=~/Share/GenomeAnalysisTK-3.7-0/GenomeAnalysisTK.jar
 
 <br> If you will be running these programs on a different system, you
 will have to specify the paths to the different programs on that system
-(or add them to your $PATH).
+(or add them to your \$PATH).
 
 <br> <br>
 
@@ -1089,7 +1089,7 @@ Click here to see the GATK IndelRealigner code
 </summary>
 
 ``` bash
-# BAMLIST=$BASEDIR/sample_lists/bam_list_dedup_overlapclipped.list # Path to a list of merged, deduplicated, and overlap clipped bam files. Full paths should be included. This file has to have a suffix of ".list"
+BAMLIST=$BASEDIR/sample_lists/bam_list_dedup_overlapclipped.list # Path to a list of merged, deduplicated, and overlap clipped bam files. Full paths should be included. This file has to have a suffix of ".list"
 REFERENCE=$BASEDIR/reference/mme_physalia_testdata_chr24.fa # Path to reference fasta file and file name
 REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files
 
