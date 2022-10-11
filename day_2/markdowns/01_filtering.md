@@ -112,9 +112,7 @@ First we need to define input and output files (please note that we do not run t
 # angsd -b ALL.bams -out Results/ALL \
 ...
 ```
-with
-`-b` we give the file including paths to all BAM files we need to analyse, 
-`-out` states the prefix for all output files that will be generated.
+We provide a list of bam files (with their full paths) with `-b`, while `-out` states the prefix for all output files that will be generated.
 
 Next we need to define some basic filtering options.
 First we define filters based on reads quality.
