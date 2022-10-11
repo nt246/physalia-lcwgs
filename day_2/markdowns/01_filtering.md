@@ -143,10 +143,10 @@ Parameter | Meaning |
 --- | --- |
 -setMinDepthInd INT | Minimum number of reads to consider an individual as having non-missing data |
 -minInd INT | use only sites where at least INT individuals have data |
--setMinDepth INT | minimum total depth |
--setMaxDepth INT | maximum total depth |
+-setMinDepth INT | minimum total site depth |
+-setMaxDepth INT | maximum total site depth |
 
-More sophisticated filtering can be done, but this is outside the scope of this practical.
+More sophisticated filtering can be performed, but this is outside the scope of this practical.
 
 You have now learned how to build a basic pipeline in ANGSD.
 Next you are going to learn how to calculate genotype likelihoods.
@@ -154,6 +154,3 @@ Next you are going to learn how to calculate genotype likelihoods.
 [click here](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/02_likelihoods.md) to move to the next session.
 
 ---------------------------------------
-
-
-
