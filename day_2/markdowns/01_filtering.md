@@ -107,7 +107,7 @@ Examples for region specification:
 		chr:site	Use single site on chromosome: chr
 ```
 
-First we need to define input and output files (please note that here we do not run these intermediate steps, as you can see thare is a ```#``` in the front):
+First we need to define input and output files (please note that we do not run the following intermediate steps, as they are preceded with ```#```):
 ```
 # angsd -b ALL.bams -out Results/ALL \
 ...
