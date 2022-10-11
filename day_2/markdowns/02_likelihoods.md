@@ -47,7 +47,7 @@ where we specify:
 * -GL 1: genotype likelihood model as in SAMtools
 * -doGlf 4: output in text format
 
-If it is too slow, the add `-nThreads 10` at the end of the command line. This command should take around 2 minutes to run.
+You can usually speed up computation with `-nThreads INT`.
 
 The `-C` option adjusts mapping quality for reads with excessive mismatches. The [samtools](http://www.htslib.org/doc/samtools-mpileup.html)
 documentation recommends setting this to 50 for reads mapped with BWA. `-C` and `-baq` (not used here, but see below) require that you supply the reference genome with `-ref`.
