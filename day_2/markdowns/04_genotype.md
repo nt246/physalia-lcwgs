@@ -140,7 +140,7 @@ angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_unif \
 </details>
 
 
-Now extract the genotype probabilities for PANY_07 Mme_chr24:2558528-4558528 459780 from this new .geno file. What are the 
+Now extract the genotype probabilities for PANY_07 at Mme_chr24:2558528-4558528 459780 from this new .geno file. What are the 
 genotype probabilities?
 
 <details>
@@ -198,7 +198,7 @@ What happens when individuals having missing data when using a HWE prior `-doPos
 
 <summary> Click for answer </summary>
 
-Each possible genotype is assigned it's probability under the Hardy-Weinberg model based on the minor 
+Each possible genotype is assigned its probability under the Hardy-Weinberg model based on the minor 
 allele frequency estimated with `-doMaf`.
 
 </details>
