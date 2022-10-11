@@ -51,9 +51,9 @@ the PANY population. We'll limit our analysis to PANY biallelic SNPs (`SNP_pval 
 to recalculate GLs with `-GL`). You could also use pre-calculated genotype likelihoods as input with `-glf` (binary) or `-glf10_text` (text). 
 We'll use many of the same quality controls that we've been using throughout.
 
-Note that while we need to estimate allele frequencies we already have a file containing them, which we don't need to write again (I/O can be expensive). In more recent
-versions of ANGSD you can suppress writing another maf file by making the value for `-doMaf` negative, e.g. `-doMaf -1`. But for the version we have to write 
-the maf file again.
+Note that we need to estimate allele frequencies but we already have a file containing them, which we don't need to write again (I/O can be expensive). In more recent
+versions of ANGSD you can suppress writing another maf file by making the value for `-doMaf` negative, e.g. `-doMaf -1`. But for the version we're currently working with we
+have to write the maf file again.
 
 ```
 angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
