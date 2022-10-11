@@ -246,3 +246,10 @@ would run.
 Are you able to describe what the commands above are doing?
 
 </details>
+
+Now you know how to estimate allele frequencies and call SNPs based on these frequencies. Next you'll learn how to call genotypes.
+
+
+[click here](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/04_genotype.md) to move to the next session.
+
+---------------------------------------
