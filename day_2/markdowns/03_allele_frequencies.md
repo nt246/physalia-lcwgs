@@ -176,7 +176,9 @@ SNP_pval Number_SNPs
 
 Here's a representative image of what the SNP calling density under different `SNP_pval` cutoffs may look like.
 
-![stage3](../files/snp_call_comparison.png)
+
+![snp_call_comparison](../files/snp_call_comparison.png)
+
 
 </details>
 
