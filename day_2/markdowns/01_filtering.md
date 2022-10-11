@@ -1,5 +1,5 @@
 
-#### 1. Data filtering and I/O
+## 1. Data filtering and I/O
 
 First, we will learn **how to build a command line in ANGSD**.
 
