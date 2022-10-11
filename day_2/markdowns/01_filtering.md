@@ -3,8 +3,6 @@
 
 First, we will learn **how to build a command line in ANGSD**.
 
-![stage0](../files/stage0.png)
-
 To see a full list of options in ANGSD type:
 ```
 angsd --help
@@ -107,12 +105,11 @@ Examples for region specification:
 
 First we need to define input and output files (please note that here we do not run these intermediate steps, as you can see thare is a ```#``` in the front):
 ```
-# angsd -b ALL.bams -ref $REF -out Results/ALL \
+# angsd -b ALL.bams -out Results/ALL \
 ...
 ```
 with
 `-b` we give the file including paths to all BAM files we need to analyse, 
-`-ref` specifies the reference sequence,
 `-out` states the prefix for all output files that will be generated.
 
 Next we need to define some basic filtering options.
@@ -122,41 +119,37 @@ First we define filters based on reads quality.
 #        -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
 ...
 ```
-These filters will retain only uniquely mapping reads, not tagged as bad, considering only proper pairs, without trimming, and adjusting for indel/mapping (as in samtools).
-`-C 50` reduces the effect of reads with excessive mismatches, while `-baq 1` computes base alignment quality as explained here ([BAQ](http://samtools.sourceforge.net/mpileup.shtml)) used to rule out false SNPs close to INDELS.
+These filters will retain only uniquely mapped reads (`uniqueOnly`) that map as a proper pair (`only_proper_pairs`) are not tagged with a SAM flag above 255 (`remove_bads`).
+No bases are trimmed from the ends of reads `-trim 0` and we downgrading mapping and base qualities in problematic mapping regions (`-C` and `-baq`).
+`-C INT` downgrades mapping quality when there are excessive mismatches based on sqrt((INT-q)/INT)*INT, while `-baq 1` 
+adjusts base qualities around INDELS ([BAQ](https://academic.oup.com/bioinformatics/article/27/8/1157/227268?login=false)).
 
-Also, you may want to remove reads with low mapping quality and sites with low quality or covered by few reads (low depth).
-Under these circumstances, the assignment of individual genotypes and SNPs is problematic, and can lead to errors.
-We may also want to remove sites where a fraction (half?) of the individuals have no data.
-This is achieved by the ```-minInd``` option.
+Low mapping qualities as well as exceptionally low or high sequencing depth generally signal regions of the genome that are refractory 
+to short read mapping and must be handled with care. In this scenario you may want to discard reads with low mapping quality or discard these sites 
+altogether to avoid erroneous inference. You may also want to remove bases with exceptionally low base quality as below.
 
-![stage0A](../files/stage0A.png)
-
-<details>
-
-<summary> click here for a possible command line for filtering </summary>
 
 ```bash
 ...
 # angsd -b ALL.bams -ref $REF -out Results/ALL \
 #        -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
-#        -minMapQ 20 -minQ 20 -minInd 5 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
+#        -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
 ...
 ```
-</details>
 
 which corresponds to the following scenario:
 
 Parameter | Meaning |
 --- | --- |
--minInd 5 | use only sites with data from at least N individuals |
--setMinDepth 7 | minimum total depth |
--setMaxDepth 30 | maximum total depth |
+-setMinDepthInd INT | Minimum number of reads to consider an individual as having non-missing data |
+-minInd INT | use only sites with N individuals with non-missing data |
+-setMinDepth INT | minimum total depth |
+-setMaxDepth INT | maximum total depth |
 
 More sophisticated filtering can be done, but this is outside the scope of this practical.
 
-You have learnt how to build a basic pipeline in ANGSD.
-Next you are going to learn how to calculate genotype likelihoods in ANGSD.
+You have now learned how to build a basic pipeline in ANGSD.
+Next you are going to learn how to calculate genotype likelihoods.
 
 [click here](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/02_likelihoods.md) to move to the next session.
 
