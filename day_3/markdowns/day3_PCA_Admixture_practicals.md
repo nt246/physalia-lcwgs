@@ -107,7 +107,7 @@ Using the list of LD-pruned variant sites and the code shown below, we can estim
 
 Let's specify our SNPlist and index it:
 ```
-SNPlist=~/day3/ngsld/LDpruned_snps.list
+SNPlist=~/day3/ngsld/LDpruned_snps_chr24.list
 angsd sites index $SNPlist
 ```
 
