@@ -132,11 +132,11 @@ Try to output genotype likelihood files in binary format (be sure to change the 
 Look at the file sizes of text vs binary format. Which one is smaller? Which one would you use?
 
 **BONUS QUESTION**
-Try to change some filtering options and record the number of entries in the final output file.
+Try to change some filtering options and record the number of entries in the final output file (remember to change the output name to avoid overwriting).
 
 You have learned how to calculate and read genotype likelihood files.
-Now you are going to learn how to perform genotype calling with ANGSD.
+Next you are going to learn how to estimate allele frequencies with ANGSD.
 
-[click here](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/03_genotype.md) to move to the next session.
+[click here](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/03_allele_frequencies.md) to move to the next session.
 
 --------------------------------
