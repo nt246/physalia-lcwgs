@@ -1,6 +1,6 @@
-#### 3. Allele frequencies and SNP calling
+## 3. Allele frequencies and SNP calling
 
-## Allele Frequency Estimation
+#### Allele Frequency Estimation
 
 Now you will estimate allele frequencies using the GLs that just calculated as input.
 
