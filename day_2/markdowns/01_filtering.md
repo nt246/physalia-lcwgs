@@ -60,9 +60,13 @@ These filters are based on:
 * sites, see [here](http://popgen.dk/angsd/index.php/Sites)
 
 Have a look at our list of BAM files:
-```
+```bash
 cat $DIR/ALL_bams.txt
+```
+```bash
 wc -l $DIR/ALL_bams.txt
+```
+```bash
 ls -l $DIR/*_bams.txt
 ```
 
