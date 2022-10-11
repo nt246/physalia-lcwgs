@@ -47,10 +47,9 @@ angsd -doPost
 
 We'll calculate genotype posterior probabilities using a HWE prior (`-doPost 1`) based on the allele frequencies estimated with `-doMaf 1`
 and then output the posterior probabilities for the major/major, major/minor, minor/minor genotypes for each individual with `-doGeno 8` for
-the PANY population. We'll limit our analysis to PANY biallelic SNPs (`SNP_pval 1e-6`). Note that while we need to estimate allele frequencies we already 
-have a file containing them, which we don't need to write again (I/O can be expensive), so we can suppress writing another maf file by making the value for 
-`-doMaf` negative. We'll use the BAM files as input (meaning that we have to recalculate GLs with `-GL`). You could also use pre-calculated genotype likelihoods
-as input with `-glf` (binary) or `-glf10_text` (text). We'll use many of the same quality controls that we've been using throughout.
+the PANY population. We'll limit our analysis to PANY biallelic SNPs (`SNP_pval 1e-6`). We'll use the BAM files as input (meaning that we have 
+to recalculate GLs with `-GL`). You could also use pre-calculated genotype likelihoods as input with `-glf` (binary) or `-glf10_text` (text). 
+We'll use many of the same quality controls that we've been using throughout.
 
 Note that while we need to estimate allele frequencies we already have a file containing them, which we don't need to write again (I/O can be expensive). In more recent
 versions of ANGSD you can suppress writing another maf file by making the value for `-doMaf` negative, e.g. `-doMaf -1`. But for the version we have to write 
