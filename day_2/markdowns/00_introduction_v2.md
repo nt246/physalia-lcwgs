@@ -1,5 +1,5 @@
 
-In this session you will learn how to do:
+In this session you will learn how to:
 * Call genotypes in a probabilistic framework
 * Estimate allele frequencies
 * Call SNPs in the face of high genotyping uncertainty
@@ -44,13 +44,13 @@ ANC=$DIR/outgrp_ref.fa
 
 The **workflow** is roughly divided into four steps:
 
-[1.](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/01_filtering.md) Data filtering options and I/O
+[1. Data filtering options and I/O](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/01_filtering.md)
 
-[2.](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/02_likelihoods.md) Genotype likelihoods
+[2. Genotype likelihoods](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/02_likelihoods.md)
 
-[3.](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/03_allele_frequencies.md) Allele frequency estimation & SNP calling
+[3. Allele frequency estimation & SNP calling](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/03_allele_frequencies.md)
 
-[4.](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/04_genotype.md) Genotype calling
+[4. Genotype calling](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/04_genotype.md)
 
 You are now going to learn how to build your first pipeline in ANGSD for data processing and filtering.
 
