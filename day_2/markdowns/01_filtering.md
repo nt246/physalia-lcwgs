@@ -142,7 +142,7 @@ altogether to avoid erroneous inference. You may also want to remove bases with 
 Parameter | Meaning |
 --- | --- |
 -setMinDepthInd INT | Minimum number of reads to consider an individual as having non-missing data |
--minInd INT | use only sites with N individuals with non-missing data |
+-minInd INT | use only sites where at least INT individuals have data |
 -setMinDepth INT | minimum total depth |
 -setMaxDepth INT | maximum total depth |
 
