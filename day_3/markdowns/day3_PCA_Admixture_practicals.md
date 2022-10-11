@@ -29,7 +29,7 @@ For this practical, we will be using [ANGSD](http://popgen.dk/wiki/index.php/ANG
 
 # Initial preparation
 
-Please make sure to follow these preparatory instructions below before running these examples. You need to set the path to the software and various data that will be used. Also, you will have to create two new folders in your `day3` working directory, one for your results and one for your intermediate data.
+Please make sure to follow these preparatory instructions below before running these examples. You need to set the path to the software and the various data that will be used. Also, you will have to create two new folders in your `day3` working directory, one for your results and one for your intermediate data.
 
 First go to the day3 directory you created for the previous exercise create subdirectories for data and results:
 ```
@@ -107,7 +107,8 @@ Using the list of LD-pruned variant sites and the code shown below, we can estim
 
 Let's specify our SNPlist and index it:
 ```
-SNPlist=~/day3/ngsld/LDpruned_snps_chr24.list
+cp $DIR'/LDpruned_snps_chr24.list' ~/day3/Data/
+SNPlist=~/day3/Data/LDpruned_snps_chr24.list
 angsd sites index $SNPlist
 ```
 
