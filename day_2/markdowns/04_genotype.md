@@ -91,7 +91,7 @@ So PANY_07 is at row 7 of the BAM list. Now extract their genotype probabilities
 zcat $RESDIR/PANY.geno.gz | grep -m 1 $'^Mme_chr24:2558528-4558528\t459780\t' | cut -f 3- | perl -se '$start=($n-1)*3; @arr = split(/\t/,<>); print "@arr[$start .. $start+2]\n"' -- -n=$INDNUM
 ```
 
-The most probably genotype configuration is major/major with a posterior probability of 0.984109.
+The most probable genotype configuration is major/major with a posterior probability of 0.984109.
 
 </details> 
 
@@ -105,7 +105,7 @@ What do the genotype probabilities for PANY_07 at Mme_chr24:2558528-4558528 4597
 
 </details>
 
-Repeat this for PANY_03. What are their genotype probabilites are site Mme_chr24:2558528-4558528 459780?
+Repeat this for PANY_03. What are their genotype probabilites at site Mme_chr24:2558528-4558528 459780?
 
 <details>
 
