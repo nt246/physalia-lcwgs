@@ -158,7 +158,7 @@ Have a look at the outputs, e.g. `less $RESDIR/PANY_0.05.mafs.gz`. You'll notice
 There is now a field, 'ref', with the reference allele, and a "pK-EM" field, which shows the p-value for the likelihood 
 ratio test of whether the site is variable.
 
-***QUESTION***
+**QUESTION**
 
 What is the relationship between the value of `SNP_pval` and the number of identified SNPs?
 
@@ -173,6 +173,10 @@ SNP_pval Number_SNPs
 1e-4 9084
 1e-6 6263
 ```
+
+Here's a representative image of what the SNP calling density under different `SNP_pval` cutoffs may look like.
+
+![stage3](../files/snp_call_comparison.png)
 
 </details>
 
