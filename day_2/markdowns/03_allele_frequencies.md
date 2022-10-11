@@ -174,7 +174,9 @@ SNP_pval Number_SNPs
 1e-6 6263
 ```
 
-Here's a representative image of what the SNP calling density under different `SNP_pval` cutoffs may look like.
+Here's a representative image of what the SNP MAF density under different `SNP_pval` cutoffs may look like. Note that sites 
+with MAF below a certain cutoff can be discarded with `-minMaf`. This can be useful for PCA, admixture, or GWAS-type analyses where a 
+minimum MAF (e.g. 5%) can help reduce noise and improve inference.
 
 
 ![snp_call_comparison](../files/snp_call_comparison.png)
