@@ -121,7 +121,7 @@ First we define filters based on aspects of read quality.
 #        -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
 ...
 ```
-These filters will retain only uniquely mapped reads (`uniqueOnly`) that map as a proper pair (`only_proper_pairs`) are not tagged with a SAM flag above 255 (`remove_bads`).
+These filters will retain only uniquely mapped reads (`uniqueOnly`) that map as a proper pair (`only_proper_pairs`) and are not tagged with a SAM flag above 255 (`remove_bads`).
 No bases are trimmed from the ends of reads `-trim 0` and we downgrading mapping and base qualities in problematic mapping regions (`-C` and `-baq`).
 `-C INT` downgrades mapping quality when there are excessive mismatches based on sqrt((INT-q)/INT)*INT, while `-baq 1` 
 adjusts base qualities around INDELS ([BAQ](https://academic.oup.com/bioinformatics/article/27/8/1157/227268?login=false)).
@@ -138,8 +138,6 @@ altogether to avoid erroneous inference. You may also want to remove bases with 
 #        -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
 ...
 ```
-
-which corresponds to the following scenario:
 
 Parameter | Meaning |
 --- | --- |
