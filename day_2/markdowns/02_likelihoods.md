@@ -106,7 +106,7 @@ INDNUM=$(grep -n "PANY_04.bam$" $DIR/PANY_bams.txt | cut -f1 -d':')
 echo "$INDNUM"
 ```
 
-So this individual is at row 9 in the bam list. Now we can extract their likelihoods.
+So this individual is at row 4 in the bam list. Now we can extract their likelihoods.
 
 ```bash
 zcat $RESDIR/PANY.glf.gz | grep -m 1 $'^Mme_chr24:2558528-4558528\t34213\t' | cut -f 3- | perl -se '$start=($n-1)*10; @arr = split(/\t/,<>); print "@arr[$start .. $start+9]\n"' -- -n=$INDNUM
