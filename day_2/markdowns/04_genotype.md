@@ -1,4 +1,4 @@
-#### 3. Genotype calling
+## 3. Genotype calling
 
 Now that you know how to calculate allele frequencies, we'll use these estimates to obtain prior probabilities 
 for genotypes, which ultimately allows us to calculate genotype posterior probabilities and call genotypes.
