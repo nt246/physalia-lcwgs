@@ -114,8 +114,8 @@ First we need to define input and output files (please note that we do not run t
 ```
 We provide a list of bam files (with their full paths) with `-b`, while `-out` states the prefix for all output files that will be generated.
 
-Next we need to define some basic filtering options.
-First we define filters based on reads quality.
+Next we specify some basic filtering options.
+First we define filters based on aspects of read quality.
 ```
 # angsd -b ALL.bams -ref $REF -out Results/ALL \
 #        -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
