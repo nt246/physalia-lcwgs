@@ -1,7 +1,5 @@
 #### 3. Allele frequencies and SNP calling
 
-![stage2](../files/stage3.png)
-
 ## Allele Frequency Estimation
 
 Now you will estimate allele frequencies using the GLs that just calculated as input.
@@ -219,18 +217,24 @@ zcat $RESDIR/ALL.mafs.gz | cut -f1,2 | tail -n+2 > $DATDIR/biallelic_snps.pos
 angsd sites index $DATDIR/biallelic_snps.pos
 ```
 
+Now you can calculate allele frequencies that would be comparable between populations. Unfortunately, again because ANGSD does 
+not like the naming convention for our test chromosome we won't run the following command but I've posted below what you 
+would run.
+
 ```bash
 # Calculate derived allele frequencies for PANY
 
-angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_derived \
-   -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -minMapQ 20 -minQ 20 \
-   -GL 1 -doMajorMinor 5 -anc $ANC -doMaf 1 -sites $DATDIR/biallelic_snps.pos
+#angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_derived \
+#   -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -minMapQ 20 -minQ 20 \
+#   -GL 1 -doMajorMinor 5 -anc $ANC -doMaf 1 -sites $DATDIR/biallelic_snps.pos
 
 # Calculate derived allele frequencies for JIGA
 
-angsd -b $DIR/JIGA_bams.txt -ref $REF -out $RESDIR/JIGA_derived \
-   -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -minMapQ 20 -minQ 20 \
-   -GL 1 -doMajorMinor 5 -anc $ANC -doMaf 1 -sites $DATDIR/biallelic_snps.pos
+#angsd -b $DIR/JIGA_bams.txt -ref $REF -out $RESDIR/JIGA_derived \
+#   -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -minMapQ 20 -minQ 20 \
+#   -GL 1 -doMajorMinor 5 -anc $ANC -doMaf 1 -sites $DATDIR/biallelic_snps.pos
 ```
+
+Are you able to describe what the commands above are doing?
 
 </details>

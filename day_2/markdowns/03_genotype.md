@@ -3,7 +3,7 @@
 
 ![stage2](../files/stage2.png)
 
-Here we will explore several ways to call genotypes from sequencing data.
+Now we will explore several ways to call genotypes from sequencing data.
 We will also calculate genotypes probabilities to each site for each individual.
 
 In ANGSD, the option to call genotypes is `-doGeno`:

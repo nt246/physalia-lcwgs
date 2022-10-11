@@ -1,8 +1,6 @@
 
 #### 2. Genotype likelihoods
 
-![stage1](../files/stage1.png)
-
 Many of the calculations that you perform with ANGSD are based on ***genotype likelihoods*** (GL)s, which improves accuracy over hard-called genotypes (avoids snowballing errors). 
 We will now calculate GLs for each individual at all sites in our test dataset. 
 
