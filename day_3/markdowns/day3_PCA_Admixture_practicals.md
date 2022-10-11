@@ -113,8 +113,7 @@ angsd sites index $SNPlist
 ```
 
 ```
-angsd -b $DIR'/ALL_bams.txt' -anc $REF -out $BASEDIR'Results/MME_ANGSD_PCA_LDpruned' \
-	-GL 1 -doGlf 2 -doMajorMinor 3 -doMAF 1 -doPost 1 -doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1 -sites $SNPlist
+angsd -b $DIR'/ALL_bams.txt' -anc $REF -out $BASEDIR'Results/MME_ANGSD_PCA_LDpruned' -GL 1 -doGlf 2 -doMajorMinor 3 -doMAF 1 -doPost 1 -doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1 -sites $SNPlist
 ```
 
 At the same time, we will also output the genotype likelihoods for these variant sites in beagle likelihood file format (beagle.gz) by specifying the `-doGlf 2` option. This will be used as input for estimating the covariance matrix using PCAngsd (below) 
