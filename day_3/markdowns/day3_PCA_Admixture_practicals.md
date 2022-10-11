@@ -45,7 +45,7 @@ BASEDIR=~/day3/    # Edit if this is not the path to your day3 directory. Rememb
 
 And then we set all the rest of the paths:
 ```
-DIR=/home/ubuntu/Share/data
+DIR=/home/ubuntu/Share/physalia-lcwgs/data
 DATA=$DIR/BAMS
 REF=$DIR/Ref.fa
 ANC=$DIR/outgrp_ref.fa
@@ -107,8 +107,8 @@ Using the list of LD-pruned variant sites and the code shown below, we can estim
 
 Let's specify our SNPlist and index it:
 ```
-cp $DIR'/LDpruned_snps_chr24.list' ~/day3/Data/
-SNPlist=~/day3/Data/LDpruned_snps_chr24.list
+cp /home/ubuntu/Share/physalia-lcwgs/day_3/ngsld/LDpruned_snps.list ~/day3/Data/
+SNPlist=~/day3/Data/LDpruned_snps.list
 angsd sites index $SNPlist
 ```
 
