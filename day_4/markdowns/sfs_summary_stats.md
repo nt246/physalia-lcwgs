@@ -110,7 +110,7 @@ The columns are (1) chromosome, (2) position, (3) likelihood of 0 derived allele
 are scaled to the highest likelihood and log transformed (such that the most likely allele frequency will have a 
 value of 0).
 
-*QUESTION*
+**QUESTION**
 Can you tell which are the first two sites that look to be variable?
 
 <details>
