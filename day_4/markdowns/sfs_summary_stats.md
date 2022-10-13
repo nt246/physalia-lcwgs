@@ -208,19 +208,6 @@ You should observe the following vector of 2N+1 values (you'll need to scroll ri
 
 These are the *expected* number of sites in the PANY sample with 0 (value 1), 1 (value 2), 3 (value 3), ..., 2N (value 2N+1) derived alleles.
 
-Plotting the SFS (TO DO)
-```
-/usr/bin/R
-
-sfs<-scan("smallFolded.sfs")
-
-pdf("~/day4/Results/PANY_1D_SFS.pdf")
-plot = barplot(sfs[-1])
-dev.off() 
-```
-
-
-
 
 What if we did not have an outgroup to polarize alleles with? In this case we could calculate the folded SFS. Let's try it.
 
