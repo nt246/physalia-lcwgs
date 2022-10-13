@@ -29,7 +29,7 @@ For this practical, we will be using [ANGSD](http://popgen.dk/wiki/index.php/ANG
 
 # Initial preparation
 
-Please make sure to follow these preparatory instructions below before running these examples. You need to set the path to the software and various data that will be used. Also, you will have to create two new folders in your `day3` working directory, one for your results and one for your intermediate data.
+Please make sure to follow these preparatory instructions below before running these examples. You need to set the path to the software and the various data that will be used. Also, you will have to create two new folders in your `day3` working directory, one for your results and one for your intermediate data.
 
 First go to the day3 directory you created for the previous exercise create subdirectories for data and results:
 ```
@@ -45,11 +45,12 @@ BASEDIR=~/day3/    # Edit if this is not the path to your day3 directory. Rememb
 
 And then we set all the rest of the paths:
 ```
-DIR=/home/ubuntu/Share/data
+DIR=/home/ubuntu/Share/physalia-lcwgs/data
 DATA=$DIR/BAMS
 REF=$DIR/Ref.fa
 ANC=$DIR/outgrp_ref.fa
 NGSadmix=/
+ANGSD=/home/ubuntu/Share/angsd/angsd
 ```
 
 
@@ -71,7 +72,7 @@ We only want to focus on variant sites in our population structure analyses. As 
 Here is some example code to illustrate how we would do this. WE ARE NOT RUNNING THIS CODE TODAY - JUST READ OVER IT, DON'T COPY AND RUN IT.
 
 ```
-# angsd -b $DIR'/ALL_bams.txt' -anc $REF -out $BASEDIR'/Results/MME_SNPs' \
+# $ANGSD -b $DIR'/ALL_bams.txt' -anc $REF -out $BASEDIR'/Results/MME_SNPs' \
 #	-minMapQ 20 -minQ 20 -doMaf 1 -minMaf 0.05 -SNP_pval 2e-6 \
 #	-GL 1 -doGlf 2 -doMajorMinor 1 -doPost 1
 ```
@@ -88,7 +89,7 @@ We could then extract a list of all variant sites from the minor allele frequenc
 And then we have to index our SNP list so that ANGSD can read it:
 
 ```
-# angsd sites index Global_SNPList_MME_SNPs.txt
+# $ANGSD sites index Global_SNPList_MME_SNPs.txt
 ```
 
 <br>
@@ -107,13 +108,13 @@ Using the list of LD-pruned variant sites and the code shown below, we can estim
 
 Let's specify our SNPlist and index it:
 ```
-SNPlist=~/day3/ngsld/LDpruned_snps.list
-angsd sites index $SNPlist
+cp /home/ubuntu/Share/physalia-lcwgs/day_3/ngsld/LDpruned_snps.list ~/day3/Data/
+SNPlist=~/day3/Data/LDpruned_snps.list
+$ANGSD sites index $SNPlist
 ```
 
 ```
-angsd -b $DIR'/ALL_bams.txt' -anc $REF -out $BASEDIR'Results/MME_ANGSD_PCA_LDpruned' \
-	-GL 1 -doGlf 2 -doMajorMinor 3 -doMAF 1 -doPost 1 -doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1 -sites $SNPlist
+$ANGSD -b $DIR'/ALL_bams.txt' -anc $REF -out $BASEDIR'Results/MME_ANGSD_PCA_LDpruned' -GL 1 -doGlf 2 -doMajorMinor 3 -doMAF 1 -doPost 1 -doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1 -sites $SNPlist
 ```
 
 At the same time, we will also output the genotype likelihoods for these variant sites in beagle likelihood file format (beagle.gz) by specifying the `-doGlf 2` option. This will be used as input for estimating the covariance matrix using PCAngsd (below) 
@@ -192,7 +193,7 @@ PCAngsd provides a multitude of different settings, described [here](http://www.
 We provide the path to the input file using the `-beagle` option, which also tells PCAngsd that we are working with a beagle file. The output path and output name is provided using the `-o` option. 
 
 ```
-python ~/Software/pcangsd/pcangsd.py -beagle Results/MME_ANGSD_PCA_LDpruned.beagle.gz -o Results/PCAngsd_LDpruned_covmat
+pcangsd -b ~/day3/Results/MME_ANGSD_PCA_LDpruned.beagle.gz -o ~/day3/Results/PCAngsd_LDpruned_covmat
 ```
 
 <br>
@@ -252,7 +253,7 @@ While it is best practice to perform a PCA based on an LD-pruned SNP dataset, PC
 For this, we will only estimate the covariance matrix using single read sampling in ANGSD. SNPs can be inferred based on genotype likelihoods (see day 2) at the same time as inferring the covariance matrix (`-doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1`) by providing the `-SNP_pval` option. SNPs should be restricted to more common variants with minor allele frequencies of at least 5% using the `-minMAF 0.05` option.
 
 ```
-angsd -b $DIR/ALL_bams.txt -anc $REF -out $BASEDIR'Results/MME_ANGSD_PCA' \
+$ANGSD -b $DIR/ALL_bams.txt -anc $REF -out $BASEDIR'Results/MME_ANGSD_PCA' \
 	-minMapQ 20 -minQ 20 -doMaf 1 -minMaf 0.05 -SNP_pval 2e-6 \
 	-GL 1 -doGlf 2 -doMajorMinor 1 -doPost 1 \
 	-doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1 -P 4
@@ -402,7 +403,7 @@ dev.off()
 <br>
 
 ```
-NGSadmix -likes Results/MME_ANGSD_PCA_LDpruned.beagle.gz -K 3 -o Results/MME_LDpruned_ngsAdmix_K3_out
+NGSadmix -likes $BASEDIR'/Results/MME_ANGSD_PCA_LDpruned.beagle.gz -K 3 -o $BASEDIR'/Results/Results/MME_LDpruned_ngsAdmix_K3_out
 ```
 
 <br>
@@ -443,9 +444,7 @@ However, one can also set the number of clusters using the `-admix_K` option.
 <br>
 
 ```
-cd $BASEDIR
-
-python ~/Software/pcangsd/pcangsd.py -beagle Results/MME_ANGSD_PCA_LDpruned.beagle.gz -admix -admix_K 2 -o Results/MME_PCAngsd_K2_out
+pcangsd -b ~/day3/Results/MME_ANGSD_PCA_LDpruned.beagle.gz --admix --admix_K 2 -o ~/day3/Results/MME_PCAngsd_K2_out
 ```
 
 <br>

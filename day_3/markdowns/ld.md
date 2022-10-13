@@ -1,26 +1,27 @@
 Linkage disequilibrium estimation
 ================
 
-  - [Define paths to the project directory and
+-   [Define paths to the project directory and
     programs](#define-paths-to-the-project-directory-and-programs)
-      - [Set the project directory as a variable named
+    -   [Set the project directory as a variable named
         `BASEDIR`](#set-the-project-directory-as-a-variable-named-basedir)
-      - [Specify the path to required programs as
+    -   [Specify the path to required programs as
         variables](#specify-the-path-to-required-programs-as-variables)
-  - [Estimate LD](#estimate-ld)
-      - [Prepare the input files](#prepare-the-input-files)
-      - [Run ngsLD](#run-ngsld)
-      - [Visualize LD blocks](#visualize-ld-blocks)
-          - [Transfer the input file and the script to your local
-            computer](#transfer-the-input-file-and-the-script-to-your-local-computer)
-          - [Install required R packages on your local
-            computer](#install-required-r-packages-on-your-local-computer)
-          - [Run `LD_blocks.sh` on your local
-            computer](#run-ld_blockssh-on-your-local-computer)
-      - [LD pruning](#ld-pruning)
-          - [Run LD pruning](#run-ld-pruning)
-          - [Generate an LD-pruned SNP
-            list](#generate-an-ld-pruned-snp-list)
+-   [Estimate LD](#estimate-ld)
+    -   [Prepare the input files](#prepare-the-input-files)
+    -   [Run ngsLD](#run-ngsld)
+-   [Visualize LD blocks](#visualize-ld-blocks)
+    -   [Transfer the input file and the script to your local
+        computer](#transfer-the-input-file-and-the-script-to-your-local-computer)
+    -   [Install required R packages on your local
+        computer](#install-required-r-packages-on-your-local-computer)
+    -   [Run `LD_blocks.sh` on your local
+        computer](#run-ld_blockssh-on-your-local-computer)
+-   [LD pruning](#ld-pruning)
+    -   [Run LD pruning](#run-ld-pruning)
+    -   [Generate an LD-pruned SNP
+        list](#generate-an-ld-pruned-snp-list)
+-   [Practical considerations](#practical-considerations)
 
 <br> <br>
 
@@ -53,7 +54,7 @@ dataset, as inversions can strongly suppress recombination.
 
 <br>
 
-# Define paths to the project directory and programs
+## Define paths to the project directory and programs
 
 We need to make sure the server knows where to find the programs we’ll
 be running and our input and output directories. This will always need
@@ -61,15 +62,14 @@ to be specified every time we run our scripts in a new login session.
 
 <br>
 
-## Set the project directory as a variable named `BASEDIR`
+### Set the project directory as a variable named `BASEDIR`
 
 We’ll copy today’s data files into your home directory with the
 following commands
 
 ``` bash
-
 ## Copy the shared project directory to your home directory
-cp -r ~/Share/day3/ ~ 
+cp -r ~/Share/physalia-lcwgs/day_3 ~/day3
 
 ## Define BASEDIR as your project directory
 BASEDIR=~/day3/ # Note that no spaces are allowed! 
@@ -80,13 +80,12 @@ ls
 
 <br>
 
-## Specify the path to required programs as variables
+### Specify the path to required programs as variables
 
 When running these scripts on the AWS server, run the following:
 
 ``` bash
-
-NGSLD=~/Share/ngsLD/
+NGSLD=~/Share/ngsTools/ngsLD/
 ```
 
 <br>
@@ -97,16 +96,16 @@ add them to your $PATH).
 
 <br>
 
-# Estimate LD
+## Estimate LD
 
-## Prepare the input files
+### Prepare the input files
 
 ngsLD requires two input files.
 
 1.  `--geno FILE`: input file with genotypes, genotype likelihoods or
     genotype posterior probabilities. With low-coverage data, a genotype
     likelihood file is often used, in which each row is a SNP and each
-    individual has three columns correponding to the likelihood of the
+    individual has three columns corresponding to the likelihood of the
     three genotypes (we only need to keep track of the likelihood of
     three genotypes (rather than all ten possible) when the major and
     minor allele has been inferred). Therefore, a `beagle` formatted
@@ -126,10 +125,7 @@ ngsLD requires two input files.
     `mafs` file that were generated in the same ANGSD run that generated
     our genotype likelihood beagle file (`MME_ANGSD_PCA.mafs.gz`).
 
-<!-- end list -->
-
 ``` bash
-
 ## Prepare a geno file by subsampling one SNP in every 50 SNPs in the beagle file
 zcat $BASEDIR/angsd/MME_ANGSD_PCA.beagle.gz | awk 'NR % 50 == 0' | cut -f 4- | gzip  > $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.beagle.gz
 
@@ -141,27 +137,30 @@ Don’t worry if you don’t understand the `sed` command. The `:` in the
 chromosome name interferes with the code, so the `sed` command just
 replaces the `:` with `_`.
 
+You can use something like
+`zcat $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.beagle.gz | cut -f 1,2,3 | head`
+and `zcat $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.pos.gz | head` to
+check the content of these input files.
+
 <br>
 
-## Run ngsLD
+### Run ngsLD
 
-Important ngsLD parameters:
+Important ngsLD parameters (default values shown in square brackets):
 
-  - `--probs`: specification of whether the input is genotype
-    probabilities (likelihoods or posteriors)?
-  - `--n_ind INT`: sample size (number of individuals).
-  - `--n_sites INT`: total number of sites.
-  - `--max_kb_dist DOUBLE`: maximum distance between SNPs (in Kb) to
-    calculate LD. Set to 0(zero) to disable filter. \[100\]
-  - `--max_snp_dist INT`: maximum distance between SNPs (in number of
+-   `--probs`: specification of whether the input is genotype
+    probabilities (likelihoods or posteriors).
+-   `--n_ind INT`: sample size (number of individuals).
+-   `--n_sites INT`: total number of sites.
+-   `--max_kb_dist DOUBLE`: maximum distance between SNPs (in Kb) to
+    calculate LD. Set to 0 (zero) to disable filter. \[100\]
+-   `--max_snp_dist INT`: maximum distance between SNPs (in number of
     SNPs) to calculate LD. Set to 0 (zero) to disable filter. \[0\]
-  - `--n_threads INT`: number of threads to use. \[1\]
-  - `--out FILE`: output file name. \[stdout\]
-
-<!-- end list -->
+-   `--n_threads INT`: number of threads to use. Using more threads will
+    speed up the computation. \[1\]
+-   `--out FILE`: output file name. \[stdout\]
 
 ``` bash
-
 $NGSLD/ngsLD \
 --geno $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.beagle.gz \
 --pos $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.pos.gz \
@@ -173,16 +172,20 @@ $NGSLD/ngsLD \
 --out $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.ld 
 ```
 
-Note: this step may take a few minutes to run. In the meantime, you can
-take a look at the [ngsLD GitHub
-page](https://github.com/fgvieira/ngsLD).
+This step may take a few minutes to run. In the meantime, you can take a
+look at the [ngsLD GitHub page](https://github.com/fgvieira/ngsLD).
+Particularly, read [this
+section](https://github.com/fgvieira/ngsLD#output) on output format, and
+see if you can identify the different measures of LD in the output file
+once it is generated. Note that the r<sup>2</sup> value from the EM
+algorithm is the one that is going to be the most useful.
 
 <br>
 
 ## Visualize LD blocks
 
-For this exercise and this exercise only, you will run the script on
-your local computer because we could not make the necessary packages
+For this exercise and **this exercise only**, you will run the script on
+your **local computer** because we could not make the necessary packages
 work in the version of R available on the server.
 
 <br>
@@ -196,9 +199,8 @@ Then, edit the pem file path and name, user name, IP address of the
 following script and run it.
 
 ``` bash
-
-# scp -i "c2.pem" user2@34.220.201.184:~/day3/ngsld/MME_ANGSD_PCA_subsampled.ld ./
-# scp -i "c2.pem" user2@34.220.201.184:~/day3/scripts/LD_blocks.sh ./
+# scp -i "c1.pem" user1@35.89.70.53:~/day3/ngsld/MME_ANGSD_PCA_subsampled.ld ./
+# scp -i "c1.pem" user1@35.89.70.53:~/day3/scripts/LD_blocks.sh ./
 ```
 
 <br>
@@ -215,8 +217,8 @@ install.packages("gtools")
 ```
 
 <details>
-
-<summary> Click here if you are having trouble installing LDheatmap
+<summary>
+Click here if you are having trouble installing LDheatmap
 </summary>
 
 If you see the following error message when installing `LDheatmap`
@@ -248,10 +250,9 @@ takes three argument in the following order:
 2.  starting position
 3.  ending position
 
-Run the following script in command line.
+Run the following script in command line on your local computer.
 
 ``` bash
-
 cat MME_ANGSD_PCA_subsampled.ld | bash LD_blocks.sh \
 Mme_chr24_2558528-4558528 \
 200000 \
@@ -275,27 +276,31 @@ you think is causing this pattern and why?
 
 For many downstream analyses, independence among different SNPs is often
 assumed, so it is important to generate a list of SNPs that are in low
-LD with each other. To do this, we can use the `prune_graph.pl` script
+LD with each other. To do this, we can use the `prune_ngsLD.py` script
 provided in ngsLD. This script takes the LD estimation output (in our
 case `MME_ANGSD_PCA.ld`) as its input. Some important parameters
 include:
 
-  - `--max_kb_dist INT`: Maximum distance between nodes (ie. SNPs, input
-    file 3rd column) to assume they are connected
-  - `--min_weight FLOAT`: Minimum weight (in –weight\_field) of an edge
-    to assume nodes are connected (the weight refers to the LD estimate
-    between two SNPs)
-  - `--out FILE`: Path to output file \[STDOUT\]
+-   `--input FILE`: Path to input file (i.e. `.ld` file generated from
+    the LD estimation step)
+-   `--max_dist INT`: Maximum distance between two SNPs to assume they
+    are potentially in strong LD
+-   `--min_weight FLOAT`: Minimum LD estimates between two SNPs to
+    assume that they are in strong LD (and thus one of them will be
+    pruned)
+-   `--output FILE`: Path to output file \[STDOUT\]
 
 <br>
 
-``` bash
+Run the following script **on the AWS server** to perform LD pruning
+with our test dataset.
 
-perl $NGSLD/scripts/prune_graph.pl \
---in_file $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.ld \
---max_kb_dist 2000 \
+``` bash
+python $NGSLD/scripts/prune_ngsLD.py \
+--input $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.ld \
+--max_dist 2000000 \
 --min_weight 0.5 \
---out $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled_unlinked.id
+--output $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled_unlinked.id
 ```
 
 Check the LD pruning result. How many SNPs survived the LD pruning
@@ -306,13 +311,12 @@ process and how many were lost?
 ### Generate an LD-pruned SNP list
 
 We will use R to generate an LD-pruned SNP list in a format that can be
-used by ANGSD for downstream analyses. This can be run on the AWS
-server.
+used by ANGSD for downstream analyses. This can be run **on the AWS
+server**.
 
 To launch R on the AWS server, run the following command.
 
 ``` bash
-
 /usr/bin/R
 ```
 
@@ -322,11 +326,60 @@ SNP list.
 ``` r
 library(tidyverse)
 basedir="~/day3/"
+## position of SNPs that survived LD pruning
 pruned_position <- read_lines(paste0(basedir, "ngsld/MME_ANGSD_PCA_subsampled_unlinked.id")) %>%
   str_remove("Mme_chr24_2558528-4558528:") %>%
   as.integer()
+## filter SNPs in the original SNP list to only include those that survived LD pruning
 pruned_snp_list <- read_tsv(paste0(basedir, "angsd/MME_ANGSD_PCA.mafs.gz")) %>%
   dplyr::select(1:4) %>%
   filter(position %in% pruned_position)
 write_tsv(pruned_snp_list, paste0(basedir, "ngsld/LDpruned_snps.list"), col_names = F)
 ```
+
+Note that this is a simple example with only one chromosome. If multiple
+chromosomes are considered, both the chromosome name and position in the
+SNP list need to match to the LD pruning output.
+
+## Practical considerations
+
+LD estimation and pruning tend to be computationally expensive because
+for a chromosome with n SNPs, there are n<sup>2</sup> pairs of SNPs. To
+make this computationally tractable, it is important to:
+
+-   consider downsampling your SNP list.
+-   impose stringent filters on minor allele frequencies since rare
+    alleles are not helpful for LD estimation or for many of the
+    downstream analyses. This can be done with the `--min_maf` flag
+    (e.g. `--min_maf 0.05`).
+-   take advantage of the `--max_kb_dist` and `--max_snp_dist` flags for
+    LD estimation and the `--max_dist` flag in LD pruning to limit the
+    pairs of SNPs the program needs to consider.
+
+Below are some specific recommendations with regard to two LD-related
+applications.
+
+For LD pruning, we recommend you to estimate LD with a relatively large
+maximum distance (i.e. a distance at which you are very confident that
+LD has decayed to the background level). Then, you can visualize the
+patterns of LD decay by plotting LD estimates against physical distance
+and fit a smooth curve to it. From this plot, you will be able to find
+the smallest distance at which LD decays to the background level. Use
+this value as your `--max_dist` in LD pruning. If everything still takes
+too long, you can consider running each chromosome in parallel if you
+have access to a computer cluster, or downsample the SNP list as we did
+for this exercise. Also, if there are putative inversions that are
+segregating in your samples, you can just remove all the SNPs that fall
+into the inversions from the SNP list before LD pruning, because LD
+extends too far when inversions are present.
+
+For the visualization of large LD blocks, we recommend you to
+drastically downsample the SNP list as we did here, and impose a very
+stringent minor allele frequency filter. You will need to use a maximum
+distance value that is large enough to span the entire LD block, so
+having too many SNPs will significantly slow things down. If you are
+just zooming into one of the edges of LD blocks (e.g. to identify the
+breakpoint), you may use a denser SNP list as the maximum distance value
+would be much smaller.
+
+<br>
