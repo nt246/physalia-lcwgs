@@ -28,6 +28,7 @@ RESDIR=~/day4/Results
 DATDIR=~/day4/Data
 ANGSD=/home/ubuntu/Share/angsd/angsd
 REALSFS=/home/ubuntu/Share/angsd/misc/realSFS
+THETASTAT=/home/ubuntu/Share/angsd/misc/thetaStat
 ```
 
 ### Data
@@ -340,10 +341,125 @@ so the SFS for a single individual provides the heterozygosity of that individua
 
 ### Diversity and Neutrality Statistics
 
-Many population genetic summary statistics can be calculated directly from the SFS.
+Various population genetic summary statistics, including commonly used measures of genetic diversity, can be calculated directly from the SFS. 
+Here we'll learn how to estimate some of these different measures of genetic diversity using the PANY population as an example. 
+The methods are described [here](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-14-289).
+Since these statistics are estimated from the SFS we supply `realSFS` with the allele frequency likelihoods at all sites (.saf.idx file) as well as the 
+ML estimate of the SFS (.sfs file). The program can then calculate posterior probabilities for different allele frequencies accross all sites 
+and ultimately a posterior expectation of the SFS. This SFS is then used to calculate diversity statistics. Here we are not using the folded SFS 
+but if you were, you would supply the `-fold 1` argument at this stage. 
 
-./misc/realSFS saf2theta out.saf.idx -outname out -sfs out.sfs (TODO)
+$REALSFS saf2theta $RESDIR/PANY.saf.idx -outname $RESDIR/PANY -sfs $RESDIR/PANY.sfs
+
+You can view log-transformed per site estimates of theta using `thetaStat`. Try viewing the first 20 sites.
+
+```bash
+$THETASTAT print $RESDIR/PANY.thetas.idx 2>/dev/null | head -n 20
+```
+
+```bash
+#Chromo	Pos	Watterson	Pairwise	thetaSingleton	thetaH	thetaL
+Mme_chr24:2558528-4558528	27	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
+Mme_chr24:2558528-4558528	28	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
+Mme_chr24:2558528-4558528	29	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
+Mme_chr24:2558528-4558528	30	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
+Mme_chr24:2558528-4558528	31	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
+Mme_chr24:2558528-4558528	32	-6.557443	-7.278310	-5.695343	-9.283727	-7.845174
+Mme_chr24:2558528-4558528	35	-6.557443	-7.278310	-5.695343	-9.283727	-7.845174
+Mme_chr24:2558528-4558528	38	-6.557443	-7.278310	-5.695343	-9.283727	-7.845174
+Mme_chr24:2558528-4558528	39	-6.602772	-7.355801	-5.716146	-9.435252	-7.931166
+Mme_chr24:2558528-4558528	40	-6.688331	-7.495578	-5.759189	-9.691832	-8.083268
+Mme_chr24:2558528-4558528	41	-6.729235	-7.559628	-5.781463	-9.803245	-8.151958
+Mme_chr24:2558528-4558528	42	-6.688332	-7.495582	-5.759189	-9.691842	-8.083272
+Mme_chr24:2558528-4558528	43	-6.729242	-7.559647	-5.781463	-9.803303	-8.151980
+Mme_chr24:2558528-4558528	44	-6.729246	-7.559657	-5.781463	-9.803333	-8.151993
+Mme_chr24:2558528-4558528	45	-6.688335	-7.495590	-5.759189	-9.691867	-8.083282
+Mme_chr24:2558528-4558528	46	-6.729248	-7.559663	-5.781463	-9.803354	-8.152000
+Mme_chr24:2558528-4558528	47	-6.729248	-7.559663	-5.781463	-9.803354	-8.152000
+Mme_chr24:2558528-4558528	48	-1.376662	-0.822030	-15.112546	-1.061792	-0.934742
+Mme_chr24:2558528-4558528	49	-6.602776	-7.355811	-5.716146	-9.435287	-7.931179
+```
+The columns are (1) Chromosome, (2) position, (3) Watterson's theta, (4) nucleotide diversity, (5) theta based only on singletons, (6) theta H, (7) theta L.
+The estimates of theta are linear functions of the SFS, so if you wanted to estimate theta for a regions you simply sum the estimates over all sites in the region.
+
+There is an easy way in ANGSD however to calculate genome-wide estimates of theta for each chromosome along with some statistics commonly used to 
+detect signatures of selection once you have the .thetas.idx file, which we'll do now.
+
+```bash
+$THETASTAT do_stat $RESDIR/PANY.thetas.idx
+```
+Have a look at the output:
+
+```bash
+less -S $RESDIR/PANY.thetas.idx.pestPG
+```
+There are 14 tab-delimited fields. The first 3 columns provide information about the coordinates of the genomic region (window) that the statistic values are for. In this instance 
+these coordinates specify the entire chromosome (Mme_chr24:2558528-4558528) since did not give any window information to `thetaStat` when we ran it. The next five columns 
+give different estimates of theta, followed by five columns with different neutrality statistics calculated from the theta estimates. The last column is the number of sites with data that were 
+used in calculating the statistics for the given region. More information about the output can be found [here](http://www.popgen.dk/angsd/index.php/Thetas,Tajima,Neutrality_tests).
+
+*QUESTION*
+What are the per site estimates of Watterson's theta and nucleotide diversity for chromosome Mme_chr24:2558528-4558528? What is the estimate of 
+Tajima's D for this region?
+
+<details>
+
+<summary> Click for help </summary>
+
+The output is:
+
+```bash
+#(indexStart,indexStop)(firstPos_withData,lastPos_withData)(WinStart,WinStop)	Chr	WinCenter	tW	tP	tF	tH	tL	Tajima	fuf	fud	fayh	zeng	nSites
+(0,1351769)(27,1999989)(0,1999989)	Mme_chr24:2558528-4558528	999994	4233.873378	3712.268273	5440.874692	4406.047859	4059.158069	-0.483002	-0.758499	-0.698366	-0.142861	-0.037702	1351769
+```
+
+The total number of sites used in the statistic calculations are given in the last column, and is equal to 1351769.
+
+The per site estimate for Watterson's theta (column "tW") is 4233.873378 / 1351769 = 0.003132098.
+
+The per site estimate of nucleotide diversity (column "tP") is 3712.268273 / 1351769 = 0.00274623.
+
+Tajima's D is given in column 9 ("Tajima") and is equal to -0.483002.
+
+</details>
+
+It is also possible to have `thetaStat` print thetas and neutrality statistics in windows along the genome. As an example, let's look at windows of 10kb along Mme_chr24:2558528-4558528 using a 
+step size of 1kb (i.e. every 10kb window will be advanced by 1kb).
+
+```bash
+$THETASTAT do_stat $RESDIR/PANY.thetas.idx -win 10000 -step 1000  -outnames $RESDIR/PANY.thetasWindow.gz  
+```
+
+Let's look at the window output:
+
+```bash
+less -S $RESDIR/PANY.thetasWindow.gz.pestPG | less -S
+```
 
 ### Multidimensional SFS and Fst
 
-(TODO)
+In this part of the tutorial you will learn how to estimate the joint site frequency spectrum. In this case we're 
+calculating the joint SFS between two populations, which is generally called the 2D-SFS. Note that ANGSD can estimate 
+the joint SFS for more than two populations, which is useful inferring divergene with Population Branch Length statistics, which we won't 
+be covering here. More information about calculating multidimensional frequency spectra with ANGSD can be found [here](http://www.popgen.dk/angsd/index.php/2d_SFS_Estimation).
+
+We'll calculate the 2D-SFS between the PANY and MAQU populations. The first step in doing this estimating allele frequency likelihoods across all sites for each population 
+separately. We've already done this for the PANY population, so let's carry out this calculation for the MAQU population:
+
+```bash
+$ANGSD -b $DIR/MAQU_bams.txt -ref $REF -anc $ANC -out $RESDIR/MAQU \
+   -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
+   -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 60 -doCounts 1 \
+   -GL 1 -doSaf 1
+```
+
+Then we can use each population respective allele frequency likelihoods to obtain a maximum likelihood estimate of the 
+joint allele frequency likelihoods:
+
+```bash
+$REASFS $RESDIR/PANY.saf.idx $RESDIR/MAQU.saf.idx > $RESDIR/PANY_vs_MAQU.2dsfs
+```
+
+```bash
+realSFS fst index $RESDIR/PANY.saf.idx $RESDIR/MAQU.saf.idx -sfs $RESDIR/PANY_vs_MAQU.2dsfs -fstout $RESDIR/PANY_vs_MAQU
+```
