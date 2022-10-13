@@ -475,9 +475,46 @@ Now we have a prior for the joint probability of observing *i* alleles in PANY a
 with a heatmap. We're going to use these probabilities of jointly observing combinations of allele frequencies in our two example populations to calculate 
 F<sub>ST</sub> between them. F<sub>ST</sub> is a commonly used measure of genetic differentiation based on allele frequencies that spans from 0 when the allele frequency is the same 
 in both populations to 1 when the populations are fixed for different alleles. F<sub>ST</sub> can be expressed in terms of the genetic variance within subpopulations 
-(denoted here as *a<sub>s</sub>*) and between subpopulations (denoted here as *b<sub>s</sub>*) and between subpopulations. That is, F<sub>ST</sub> = a<sub>s</sub> / (a<sub>s</sub> + b<sub>s</sub>).
+(denoted here as *b<sub>s</sub>*) and between subpopulations (denoted here as *a<sub>s</sub>*) and between subpopulations. That is, F<sub>ST</sub> = a<sub>s</sub> / (a<sub>s</sub> + b<sub>s</sub>).
 We can calculate these genetic variances with `realSFS` for our two example populations like so:
 
 ```bash
 $REALSFS fst index $RESDIR/PANY.saf.idx $RESDIR/MAQU.saf.idx -sfs $RESDIR/PANY_vs_MAQU.2dsfs -fstout $RESDIR/PANY_vs_MAQU
 ```
+We can view the genetic variance components at each site with `realSFS`:
+
+```bash
+$REALSFS fst print $RESDIR/PANY_vs_MAQU.fst.idx | less -S
+```
+The columns are (1) Chromomsome, (2) position, (3) a<sub>s</sub> (between population genetic variance), (4) b<sub>s</sub> (within population variance).
+
+**QUESTION**
+
+What is the value of F<sub>ST</sub> at position chr24 365?
+
+<details>
+
+<summary> Click for answer </summary>
+
+a<sub>365</sub> = 0.017935
+b<sub>365</sub> = 0.224872
+
+F<sub>ST</sub> = a<sub>365</sub> / (a<sub>365</sub> + b<sub>365</sub>) = 0.017935 / (0.017935 + 0.224872) = 0.07386525
+
+</details>
+
+To calculate F<sub>ST</sub> for a region you sum over all a<sub>365</sub> for the region, and then divide that by the sum of all (a<sub>365</sub> + b<sub>365</sub>)
+in that region.
+
+You can calculate the genome-wide F<sub>ST</sub> between the PANY and MAQU populations using `realSFS`:
+
+```bash
+$REALSFS fst stats $RESDIR/PANY_vs_MAQU.fst.idx
+```
+After running the command you should observe
+
+```bash
+-> FST.Unweight[nObs:1271361]:0.026882 Fst.Weight:0.086872
+```
+The "weighted" estimate of F<sub>ST</sub> is calculated in the way that was explained for a region using the variance components, but here the "region" is the whole genome 
+and is a better estimate than the unweighted estimate. Therefore, we would say that the F<sub>ST</sub> between the PANY and MAQU populations is estimated to be 0.086872.
