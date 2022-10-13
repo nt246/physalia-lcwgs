@@ -117,14 +117,14 @@ Can you tell which are the first two sites that look to be variable?
 
 <summary> Click for answer </summary>
 
-Mme_chr24:2558528-4558528	48
-Mme_chr24:2558528-4558528	61
+chr24	48
+chr24	61
 
 </details>
 
 **QUESTION**
 
-What is the most likely number of derived alleles at position Mme_chr24:2558528-4558528 61?
+What is the most likely number of derived alleles at position chr24 61?
 
 <details>
 
@@ -281,7 +281,7 @@ probablities are log transformed.
 
 **QUESTION**
 
-What is the most probable number of derived alleles at Mme_chr24:2558528-4558528 61?
+What is the most probable number of derived alleles at chr24 61?
 
 <details>
 
@@ -293,13 +293,13 @@ What is the most probable number of derived alleles at Mme_chr24:2558528-4558528
 
 **QUESTION**
 
-What is the posterior probability that position Mme_chr24:2558528-4558528 61 has 1 derived allele (i.e. is a singleton)?
+What is the posterior probability that position chr24 61 has 1 derived allele (i.e. is a singleton)?
 
 <details>
 
 <summary> Click for answer </summary>
 
-The second value in the probabillity vector for Mme_chr24:2558528-4558528 61 is the probability of 1 derived allele in log space. 
+The second value in the probabillity vector for chr24 61 is the probability of 1 derived allele in log space. 
 This value is -1.844222. So the probability that this site is a singleton is exp(-1.844222) = **0.1581483**.
 
 </details>
@@ -308,9 +308,9 @@ This value is -1.844222. So the probability that this site is a singleton is exp
 
 What is the probability that the following sites are variable?
 
-Mme_chr24:2558528-4558528	39
-Mme_chr24:2558528-4558528	48
-Mme_chr24:2558528-4558528	61
+24	39
+24	48
+24	61
 
 <details>
 
@@ -319,9 +319,9 @@ Mme_chr24:2558528-4558528	61
 The probabiliyt that a site is variable is given by, P(variable) = 1 - P(0 derived alleles) + P(2N derived alleles). This is because sites with either 0 or 2N derived 
 alleles are fixed.
 
-P(Mme_chr24:2558528-4558528 39 is variable) = 1 - exp(-0.005389) + exp(-Inf) = 0.005374505
-P(Mme_chr24:2558528-4558528 48 is variable) = 1 - exp(-Inf) + exp(-Inf) = 1
-P(Mme_chr24:2558528-4558528 61 is variable) = 1 - exp(-0.638232) + exp(-Inf) = 0.4717745
+P(chr24 39 is variable) = 1 - exp(-0.005389) + exp(-Inf) = 0.005374505
+P(chr24 48 is variable) = 1 - exp(-Inf) + exp(-Inf) = 1
+P(chr24 61 is variable) = 1 - exp(-0.638232) + exp(-Inf) = 0.4717745
 
 Alternatively, you could take the sum over P(*x* derived alleles) for *x*=1 to *x*=2N-1. This would give the same answers.
 
@@ -363,25 +363,26 @@ $THETASTAT print $RESDIR/PANY.thetas.idx 2>/dev/null | head -n 21
 
 ```bash
 #Chromo	Pos	Watterson	Pairwise	thetaSingleton	thetaH	thetaL
-Mme_chr24:2558528-4558528	27	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
-Mme_chr24:2558528-4558528	28	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
-Mme_chr24:2558528-4558528	29	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
-Mme_chr24:2558528-4558528	30	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
-Mme_chr24:2558528-4558528	31	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
-Mme_chr24:2558528-4558528	32	-6.557443	-7.278310	-5.695343	-9.283727	-7.845174
-Mme_chr24:2558528-4558528	35	-6.557443	-7.278310	-5.695343	-9.283727	-7.845174
-Mme_chr24:2558528-4558528	38	-6.557443	-7.278310	-5.695343	-9.283727	-7.845174
-Mme_chr24:2558528-4558528	39	-6.602772	-7.355801	-5.716146	-9.435252	-7.931166
-Mme_chr24:2558528-4558528	40	-6.688331	-7.495578	-5.759189	-9.691832	-8.083268
-Mme_chr24:2558528-4558528	41	-6.729235	-7.559628	-5.781463	-9.803245	-8.151958
-Mme_chr24:2558528-4558528	42	-6.688332	-7.495582	-5.759189	-9.691842	-8.083272
-Mme_chr24:2558528-4558528	43	-6.729242	-7.559647	-5.781463	-9.803303	-8.151980
-Mme_chr24:2558528-4558528	44	-6.729246	-7.559657	-5.781463	-9.803333	-8.151993
-Mme_chr24:2558528-4558528	45	-6.688335	-7.495590	-5.759189	-9.691867	-8.083282
-Mme_chr24:2558528-4558528	46	-6.729248	-7.559663	-5.781463	-9.803354	-8.152000
-Mme_chr24:2558528-4558528	47	-6.729248	-7.559663	-5.781463	-9.803354	-8.152000
-Mme_chr24:2558528-4558528	48	-1.376662	-0.822030	-15.112546	-1.061792	-0.934742
-Mme_chr24:2558528-4558528	49	-6.602776	-7.355811	-5.716146	-9.435287	-7.931179
+chr24	27	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
+chr24	28	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
+chr24	29	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
+chr24	30	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
+chr24	31	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
+chr24	32	-6.557443	-7.278310	-5.695343	-9.283727	-7.845174
+chr24	35	-6.557443	-7.278310	-5.695343	-9.283727	-7.845174
+chr24	38	-6.557443	-7.278310	-5.695343	-9.283727	-7.845174
+chr24	39	-6.602772	-7.355801	-5.716146	-9.435252	-7.931166
+chr24	40	-6.688331	-7.495578	-5.759189	-9.691832	-8.083268
+chr24	41	-6.729235	-7.559628	-5.781463	-9.803245	-8.151958
+chr24	42	-6.688332	-7.495582	-5.759189	-9.691842	-8.083272
+chr24	43	-6.729242	-7.559647	-5.781463	-9.803303	-8.151980
+chr24	44	-6.729246	-7.559657	-5.781463	-9.803333	-8.151993
+chr24	45	-6.688335	-7.495590	-5.759189	-9.691867	-8.083282
+chr24	46	-6.729248	-7.559663	-5.781463	-9.803354	-8.152000
+chr24	47	-6.729248	-7.559663	-5.781463	-9.803354	-8.152000
+chr24	48	-1.376662	-0.822030	-15.112546	-1.061792	-0.934742
+chr24	49	-6.602776	-7.355811	-5.716146	-9.435287	-7.931179
+chr24	50	-6.688341	-7.495606	-5.759189	-9.691919	-8.083302
 ```
 The columns are (1) Chromosome, (2) position, (3) Watterson's theta, (4) nucleotide diversity, (5) theta based only on singletons, (6) theta H, (7) theta L.
 The estimates of theta are linear functions of the SFS, so if you wanted to estimate theta for a regions you simply sum the estimates over all sites in the region.
@@ -398,12 +399,12 @@ Have a look at the output:
 less -S $RESDIR/PANY.thetas.idx.pestPG
 ```
 There are 14 tab-delimited fields. The first 3 columns provide information about the coordinates of the genomic region (window) that the statistic values are for. In this instance 
-these coordinates specify the entire chromosome (Mme_chr24:2558528-4558528) since did not give any window information to `thetaStat` when we ran it. The next five columns 
+these coordinates specify the entire chromosome (chr24) since did not give any window information to `thetaStat` when we ran it. The next five columns 
 give different estimates of theta, followed by five columns with different neutrality statistics calculated from the theta estimates. The last column is the number of sites with data that were 
 used in calculating the statistics for the given region. More information about the output can be found [here](http://www.popgen.dk/angsd/index.php/Thetas,Tajima,Neutrality_tests).
 
 **QUESTION**
-What are the per site estimates of Watterson's theta and nucleotide diversity for chromosome Mme_chr24:2558528-4558528? What is the estimate of 
+What are the per site estimates of Watterson's theta and nucleotide diversity for chromosome chr24? What is the estimate of 
 Tajima's D for this region?
 
 <details>
@@ -414,7 +415,7 @@ The output is:
 
 ```bash
 #(indexStart,indexStop)(firstPos_withData,lastPos_withData)(WinStart,WinStop)	Chr	WinCenter	tW	tP	tF	tH	tL	Tajima	fuf	fud	fayh	zeng	nSites
-(0,1351769)(27,1999989)(0,1999989)	Mme_chr24:2558528-4558528	999994	4233.873378	3712.268273	5440.874692	4406.047859	4059.158069	-0.483002	-0.758499	-0.698366	-0.142861	-0.037702	1351769
+(0,1351769)(27,1999989)(0,1999989)	chr24	999994	4233.873378	3712.268273	5440.874692	4406.047859	4059.158069	-0.483002	-0.758499	-0.698366	-0.142861	-0.037702	1351769
 ```
 
 The total number of sites used in the statistic calculations are given in the last column, and is equal to 1351769.
@@ -427,7 +428,7 @@ Tajima's D is given in column 9 ("Tajima") and is equal to -0.483002.
 
 </details>
 
-It is also possible to have `thetaStat` print thetas and neutrality statistics in windows along the genome. As an example, let's look at windows of 10kb along Mme_chr24:2558528-4558528 using a 
+It is also possible to have `thetaStat` print thetas and neutrality statistics in windows along the genome. As an example, let's look at windows of 10kb along chr24 using a 
 step size of 1kb (i.e. every 10kb window will be advanced by 1kb).
 
 ```bash
@@ -461,9 +462,9 @@ Then we can use each population respective allele frequency likelihoods to obtai
 joint allele frequency likelihoods:
 
 ```bash
-$REASFS $RESDIR/PANY.saf.idx $RESDIR/MAQU.saf.idx > $RESDIR/PANY_vs_MAQU.2dsfs
+$REALSFS $RESDIR/PANY.saf.idx $RESDIR/MAQU.saf.idx > $RESDIR/PANY_vs_MAQU.2dsfs
 ```
 
 ```bash
-realSFS fst index $RESDIR/PANY.saf.idx $RESDIR/MAQU.saf.idx -sfs $RESDIR/PANY_vs_MAQU.2dsfs -fstout $RESDIR/PANY_vs_MAQU
+$REALSFS fst index $RESDIR/PANY.saf.idx $RESDIR/MAQU.saf.idx -sfs $RESDIR/PANY_vs_MAQU.2dsfs -fstout $RESDIR/PANY_vs_MAQU
 ```
