@@ -1,7 +1,5 @@
 
-#### 2. Genotype likelihoods
-
-![stage1](../files/stage1.png)
+## 2. Genotype likelihoods
 
 Many of the calculations that you perform with ANGSD are based on ***genotype likelihoods*** (GL)s, which improves accuracy over hard-called genotypes (avoids snowballing errors). 
 We will now calculate GLs for each individual at all sites in our test dataset. 
@@ -35,7 +33,7 @@ The GATK model is based on the one from the first GATK paper, SAMtools uses a mo
 SOAPsnp requires a reference sequence for recalibration of quality scores, SYK is error-type specific.
 In most cases, GATK and SAMtools models should give similar results.
 
-Let's first assume we will work with PANY samples only.
+Let's first work with only the PANY samples.
 A possible command line to calculate genotype likelihoods might be:
 
 ```
@@ -49,7 +47,7 @@ where we specify:
 * -GL 1: genotype likelihood model as in SAMtools
 * -doGlf 4: output in text format
 
-If it is too slow, the add `-nThreads 10` at the end of the command line. This command should take around 2 minutes to run.
+You can usually speed up computation with `-nThreads INT`.
 
 The `-C` option adjusts mapping quality for reads with excessive mismatches. The [samtools](http://www.htslib.org/doc/samtools-mpileup.html)
 documentation recommends setting this to 50 for reads mapped with BWA. `-C` and `-baq` (not used here, but see below) require that you supply the reference genome with `-ref`.
@@ -108,7 +106,7 @@ INDNUM=$(grep -n "PANY_04.bam$" $DIR/PANY_bams.txt | cut -f1 -d':')
 echo "$INDNUM"
 ```
 
-So this individual is at row 9 in the bam list. Now we can extract their likelihoods.
+So this individual is at row 4 in the bam list. Now we can extract their likelihoods.
 
 ```bash
 zcat $RESDIR/PANY.glf.gz | grep -m 1 $'^Mme_chr24:2558528-4558528\t34213\t' | cut -f 3- | perl -se '$start=($n-1)*10; @arr = split(/\t/,<>); print "@arr[$start .. $start+9]\n"' -- -n=$INDNUM
@@ -134,11 +132,11 @@ Try to output genotype likelihood files in binary format (be sure to change the 
 Look at the file sizes of text vs binary format. Which one is smaller? Which one would you use?
 
 **BONUS QUESTION**
-Try to change some filtering options and record the number of entries in the final output file.
+Try to change some filtering options and record the number of entries in the final output file (remember to change the output name to avoid overwriting).
 
 You have learned how to calculate and read genotype likelihood files.
-Now you are going to learn how to perform genotype calling with ANGSD.
+Next you are going to learn how to estimate allele frequencies with ANGSD.
 
-[click here](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/03_genotype.md) to move to the next session.
+[click here](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/03_allele_frequencies.md) to move to the next session.
 
 --------------------------------
