@@ -26,15 +26,13 @@ REF=$DIR/Ref.fa
 ANC=$DIR/outgrp_ref.fa
 RESDIR=~/day4/Results
 DATDIR=~/day4/Data
-ANGSD=(TODO)
-REALSFS=(TODO)
+ANGSD=/home/ubuntu/Share/angsd/angsd
+REALSFS=/home/ubuntu/Share/angsd/misc/realSFS
 ```
 
 ### Data
 
 We will continue to work with the low-coverage NGS data for 60 Atlantic silversides from the following four populations:
-
-As outlined in the previous exercises, we are working with low-coverage NGS data for 60 Atlantic silve
 
 <img src="https://github.com/nt246/physalia-lcwgs/blob/main/day_3/img/Silverside_Sample_Map.png?raw=true" height="400">
 
@@ -42,6 +40,8 @@ These populations have been previously studied in [Therkildsen et al. 2019](http
 
 Our NGS data are in BAM format and span a 2Mb region on chromosome 24. The interesting aspect about chromosome 24 is that it harbours a large polymorphic inversion that differs in its frequency across populations. 
 The test dataset spans one breakpoint of this inversion (1Mb up and downstream).
+
+
 
 ### The Site Frequency Spectrum (SFS)
 
@@ -63,8 +63,7 @@ The general workflow is pictured as
 <img src="https://github.com/nt246/physalia-lcwgs/blob/main/day_3/img/Silverside_Sample_Map.png?raw=true" height="400">
 
 We will estimate the unfolded SFS for the PANY population. To do this first we need to estimate the likelihood of sampling **k** derived alleles for k=0, k=1, k=2, ...,k=2N at 
-every site. This is accomplished using `-doSaf`. We will start with BAMs as input and as usual we will use `-GL` to calculate genotype likelihoods from which we can 
-start estimating the allele frequency likelihoods.
+every site. This is accomplished using `-doSaf`. We will start with BAMs as input and as usual we will use `-GL` to calculate genotype likelihoods from which we can start estimating the allele frequency likelihoods.
 
 `-doSaf`
 
@@ -193,6 +192,7 @@ a maximum likelihood estimate of the SFS with the `realSFS` program.
 ```bash
 $REALSFS $RESDIR/PANY.saf.idx > $RESDIR/PANY.sfs
 ```
+
 Take a look at the output:
 
 ```bash
@@ -203,9 +203,23 @@ You should observe the following vector of 2N+1 values:
 ```bash
 1287585.159170 5441.014450 1893.638927 1024.182258 1477.927761 1192.652825 353.801352 166.179066 199.498879 736.762268 775.654171 132.182867 36.552615 55.659970 162.170177 327.757461 287.965161 106.914226 46.408186 75.780528 238.957573 419.965002 305.941344 92.168706 38.235800 89.032890 167.489915 426.555830 265.498645 236.967396 47411.324580
 ```
+
+
 These are the *expected* number of sites in the PANY sample with 0 (value 1), 1 (value 2), 3 (value 3), ..., 2N (value 2N+1) derived alleles.
 
-PLOT SFS (TODO)
+Plotting the SFS (TO DO)
+```
+/usr/bin/R
+
+sfs<-scan("smallFolded.sfs")
+
+pdf("~/day4/Results/PANY_1D_SFS.pdf")
+plot = barplot(sfs[-1])
+dev.off() 
+```
+
+
+
 
 What if we did not have an outgroup to polarize alleles with? In this case we could calculate the folded SFS. Let's try it.
 
