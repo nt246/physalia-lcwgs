@@ -122,13 +122,13 @@ Mme_chr24:2558528-4558528	61
 
 </details>
 
-*QUESTION*
+**QUESTION**
 
 What is the most likely number of derived alleles at position Mme_chr24:2558528-4558528 61?
 
 <details>
 
-<summary> Click for answer </details>
+<summary> Click for answer </summary>
 
 3 derived alleles.
 
@@ -199,7 +199,7 @@ Take a look at the output:
 ```bash
 cat $RESDIR/PANY.sfs
 ```
-You should observe the following vector of 2N+1 values:
+You should observe the following vector of 2N+1 values (you'll need to scroll right in the markdown box to see them all):
 
 ```bash
 1287585.159170 5441.014450 1893.638927 1024.182258 1477.927761 1192.652825 353.801352 166.179066 199.498879 736.762268 775.654171 132.182867 36.552615 55.659970 162.170177 327.757461 287.965161 106.914226 46.408186 75.780528 238.957573 419.965002 305.941344 92.168706 38.235800 89.032890 167.489915 426.555830 265.498645 236.967396 47411.324580
@@ -247,8 +247,10 @@ Let's look at the ML estimate of the folded SFS:
 cat $RESDIR/PANY_fold.sfs
 ```
 
-Now your vector of expected counts should look like this:
+Now your vector of expected counts should look like this (scroll to see all values):
+```bash
 1403715.239733 6987.037568 2279.638485 2180.218338 1813.594151 1117.329380 697.428766 652.617721 797.370326 889.151374 744.767130 541.466942 478.770881 458.365587 405.231595 187.772023 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
+```
 
 The folded SFS is represented by the first 1 through N values. These are the expected number of sites with minor allele counts of 0, 1, 2, ..., N. `realSFS` still prints 2N+1 values but 
 the N+1 to 2N+1 values should all be `0.000000` and can be ignored when using `-fold 1` because these categories don't really exist in the folded SFS.
@@ -267,29 +269,29 @@ $ANGSD -b $DIR/PANY_bams.txt -ref $REF -anc $ANC -out $RESDIR/PANY_post \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 60 -doCounts 1 \
    -GL 1 -doSaf 1 -pest $RESDIR/PANY.sfs
-```bash
+```
 
 Have a look at the output:
 
 ```bash
-$REALSFS print $RESDIR/PANY_post.saf.idx | less -S
+$REALSFS print $RESDIR/PANY_post.saf.idx 2>/dev/null | less -S
 ```
 The columns are (1) chromosome, (2) position, and then the posterior probability of having 0, 1, 2, 3, ..., 2N derived alleles in each of the subsequent columns. The posterior 
 probablities are log transformed.
 
-*QUESTION*
+**QUESTION**
 
 What is the most probable number of derived alleles at Mme_chr24:2558528-4558528 61?
 
 <details>
 
-<summary> Click for answer </details>
+<summary> Click for answer </summary>
 
 0 derived alleles.
 
 </details>
 
-*QUESTION*
+**QUESTION**
 
 What is the posterior probability that position Mme_chr24:2558528-4558528 61 has 1 derived allele (i.e. is a singleton)?
 
@@ -298,11 +300,11 @@ What is the posterior probability that position Mme_chr24:2558528-4558528 61 has
 <summary> Click for answer </summary>
 
 The second value in the probabillity vector for Mme_chr24:2558528-4558528 61 is the probability of 1 derived allele in log space. 
-This value is -1.844222. So the probability that this site is a singleton is exp(-1.844222) = *0.1581483*.
+This value is -1.844222. So the probability that this site is a singleton is exp(-1.844222) = **0.1581483**.
 
 </details>
 
-*QUESTION*
+**QUESTION**
 
 What is the probability that the following sites are variable?
 
@@ -321,7 +323,7 @@ P(Mme_chr24:2558528-4558528 39 is variable) = 1 - exp(-0.005389) + exp(-Inf) = 0
 P(Mme_chr24:2558528-4558528 48 is variable) = 1 - exp(-Inf) + exp(-Inf) = 1
 P(Mme_chr24:2558528-4558528 61 is variable) = 1 - exp(-0.638232) + exp(-Inf) = 0.4717745
 
-Alternatively, you could take the sum over P(**x** derived alleles) for **x**=1 to **x**=2N-1. This would give the same answers.
+Alternatively, you could take the sum over P(*x* derived alleles) for *x*=1 to *x*=2N-1. This would give the same answers.
 
 </details>
 
@@ -349,12 +351,14 @@ ML estimate of the SFS (.sfs file). The program can then calculate posterior pro
 and ultimately a posterior expectation of the SFS. This SFS is then used to calculate diversity statistics. Here we are not using the folded SFS 
 but if you were, you would supply the `-fold 1` argument at this stage. 
 
+```bash
 $REALSFS saf2theta $RESDIR/PANY.saf.idx -outname $RESDIR/PANY -sfs $RESDIR/PANY.sfs
+```
 
 You can view log-transformed per site estimates of theta using `thetaStat`. Try viewing the first 20 sites.
 
 ```bash
-$THETASTAT print $RESDIR/PANY.thetas.idx 2>/dev/null | head -n 20
+$THETASTAT print $RESDIR/PANY.thetas.idx 2>/dev/null | head -n 21
 ```
 
 ```bash
@@ -398,7 +402,7 @@ these coordinates specify the entire chromosome (Mme_chr24:2558528-4558528) sinc
 give different estimates of theta, followed by five columns with different neutrality statistics calculated from the theta estimates. The last column is the number of sites with data that were 
 used in calculating the statistics for the given region. More information about the output can be found [here](http://www.popgen.dk/angsd/index.php/Thetas,Tajima,Neutrality_tests).
 
-*QUESTION*
+**QUESTION**
 What are the per site estimates of Watterson's theta and nucleotide diversity for chromosome Mme_chr24:2558528-4558528? What is the estimate of 
 Tajima's D for this region?
 
