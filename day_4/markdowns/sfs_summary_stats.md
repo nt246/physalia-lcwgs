@@ -445,8 +445,9 @@ less -S $RESDIR/PANY.thetasWindow.gz.pestPG | less -S
 
 In this part of the tutorial you will learn how to estimate the joint site frequency spectrum. In this case we're 
 calculating the joint SFS between two populations, which is generally called the 2D-SFS. Note that ANGSD can estimate 
-the joint SFS for more than two populations, which is useful inferring divergene with Population Branch Length statistics, which we won't 
-be covering here. More information about calculating multidimensional frequency spectra with ANGSD can be found [here](http://www.popgen.dk/angsd/index.php/2d_SFS_Estimation).
+the joint SFS for more than two populations, which is useful for inferring branch-specific divergence with Population Branch Length statistics (PBS), which we won't 
+be covering here. More information about calculating multidimensional frequency spectra with ANGSD can be found [here](http://www.popgen.dk/angsd/index.php/2d_SFS_Estimation). 
+Information about calculating FST and and PBS can be found [here](http://www.popgen.dk/angsd/index.php/Fst)
 
 We'll calculate the 2D-SFS between the PANY and MAQU populations. The first step in doing this estimating allele frequency likelihoods across all sites for each population 
 separately. We've already done this for the PANY population, so let's carry out this calculation for the MAQU population:
@@ -458,12 +459,24 @@ $ANGSD -b $DIR/MAQU_bams.txt -ref $REF -anc $ANC -out $RESDIR/MAQU \
    -GL 1 -doSaf 1
 ```
 
-Then we can use each population respective allele frequency likelihoods to obtain a maximum likelihood estimate of the 
+Then we can use each population's respective allele frequency likelihoods to obtain a maximum likelihood estimate of the 
 joint allele frequency likelihoods:
 
 ```bash
 $REALSFS $RESDIR/PANY.saf.idx $RESDIR/MAQU.saf.idx > $RESDIR/PANY_vs_MAQU.2dsfs
 ```
+Let's have a look at the output:
+
+```bash
+less -S $RESDIR/PANY_vs_MAQU.2dsfs
+```
+
+Now we have a prior for the joint probability of observing *i* alleles in PANY and *j* alleles in MAQU. One way common way to visualize the 2d-sfs is with a 
+with a heatmap. We're going to use these probabilities of jointly observing combinations of allele frequencies in our two example populations to calculate 
+F<sub>ST</sub> between them. F<sub>ST</sub> is a commonly used measure of genetic differentiation based on allele frequencies that spans from 0 when the allele frequency is the same 
+in both populations to 1 when the populations are fixed for different alleles. F<sub>ST</sub> can be expressed in terms of the genetic variance within subpopulations 
+(denoted here as *a<sub>s</sub>*) and between subpopulations (denoted here as *b<sub>s</sub>*) and between subpopulations. That is, F<sub>ST</sub> = a<sub>s</sub> / (a<sub>s</sub> + b<sub>s</sub>).
+We can calculate these genetic variances with `realSFS` for our two example populations like so:
 
 ```bash
 $REALSFS fst index $RESDIR/PANY.saf.idx $RESDIR/MAQU.saf.idx -sfs $RESDIR/PANY_vs_MAQU.2dsfs -fstout $RESDIR/PANY_vs_MAQU
