@@ -330,7 +330,7 @@ if (plottype == "bar") {
 	sfs.e.p <- sfs.expected/sum(sfs.expected)
 	px = -log10(sfs.e.p)
         py = -log10(sfs.obs.p)
-        plot(y=py, x=-log10(sfs.e.p), ylab=paste0("-log10(observed ", xlabel, " probability)"), xlab=paste0("-log10(expected ", xlabel, " probability)"), 
+        plot(y=py, x=px, ylab=paste0("-log10(observed ", xlabel, " probability)"), xlab=paste0("-log10(expected ", xlabel, " probability)"), 
         xlim=c(min(c(px,py)),max(c(px,py))),cex.lab=1.2, cex.axis=1.2)
 	abline(0,1,col="red",lty=2)
 	invisible(dev.off())
