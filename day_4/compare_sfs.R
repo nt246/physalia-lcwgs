@@ -47,7 +47,10 @@ if (plottype == "bar") {
 	pdf(file=paste0(outprefix,"_scatter.pdf"))
 	sfs.obs.p <- obs/sum(obs)
 	sfs.e.p <- sfs.expected/sum(sfs.expected)
-	plot(y=-log10(sfs.obs.p), x=-log10(sfs.e.p), ylab=paste0("-log10(observed ", xlabel, " probability)"), xlab=paste0("-log10(expected ", xlabel, " probability)"), cex.lab=1.2, cex.axis=1.2)
+	px = -log10(sfs.e.p)
+        py = -log10(sfs.obs.p)
+        plot(y=py, x=-log10(sfs.e.p), ylab=paste0("-log10(observed ", xlabel, " probability)"), xlab=paste0("-log10(expected ", xlabel, " probability)"), 
+        xlim=c(min(c(px,py)),max(c(px,py))),cex.lab=1.2, cex.axis=1.2)
 	abline(0,1,col="red",lty=2)
 	invisible(dev.off())
 } else stop("Unrecognized plot type")
