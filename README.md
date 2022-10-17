@@ -21,7 +21,7 @@ Nina Overgaard Therkildsen, Tyler Linderoth, Arne Jacobs, and Nicolas Lou
 
 * [Tutorial 3b: Population structure](https://github.com/nt246/physalia-lcwgs/blob/main/day_3/markdowns/day3_PCA_Admixture_practicals.md)
 
-* [Tutorial 4: Natural selection](https://github.com/nt246/physalia-lcwgs/blob/main/day_4/markdowns/01_sfs.md)
+* [Tutorial 4: Site Frequency Spectrum & Summary Statistics](https://github.com/nt246/physalia-lcwgs/blob/main/day_4/markdowns/sfs_summary_stats.md)
 
 
 
