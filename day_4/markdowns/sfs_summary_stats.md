@@ -218,7 +218,7 @@ Let's plot the SFS as a barplot:
 
 <details>
 
-<summary> <click for plotSFS.R code> </summary>
+<summary> click for plotSFS.R code </summary>
 
 ```bash
 #!/usr/bin/env Rscript
