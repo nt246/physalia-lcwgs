@@ -208,6 +208,63 @@ You should observe the following vector of 2N+1 values (you'll need to scroll ri
 
 These are the *expected* number of sites in the PANY sample with 0 (value 1), 1 (value 2), 3 (value 3), ..., 2N (value 2N+1) derived alleles.
 
+Let's plot the SFS as a barplot:
+
+```bash
+/home/ubuntu/Share/plotSFS.R $RESDIR/PANY.sfs PANY_SFS 0
+
+# note that the plotSFS.R script is found in the github repo at https://github.com/nt246/physalia-lcwgs/tree/main/day_4
+```
+
+<details>
+
+<summary> <click for plotSFS.R code> </summary>
+
+```bash
+#!/usr/bin/env Rscript
+
+# plotSFS.R <SFS file> <output prefix> <fold>
+# if fold = 0 the input SFS is unfolded, otherwise if fold = 1 the input SFS is assumed to be folded
+
+
+# parse inputs
+fold <- 1
+args <- commandArgs(trailingOnly=TRUE)
+
+sfs <- scan(args[1])
+outprefix <- args[2]
+fold <- as.numeric(args[3])
+n <- (length(sfs)-1)/2
+xlabel <- NULL
+idx <- NULL
+name.n <- NULL
+
+if (fold == 1) {
+   xlabel = "MAF"
+   idx = n+1
+   name.n = n
+   if (sum(sfs[(n+2):(length(sfs))]) > 0) cat("WARNING: Assuming folded SFS input despite that it looks unfolded...\n")
+} else {
+   idx = 2*n
+   xlabel = "Derived allele frequency"
+   name.n = idx-1
+}
+
+# plot
+pdf(file=paste0(outprefix,".pdf"),width=14,height=7)
+barplot(sfs[2:idx], xlab=xlabel, ylab="Number SNPs", names=1:name.n, cex.names=0.8, cex.axis=1.2, cex.lab=1.2) # plot SFS without fixed categories
+invisible(dev.off())
+```
+
+</details>
+
+
+![PANY_SFS](../files/PANY_SFS.png)
+
+
+We can also compare our obsered SFS to what we would expect for a neutrally evolving, constant-size population.
+
+
 
 What if we did not have an outgroup to polarize alleles with? In this case we could calculate the folded SFS. Let's try it.
 
@@ -314,7 +371,7 @@ Alternatively, you could take the sum over P(*x* derived alleles) for *x*=1 to *
 
 </details>
 
-*BONUS QUESTION*
+**BONUS QUESTION**
 
 What would the SFS calculated for a single diploid individual tell you?
 
