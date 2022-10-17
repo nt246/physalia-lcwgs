@@ -61,7 +61,7 @@ SFS is [here](http://popgen.dk/angsd/index.php/SFS_Estimation).
 
 The general workflow is pictured as
 
-<img src="https://github.com/nt246/physalia-lcwgs/blob/main/day_3/img/Silverside_Sample_Map.png?raw=true" height="400">
+![stats1](../files/stats1.png)
 
 We will estimate the unfolded SFS for the PANY population. To do this first we need to estimate the likelihood of sampling **k** derived alleles for k=0, k=1, k=2, ...,k=2N at 
 every site. This is accomplished using `-doSaf`. We will start with BAMs as input and as usual we will use `-GL` to calculate genotype likelihoods from which we can start estimating the allele frequency likelihoods.
