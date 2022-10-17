@@ -264,6 +264,10 @@ invisible(dev.off())
 
 We can also compare our obsered SFS to what we would expect for a neutrally evolving, constant-size population.
 
+<details>
+
+<summary> Click for compare_sfs.R code </summary>
+
 ```bash
 #!/usr/bin/env Rscript
 
