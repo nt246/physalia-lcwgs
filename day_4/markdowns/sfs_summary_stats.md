@@ -265,20 +265,6 @@ invisible(dev.off())
 We can also compare our obsered SFS to what we would expect for a neutrally evolving, constant-size population.
 
 ```bash
-# barplot
-/home/ubuntu/Share/compare_sfs.R $RESDIR/PANY.sfs PANY_SFS_compare 0 bar
-
-# scatterplot
-/home/ubuntu/Share/compare_sfs.R $RESDIR/PANY.sfs PANY_SFS_compare 0 scatter
-
-# note that the compare_sfs.R script is found in the github repo at https://github.com/nt246/physalia-lcwgs/tree/main/day_4
-```
-
-<details>
-
-<summary> Click here for compare_sfs.R code </summary>
-
-```bash
 #!/usr/bin/env Rscript
 
 # compare_sfs.R <SFS file> <output prefix> <use folded (0|1)> <plot type: "bar"|"scatter">
@@ -328,7 +314,10 @@ if (plottype == "bar") {
 	pdf(file=paste0(outprefix,"_scatter.pdf"))
 	sfs.obs.p <- obs/sum(obs)
 	sfs.e.p <- sfs.expected/sum(sfs.expected)
-	plot(y=-log10(sfs.obs.p), x=-log10(sfs.e.p), ylab=paste0("-log10(observed ", xlabel, " probability)"), xlab=paste0("-log10(expected ", xlabel, " probability)"), cex.lab=1.2, cex.axis=1.2)
+	px = -log10(sfs.e.p)
+        py = -log10(sfs.obs.p)
+        plot(y=py, x=-log10(sfs.e.p), ylab=paste0("-log10(observed ", xlabel, " probability)"), xlab=paste0("-log10(expected ", xlabel, " probability)"), 
+        xlim=c(min(c(px,py)),max(c(px,py))),cex.lab=1.2, cex.axis=1.2)
 	abline(0,1,col="red",lty=2)
 	invisible(dev.off())
 } else stop("Unrecognized plot type")
