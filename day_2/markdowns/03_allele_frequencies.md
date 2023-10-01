@@ -68,13 +68,13 @@ zcat $RESDIR/PANY.glf.gz | sed 's/Mme_chr24:2558528-4558528/chr24/' | gzip > $RE
 
 # Change chromosome name in reference fasta and index it
 sed 's/Mme_chr24:2558528-4558528/chr24/' $REF > $DATDIR/Ref_rename.fa
-samtools faidx $DATDIR/Ref_rename.fa
+$SAMTOOLS faidx $DATDIR/Ref_rename.fa
 ```
 Now you should be able to run ANGSD without problems. When supplying a glf file as input we also
 need to provide the number of individuals in the file with `-nInd` and the reference index file with `-fai`.
 
 ```bash
-angsd -glf10_text $RESDIR/PANY_rename.glf.gz -out $RESDIR/PANY_rename \
+$angsd -glf10_text $RESDIR/PANY_rename.glf.gz -out $RESDIR/PANY_rename \
    -nInd 15 -fai $DATDIR/Ref_rename.fa.fai -doMajorMinor 1 -doMaf 1 \
    -minInd 5
 ```
@@ -88,7 +88,7 @@ you want to change the filtering parameters, genotype likelihood model, etc.
 
 ```bash
 
-angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
+$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
    -GL 1 -doMajorMinor 1 -doMaf 1
@@ -151,7 +151,7 @@ Let's call biallelic PANY SNPs at four different significance levels:
 for PV in 0.05 0.01 1e-4 1e-6
 do
    if [ $PV == 0.05 ]; then echo SNP_pval Number_SNPs; fi
-   angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_$PV \
+   $angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_$PV \
       -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
       -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
       -GL 1 -doMajorMinor 1 -doMaf 1 -rmTriallelic 0.05 -SNP_pval $PV &> /dev/null
@@ -195,7 +195,7 @@ It's generally advisable to call SNPs among all individuals jointly to avoid bia
 
 ```bash
 
-angsd -b $DIR/ALL_bams.txt -ref $REF -out $RESDIR/ALL \
+$angsd -b $DIR/ALL_bams.txt -ref $REF -out $RESDIR/ALL \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 20 -setMinDepthInd 1 -setMinDepth 28 -setMaxDepth 120 -doCounts 1 \
    -GL 1 -doMajorMinor 1 -doMaf 1 -rmTriallelic 0.05 -SNP_pval 1e-6
@@ -230,25 +230,23 @@ zcat $RESDIR/ALL.mafs.gz | cut -f1,2 | tail -n+2 > $DATDIR/biallelic_snps.pos
 
 # index the sites file
 
-angsd sites index $DATDIR/biallelic_snps.pos
+$angsd sites index $DATDIR/biallelic_snps.pos
 ```
 
-Now you can calculate allele frequencies that would be comparable between populations. Unfortunately, again because ANGSD does 
-not like the naming convention for our test chromosome we won't run the following command but I've posted below what you 
-would run.
+Now you can calculate allele frequencies that would be comparable between populations.
 
 ```bash
 # Calculate derived allele frequencies for PANY
 
-#angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_derived \
-#   -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -minMapQ 20 -minQ 20 \
-#   -GL 1 -doMajorMinor 5 -anc $ANC -doMaf 1 -sites $DATDIR/biallelic_snps.pos
+$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_derived \
+   -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -minMapQ 20 -minQ 20 \
+   -GL 1 -doMajorMinor 5 -anc $ANC -doMaf 1 -sites $DATDIR/biallelic_snps.pos
 
 # Calculate derived allele frequencies for JIGA
 
-#angsd -b $DIR/JIGA_bams.txt -ref $REF -out $RESDIR/JIGA_derived \
-#   -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -minMapQ 20 -minQ 20 \
-#   -GL 1 -doMajorMinor 5 -anc $ANC -doMaf 1 -sites $DATDIR/biallelic_snps.pos
+$angsd -b $DIR/JIGA_bams.txt -ref $REF -out $RESDIR/JIGA_derived \
+   -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -minMapQ 20 -minQ 20 \
+   -GL 1 -doMajorMinor 5 -anc $ANC -doMaf 1 -sites $DATDIR/biallelic_snps.pos
 ```
 
 Are you able to describe what the commands above are doing?

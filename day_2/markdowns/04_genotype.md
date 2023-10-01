@@ -58,7 +58,7 @@ versions of ANGSD you can suppress writing another maf file by making the value 
 have to write the maf file again.
 
 ```
-angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
+$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
    -GL 1 -doMajorMinor 1 -doMaf 1 -SNP_pval 1e-6 -rmTriallelic 0.05 -doPost 1 -doGeno 8
@@ -133,7 +133,7 @@ Calculate the posterior probabilities for the PANY samples again, but this time 
 <summary> Click for help </summary>
 
 ```bash
-angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_unif \
+$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_unif \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
    -GL 1 -doMajorMinor 1 -doMaf 1 -SNP_pval 1e-6 -rmTriallelic 0.05 -doPost 2 -doGeno 8
@@ -211,7 +211,7 @@ can set the genotype for an indivdiual to missing (-1) if the maximum posterior 
 In this example we'll use a cutoff of 0.95. We'll also go ahead and write the major and minor alleles as well.
 
 ```bash
-angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_call \
+$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_call \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
    -GL 1 -doMajorMinor 1 -doMaf 1 -SNP_pval 1e-6 -rmTriallelic 0.05 -doPost 1 -doGeno 3 -postCutoff 0.95

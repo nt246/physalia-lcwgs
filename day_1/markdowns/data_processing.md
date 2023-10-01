@@ -395,8 +395,8 @@ When running these scripts on the Physalia server, run the following:
 ``` bash
 FASTQC=fastqc
 TRIMMOMATIC=trimmomatic
-PICARD=~/Share/picard/build/libs/picard.jar
-SAMTOOLS=samtools
+PICARD=PicardCommandLine
+SAMTOOLS=/home/ubuntu/Software/bin/samtools
 BOWTIEBUILD=bowtie2-build
 BOWTIE=bowtie2
 BAMUTIL=bam
@@ -681,7 +681,7 @@ REFERENCE=$BASEDIR/reference/mme_physalia_testdata_chr24.fa   # This is a fasta 
 REFBASENAME="${REFERENCE%.*}"
 $SAMTOOLS faidx $REFERENCE
 
-java -jar $PICARD CreateSequenceDictionary R=$REFERENCE O=$REFBASENAME'.dict'
+$PICARD CreateSequenceDictionary R=$REFERENCE O=$REFBASENAME'.dict'
 
 $BOWTIEBUILD $REFERENCE $REFBASENAME
 ```
@@ -1027,7 +1027,7 @@ REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files
 for SAMPLEBAM in `cat $BAMLIST`; do
     
     ## Remove duplicates and print dupstat file
-    java -Xmx60g -jar $PICARD MarkDuplicates -I $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted.bam' -O $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' -M $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dupstat.txt' -VALIDATION_STRINGENCY SILENT -REMOVE_DUPLICATES true
+    $PICARD MarkDuplicates I=$BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted.bam' O=$BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' M=$BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dupstat.txt' REMOVE_DUPLICATES=true
 
     
     ## Clip overlapping paired end reads (only necessary for paired-end data, so if you're only running se samples, you can comment this step out)
