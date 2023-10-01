@@ -209,11 +209,11 @@ So let's first extract this set of variable sites from the MAFs file.
 ```bash
 # extract positions from the mafs file
 
-zcat $RESDIR/ALL.mafs.gz | cut -f1,2 | tail -n+2 > $DATDIR/biallelic_snps.pos
+zcat $RESDIR/ALL.mafs.gz | cut -f1,2 | tail -n+2 > $DIR/biallelic_snps.pos
 
 # index the sites file
 
-$angsd sites index $DATDIR/biallelic_snps.pos
+$angsd sites index $DIR/biallelic_snps.pos
 ```
 
 Now you can calculate allele frequencies that would be comparable between populations.
