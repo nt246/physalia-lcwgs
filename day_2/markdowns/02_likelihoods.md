@@ -130,7 +130,26 @@ If all GLs are zero this means that there is no data for this individual.
 
 **BONUS QUESTION**
 Try to output genotype likelihood files in binary format (be sure to change the ouput name to avoid overwriting). Which option should you use? Can you open these files?
-Look at the file sizes of text vs binary format. Which one is smaller? Which one would you use?
+Look at the file sizes of text vs binary format. Which one is smaller?
+
+<details>
+
+<summary> click for help </summary>
+
+Use `-doGlf 1` to output genotype likelihoods in binary. So the full command would be.
+
+```
+$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_binary \
+        -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
+        -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
+        -GL 1 -doGlf 1
+```
+
+The binary .glf file is not human readable (it will just be a bunch of gibberish if you try to look at it). The compressed binary .glf is 
+slightly smaller (66M) compared to the compressed text version (69M). While this size difference is small for this test dataset it can be 
+appreciable for larger datasets. 
+
+</details>
 
 **BONUS QUESTION**
 Try to change some filtering options and record the number of entries in the final output file (remember to change the output name to avoid overwriting).
