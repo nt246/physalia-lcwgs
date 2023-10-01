@@ -45,7 +45,7 @@ ANC=$DIR/outgrp_ref.fa
 
 The **workflow** is roughly divided into four steps:
 
-[1 Data filtering options and I/O](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/01_filtering.md)
+[1. Data filtering options and I/O](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/01_filtering.md)
 
 [2. Genotype likelihoods](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/02_likelihoods.md)
 
@@ -58,6 +58,5 @@ You are now going to learn how to build your first pipeline in ANGSD for data pr
 [click here](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/01_filtering.md) to move to the next session.
 
 -----------------------------------------------
-
 
 
