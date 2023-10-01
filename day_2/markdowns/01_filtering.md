@@ -64,16 +64,20 @@ Have a look at our list of BAM files:
 ```bash
 cat $DIR/ALL_bams.txt
 ```
+
+Count how many BAM files we have
 ```bash
 wc -l $DIR/ALL_bams.txt
 ```
+
+List the text file that list different subsets of BAM files
 ```bash
 ls -l $DIR/*_bams.txt
 ```
 
 Possible options when using BAM files as input:
 ```
-angsd -bam
+$angsd -bam
 ...
 parseArgs_bambi.cpp: bam reader:
 	-bam/-b		(null)	(list of BAM/CRAM files)
@@ -112,14 +116,14 @@ Let's build an ANGSD run. Note that arguments can be supplied in any order (the 
 
 Define input and output files (please note that we do not run the following intermediate steps, as they are preceded with ```#```):
 ```
-# angsd -b ALL.bams -out Results/ALL \
+# $angsd -b ALL.bams -out Results/ALL \
 ...
 ```
 We provide a list of bam files (with their full paths) with `-b`, while `-out` states the prefix for all output files that will be generated.
 
 Next we specify some basic read filtering criteria.
 ```
-# angsd -b ALL.bams -ref $REF -out Results/ALL \
+# $angsd -b ALL.bams -ref $REF -out Results/ALL \
 #        -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
 ...
 ```
@@ -135,7 +139,7 @@ altogether to avoid erroneous inference. You may also want to remove bases with 
 
 ```bash
 ...
-# angsd -b ALL.bams -ref $REF -out Results/ALL \
+# $angsd -b ALL.bams -ref $REF -out Results/ALL \
 #        -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
 #        -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
 ...
