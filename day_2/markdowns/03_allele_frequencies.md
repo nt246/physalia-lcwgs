@@ -65,10 +65,10 @@ $angsd -glf10_text $RESDIR/PANY.glf.gz -out $RESDIR/PANY \
    -nInd 15 -fai $DIR/Ref_rename.fa.fai -doMajorMinor 1 -doMaf 1 -minInd 5
 ```
 
-<details>
-
-Note: You can always use bams as input but you need to recalculate the likelihoods (with `-GL` as before), which is redundant unless 
+Note: You can always use bams as input but you need to recalculate the likelihoods (with `-GL` as before), which is redundant unless
 you want to change the filtering parameters, genotype likelihood model, etc.
+
+<details>
 
 <summary> Click to see how to calculate allele frequencies using the bams as input </summary>
 
