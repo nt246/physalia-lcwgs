@@ -134,7 +134,7 @@ Let's call biallelic PANY SNPs at four different significance levels:
 for PV in 0.05 0.01 1e-4 1e-6
 do
    if [ $PV == 0.05 ]; then echo SNP_pval Number_SNPs; fi
-   $angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_$PV \
+   $angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY_$PV \
       -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
       -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
       -GL 1 -doMajorMinor 1 -doMaf 1 -rmTriallelic 0.05 -SNP_pval $PV &> /dev/null
@@ -178,7 +178,7 @@ It's generally advisable to call SNPs among all individuals jointly to avoid bia
 
 ```bash
 
-$angsd -b $DIR/ALL_bams.txt -ref $REF -out $RESDIR/ALL \
+$angsd -b $DIR/ALL_bams_rename.txt -ref $REF -out $RESDIR/ALL \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 20 -setMinDepthInd 1 -setMinDepth 28 -setMaxDepth 120 -doCounts 1 \
    -GL 1 -doMajorMinor 1 -doMaf 1 -rmTriallelic 0.05 -SNP_pval 1e-6
@@ -221,13 +221,13 @@ Now you can calculate allele frequencies that would be comparable between popula
 ```bash
 # Calculate derived allele frequencies for PANY
 
-$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_derived \
+$angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY_derived \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -minMapQ 20 -minQ 20 \
    -GL 1 -doMajorMinor 5 -anc $ANC -doMaf 1 -sites $DATDIR/biallelic_snps.pos
 
 # Calculate derived allele frequencies for JIGA
 
-$angsd -b $DIR/JIGA_bams.txt -ref $REF -out $RESDIR/JIGA_derived \
+$angsd -b $DIR/JIGA_bams_rename.txt -ref $REF -out $RESDIR/JIGA_derived \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -minMapQ 20 -minQ 20 \
    -GL 1 -doMajorMinor 5 -anc $ANC -doMaf 1 -sites $DATDIR/biallelic_snps.pos
 ```
