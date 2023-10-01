@@ -57,7 +57,7 @@ abcMajorMinor.cpp:
 	-skipTriallelic	0
 ```
 
-Let's estimate minor allele frequences using the GLs that we calculated from the last section as input. When supplying a glf file as input we also
+Let's estimate minor allele frequences (MAF) using the GLs that we calculated from the last section as input. When supplying a glf file as input we also
 need to provide the number of individuals in the file with `-nInd` and the reference index file with `-fai`.
 
 ```bash
@@ -66,7 +66,7 @@ $angsd -glf10_text $RESDIR/PANY.glf.gz -out $RESDIR/PANY \
 ```
 
 Note: You can always use bams as input but you need to recalculate the genotype likelihoods (with `-GL` as before), which is redundant unless
-you want to change the filtering parameters, genotype likelihood model, etc. MAF estimation uses the GLs.
+you want to change the filtering parameters, genotype likelihood model, etc. because the GLs are used in the allele frequency estimation.
 
 <details>
 
