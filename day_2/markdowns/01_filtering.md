@@ -72,7 +72,7 @@ Count how many BAM files we have:
 wc -l $DIR/ALL_bams.txt
 ```
 
-List the text file that list different subsets of BAM files:
+List the text files that contain the names (and paths) of different subsets of BAM files:
 ```bash
 ls -l $DIR/*_bams.txt
 ```
