@@ -68,7 +68,7 @@ zcat $RESDIR/PANY.glf.gz | sed 's/Mme_chr24:2558528-4558528/chr24/' | gzip > $RE
 
 # Change chromosome name in reference fasta and index it
 sed 's/Mme_chr24:2558528-4558528/chr24/' $REF > $DATDIR/Ref_rename.fa
-samtools faidx $DATDIR/Ref_rename.fa
+$SAMTOOLS faidx $DATDIR/Ref_rename.fa
 ```
 Now you should be able to run ANGSD without problems. When supplying a glf file as input we also
 need to provide the number of individuals in the file with `-nInd` and the reference index file with `-fai`.
