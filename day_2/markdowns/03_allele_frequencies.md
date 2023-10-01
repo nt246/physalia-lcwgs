@@ -214,6 +214,7 @@ zcat $RESDIR/ALL.mafs.gz | cut -f1,2 | tail -n+2 > $DIR/biallelic_snps.pos
 # index the sites file
 
 $angsd sites index $DIR/biallelic_snps.pos
+
 ```
 
 Now you can calculate allele frequencies that would be comparable between populations.
@@ -230,6 +231,7 @@ $angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY_derived \
 $angsd -b $DIR/JIGA_bams_rename.txt -ref $REF -out $RESDIR/JIGA_derived \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -minMapQ 20 -minQ 20 \
    -GL 1 -doMajorMinor 5 -anc $ANC -doMaf 1 -sites $DATDIR/biallelic_snps.pos
+
 ```
 
 Are you able to describe what the commands above are doing?
