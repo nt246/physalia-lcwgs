@@ -15,7 +15,7 @@ Nina Overgaard Therkildsen, Tyler Linderoth, Arne Jacobs, and Nicolas Lou
 
 * [Tutorial 1: Data processing](https://github.com/nt246/physalia-lcwgs/blob/main/day_1/markdowns/data_processing.md)
 
-* [Tutorial 2: Genotype and SNP calling](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/00_introduction.md)
+* [Tutorial 2: Genotype and SNP calling](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/00_introduction_v2.md)
 
 * [Tutorial 3a: Linkage disequilibrium](https://github.com/nt246/physalia-lcwgs/blob/main/day_3/markdowns/ld.md)
 
