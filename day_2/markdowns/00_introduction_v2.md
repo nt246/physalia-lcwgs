@@ -7,9 +7,9 @@ In this session you will learn how to:
 We are using the program [ANGSD](http://popgen.dk/angsd/index.php/ANGSD) (Analysis of Next Generation Sequencing Data).
 More information about the methods implemented in ANGSD can be found in its associated [paper](http://www.ncbi.nlm.nih.gov/pubmed/25420514).
 
-Quoted from the ANGSD website: *ANGSD is a software for analyzing next generation sequencing data. The software can handle a number of different input 
+*ANGSD is a software for analyzing next generation sequencing data. The software can handle a number of different input 
 types from mapped reads to imputed genotype probabilities. Most methods take genotype uncertainty into account instead of basing the analysis on called genotypes. 
-This is especially useful for low and medium depth data.*
+This is especially useful for low and medium depth data* (Quoted from the ANGSD website).
 
 Please make sure to follow the preparatory instructions below before continuing with the exercises. 
 You need to set the path to the software and various data that will be used.
