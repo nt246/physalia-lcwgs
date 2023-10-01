@@ -146,7 +146,7 @@ $angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_binary \
         -GL 1 -doGlf 1
 ```
 
-The binary .glf file is not human readable (it will just be a bunch of gibberish if you try to look at it). The compressed binary .glf is 
+The binary .glf file is not human readable (it will look like a bunch of gibberish if you try to look at it). The compressed binary .glf is 
 slightly smaller (66M) compared to the compressed text version (69M). While this size difference is small for this test dataset it can be 
 appreciable for larger datasets. 
 
