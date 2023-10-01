@@ -34,6 +34,7 @@ RESDIR=~/day2/Results
 
 mkdir Data
 DATDIR=~/day2/Data
+
 ```
 Set some other environment variables
 ```
@@ -42,6 +43,7 @@ DATA=$DIR/BAMS_RENAME
 REF=$DIR/Ref_rename.fa
 ANC=$DIR/outgrp_ref_rename.fa
 angsd=/home/ubuntu/angsd/angsd
+
 ```
 
 The **workflow** is roughly divided into four steps:
