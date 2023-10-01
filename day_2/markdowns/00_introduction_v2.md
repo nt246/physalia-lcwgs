@@ -38,7 +38,7 @@ DATDIR=~/day2/Data
 Set some other environment variables
 ```
 DIR=/home/ubuntu/Share/physalia-lcwgs/data
-DATA=$DIR/BAMS
+DATA=$DIR/BAMS_RENAME
 REF=$DIR/Ref.fa
 ANC=$DIR/outgrp_ref.fa
 angsd=/home/ubuntu/angsd/angsd
