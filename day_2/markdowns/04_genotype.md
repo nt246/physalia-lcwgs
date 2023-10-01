@@ -58,7 +58,7 @@ versions of ANGSD you can suppress writing another maf file by making the value 
 have to write the maf file again.
 
 ```
-$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
+$angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
    -GL 1 -doMajorMinor 1 -doMaf 1 -SNP_pval 1e-6 -rmTriallelic 0.05 -doPost 1 -doGeno 8
@@ -83,21 +83,21 @@ from the glf files.
 ```bash
 # find position of PANY_07 in the BAM file
 
-INDNUM=$(grep -n "PANY_07.bam$" $DIR/PANY_bams.txt | cut -f1 -d':')
+INDNUM=$(grep -n "PANY_07.bam$" $DIR/PANY_bams_rename.txt | cut -f1 -d':')
 echo "$INDNUM"
 ```
 
-So PANY_07 is at row 7 of the BAM list. Now extract their genotype probabilities from the .geno file for Mme_chr24:2558528-4558528 459780.
+So PANY_07 is at row 7 of the BAM list. Now extract their genotype probabilities from the .geno file for chr24 459780.
 
 ```bash
-zcat $RESDIR/PANY.geno.gz | grep -m 1 $'^Mme_chr24:2558528-4558528\t459780\t' | cut -f 3- | perl -se '$start=($n-1)*3; @arr = split(/\t/,<>); print "@arr[$start .. $start+2]\n"' -- -n=$INDNUM
+zcat $RESDIR/PANY.geno.gz | grep -m 1 $'^chr24\t459780\t' | cut -f 3- | perl -se '$start=($n-1)*3; @arr = split(/\t/,<>); print "@arr[$start .. $start+2]\n"' -- -n=$INDNUM
 ```
 
 The most probable genotype configuration is major/major with a posterior probability of 0.984109.
 
 </details> 
 
-What do the genotype probabilities for PANY_07 at Mme_chr24:2558528-4558528 459780 sum to?
+What do the genotype probabilities for PANY_07 at chr24:459780 sum to?
 
 <details>
 
@@ -107,7 +107,7 @@ What do the genotype probabilities for PANY_07 at Mme_chr24:2558528-4558528 4597
 
 </details>
 
-Repeat this for PANY_03. What are their genotype probabilites at site Mme_chr24:2558528-4558528 459780?
+Repeat this for PANY_03. What are their genotype probabilites at site chr24:459780?
 
 <details>
 
@@ -115,10 +115,10 @@ Repeat this for PANY_03. What are their genotype probabilites at site Mme_chr24:
 
 ```bash
 # Extract row for PANY_03
-INDNUM=$(grep -n "PANY_03.bam$" $DIR/PANY_bams.txt | cut -f1 -d':')
+INDNUM=$(grep -n "PANY_03.bam$" $DIR/PANY_bams_rename.txt | cut -f1 -d':')
 
 # Extract the PANY_03's genotype posterior probabilities
-zcat $RESDIR/PANY.geno.gz | grep -m 1 $'^Mme_chr24:2558528-4558528\t459780\t' | cut -f 3- | perl -se '$start=($n-1)*3; @arr = split(/\t/,<>); print "@arr[$start .. $start+2]\n"' -- -n=$INDNUM
+zcat $RESDIR/PANY.geno.gz | grep -m 1 $'^chr24\t459780\t' | cut -f 3- | perl -se '$start=($n-1)*3; @arr = split(/\t/,<>); print "@arr[$start .. $start+2]\n"' -- -n=$INDNUM
 ```
 The genotype posterior probabilities are 0.631517 0.326327 0.042156.
 
@@ -133,7 +133,7 @@ Calculate the posterior probabilities for the PANY samples again, but this time 
 <summary> Click for help </summary>
 
 ```bash
-$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_unif \
+$angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY_unif \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
    -GL 1 -doMajorMinor 1 -doMaf 1 -SNP_pval 1e-6 -rmTriallelic 0.05 -doPost 2 -doGeno 8
@@ -142,7 +142,7 @@ $angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_unif \
 </details>
 
 
-Now extract the genotype probabilities for PANY_07 at Mme_chr24:2558528-4558528 459780 from this new .geno file. What are the 
+Now extract the genotype probabilities for PANY_07 at chr24:459780 from this new .geno file. What are the 
 genotype probabilities?
 
 <details>
@@ -154,13 +154,13 @@ genotype probabilities?
 INDNUM=$(grep -n "PANY_07.bam$" $DIR/PANY_bams.txt | cut -f1 -d':')
 
 # Extract the genotype probablities
-zcat $RESDIR/PANY_unif.geno.gz | grep -m 1 $'^Mme_chr24:2558528-4558528\t459780\t' | cut -f 3- | perl -se '$start=($n-1)*3; @arr = split(/\t/,<>); print "@arr[$start .. $start+2]\n"' -- -n=$INDNUM
+zcat $RESDIR/PANY_unif.geno.gz | grep -m 1 $'^chr24\t459780\t' | cut -f 3- | perl -se '$start=($n-1)*3; @arr = split(/\t/,<>); print "@arr[$start .. $start+2]\n"' -- -n=$INDNUM
 ```
 The three genotype posterior probabilities are 0.969698 0.030302 0.000000.
 
 </details>
 
-Now extract the genotype posterior probabilities for PANY_03 at me_chr24:2558528-4558528 459780.
+Now extract the genotype posterior probabilities for PANY_03 at chr24:459780.
 
 <details>
 
@@ -171,7 +171,7 @@ Now extract the genotype posterior probabilities for PANY_03 at me_chr24:2558528
 INDNUM=$(grep -n "PANY_03.bam$" $DIR/PANY_bams.txt | cut -f1 -d':')
 
 # Extract the genotype probablities
-zcat $RESDIR/PANY_unif.geno.gz | grep -m 1 $'^Mme_chr24:2558528-4558528\t459780\t' | cut -f 3- | perl -se '$start=($n-1)*3; @arr = split(/\t/,<>); print "@arr[$start .. $start+2]\n"' -- -n=$INDNUM
+zcat $RESDIR/PANY_unif.geno.gz | grep -m 1 $'^chr24\t459780\t' | cut -f 3- | perl -se '$start=($n-1)*3; @arr = split(/\t/,<>); print "@arr[$start .. $start+2]\n"' -- -n=$INDNUM
 ```
 
 The genotype posterior probabilites are 0.333333 0.333333 0.333333.
@@ -211,7 +211,7 @@ can set the genotype for an indivdiual to missing (-1) if the maximum posterior 
 In this example we'll use a cutoff of 0.95. We'll also go ahead and write the major and minor alleles as well.
 
 ```bash
-$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_call \
+$angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY_call \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
    -GL 1 -doMajorMinor 1 -doMaf 1 -SNP_pval 1e-6 -rmTriallelic 0.05 -doPost 1 -doGeno 3 -postCutoff 0.95
