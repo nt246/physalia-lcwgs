@@ -1,4 +1,6 @@
 BASEDIR=$1
+SAMTOOLS=$2
+
 cd $BASEDIR'/bam'
 
 samtools merge 892_MAQU_merged_bt2_mme_physalia_testdata_chr24_minq20_sorted.bam 892_MAQU_1_lane1_pe_bt2_mme_physalia_testdata_chr24_minq20_sorted.bam 892_MAQU_1_lane2_pe_bt2_mme_physalia_testdata_chr24_minq20_sorted.bam

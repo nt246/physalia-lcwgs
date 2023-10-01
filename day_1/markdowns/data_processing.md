@@ -1,38 +1,37 @@
 Tutorial 1: Data processing - from .fastq to .bam
 ================
 
--   [Case study for practicals](#case-study-for-practicals)
--   [Initial preparation](#initial-preparation)
-    -   [1. Make sure you’re up to speed on basic shell
-        scripting](#1-make-sure-youre-up-to-speed-on-basic-shell-scripting)
-    -   [2. Copy the working directories with the needed input
-        files](#2-copy-the-working-directories-with-the-needed-input-files)
-    -   [3. Orient yourself to the formatting of our fastq table and
-        fastq
-        list](#3-orient-yourself-to-the-formatting-of-our-fastq-table-and-fastq-list)
-    -   [4. Make sure you’re familiar with `for loops` and how to assign
-        and call variables in
-        bash](#4-make-sure-youre-familiar-with-for-loops-and-how-to-assign-and-call-variables-in-bash)
-    -   [5. Practice using bash `for loops` to iterate over target
-        samples](#5-practice-using-bash-for-loops-to-iterate-over-target-samples)
-    -   [6. Define paths to the project directory and
-        programs](#6-define-paths-to-the-project-directory-and-programs)
--   [Data processing pipeline](#data-processing-pipeline)
-    -   [Examine the raw fastq files](#examine-the-raw-fastq-files)
-    -   [Adapter clipping](#adapter-clipping)
-    -   [OPTIONAL: Quality trimming](#optional-quality-trimming)
-    -   [Build reference index files](#build-reference-index-files)
-    -   [Map to the reference, sort, and quality
-        filter](#map-to-the-reference-sort-and-quality-filter)
-    -   [Examine the bam files](#examine-the-bam-files)
-    -   [Merge samples that were sequenced in multiple
-        batches](#merge-samples-that-were-sequenced-in-multiple-batches)
-    -   [Deduplicate and clip overlapping read
-        pairs](#deduplicate-and-clip-overlapping-read-pairs)
-    -   [Indel realignment (optional)](#indel-realignment-optional)
-    -   [Estimate read depth in your bam
-        files](#estimate-read-depth-in-your-bam-files)
-    -   [END OF DAY 1](#end-of-day-1)
+- [Case study for practicals](#case-study-for-practicals)
+- [Initial preparation](#initial-preparation)
+  - [1. Make sure you’re up to speed on basic shell
+    scripting](#1-make-sure-youre-up-to-speed-on-basic-shell-scripting)
+  - [2. Copy the working directories with the needed input
+    files](#2-copy-the-working-directories-with-the-needed-input-files)
+  - [3. Orient yourself to the formatting of our fastq table and fastq
+    list](#3-orient-yourself-to-the-formatting-of-our-fastq-table-and-fastq-list)
+  - [4. Make sure you’re familiar with `for loops` and how to assign and
+    call variables in
+    bash](#4-make-sure-youre-familiar-with-for-loops-and-how-to-assign-and-call-variables-in-bash)
+  - [5. Practice using bash `for loops` to iterate over target
+    samples](#5-practice-using-bash-for-loops-to-iterate-over-target-samples)
+  - [6. Define paths to the project directory and
+    programs](#6-define-paths-to-the-project-directory-and-programs)
+- [Data processing pipeline](#data-processing-pipeline)
+  - [Examine the raw fastq files](#examine-the-raw-fastq-files)
+  - [Adapter clipping](#adapter-clipping)
+  - [OPTIONAL: Quality trimming](#optional-quality-trimming)
+  - [Build reference index files](#build-reference-index-files)
+  - [Map to the reference, sort, and quality
+    filter](#map-to-the-reference-sort-and-quality-filter)
+  - [Examine the bam files](#examine-the-bam-files)
+  - [Merge samples that were sequenced in multiple
+    batches](#merge-samples-that-were-sequenced-in-multiple-batches)
+  - [Deduplicate and clip overlapping read
+    pairs](#deduplicate-and-clip-overlapping-read-pairs)
+  - [Indel realignment (optional)](#indel-realignment-optional)
+  - [Estimate read depth in your bam
+    files](#estimate-read-depth-in-your-bam-files)
+  - [END OF DAY 1](#end-of-day-1)
 
 <br> <br>
 
@@ -149,6 +148,7 @@ on. You can do this by copying the `day1` directory from `~/Share` to
 your home directory.
 
 ``` bash
+
 cp -r ~/Share/day1 ~
 
 # Go into your new day1 directory and examine its contents
@@ -162,23 +162,23 @@ Your own copy of the `day1` directory will be referred to as `BASEDIR`
 in many of the scripts below. Have a look inside; `day1` contains the
 following subdirectories:
 
--   `raw_fastq` has the raw fastq files we’ll be working on today
+- `raw_fastq` has the raw fastq files we’ll be working on today
 
--   `adapter_clipped` is empty, but you’ll use it for storing your
-    adapter clipped fastq files
+- `adapter_clipped` is empty, but you’ll use it for storing your adapter
+  clipped fastq files
 
--   `bam` is empty, but you’ll use it for storing your bam (alignment)
-    files
+- `bam` is empty, but you’ll use it for storing your bam (alignment)
+  files
 
--   `sample_lists` is for storing sample tables, sample lists, and other
-    small text files
+- `sample_lists` is for storing sample tables, sample lists, and other
+  small text files
 
--   `fastqc` is empty, but you’ll use it for storing your FastQC output
+- `fastqc` is empty, but you’ll use it for storing your FastQC output
 
--   `reference` currently contains the reference genome file and a list
-    of adapter sequences
+- `reference` currently contains the reference genome file and a list of
+  adapter sequences
 
--   `scripts` is for storing scripts
+- `scripts` is for storing scripts
 
 <br>
 
@@ -209,35 +209,35 @@ For our scripts below to work, the **fastq table** has to be a **tab
 deliminated** table with the following six columns, strictly in this
 order:
 
--   `prefix` the prefix of raw fastq file names (i.e. a part of the file
-    name that is unique to each sample)
+- `prefix` the prefix of raw fastq file names (i.e. a part of the file
+  name that is unique to each sample)
 
--   `lane_number` lane number; each sequencing lane or batch should be
-    assigned a unique identifier. This is important so that if you
-    sequence a library across multiple different sequencing lanes, you
-    can keep track of which lane/batch a particular set of reads came
-    from (important for accounting for sequencing error patterns or
-    batch effects).
+- `lane_number` lane number; each sequencing lane or batch should be
+  assigned a unique identifier. This is important so that if you
+  sequence a library across multiple different sequencing lanes, you can
+  keep track of which lane/batch a particular set of reads came from
+  (important for accounting for sequencing error patterns or batch
+  effects).
 
--   `seq_id` sequence ID; this variable is only relevant when different
-    libraries were prepared from the same sample and were run in the
-    same lane (e.g. if you wanted to include a replicate). In this case,
-    seq_id should be used to distinguish these separate libraries. If
-    you only have a single library prepared from each of your samples
-    (even if you sequence that same library across multiple lanes), you
-    can just put 1 for all samples in this column.
+- `seq_id` sequence ID; this variable is only relevant when different
+  libraries were prepared from the same sample and were run in the same
+  lane (e.g. if you wanted to include a replicate). In this case, seq_id
+  should be used to distinguish these separate libraries. If you only
+  have a single library prepared from each of your samples (even if you
+  sequence that same library across multiple lanes), you can just put 1
+  for all samples in this column.
 
--   `sample_id` sample ID; a unique identifier for each individual
-    sequenced (the name that you want to use to identify your files from
-    a specific individual downstream)
+- `sample_id` sample ID; a unique identifier for each individual
+  sequenced (the name that you want to use to identify your files from a
+  specific individual downstream)
 
--   `population` population name; the population or other relevant
-    grouping variable that the individual belongs to
+- `population` population name; the population or other relevant
+  grouping variable that the individual belongs to
 
--   `data_type` data type; there are only two allowed entries here: `pe`
-    (for paired-end data) or `se` (for single end data). We need this in
-    the table because for some of our processing steps, the commands are
-    slightly different for paired-end and single-end data.
+- `data_type` data type; there are only two allowed entries here: `pe`
+  (for paired-end data) or `se` (for single end data). We need this in
+  the table because for some of our processing steps, the commands are
+  slightly different for paired-end and single-end data.
 
 It is important to make sure that the combination of sample_id, seq_id,
 and lane_number is unique for each fastq file.
@@ -292,6 +292,7 @@ Here is a key extract inspired from that tutorial:
 The basic syntax of a `for loop` is as follows:
 
 ``` bash
+
 for thing in list_of_things; do    # ; is equivalent to an end-of-line. We can alternatively put "do" on its own line
 
     operation_using $thing    # Indentation within the loop is not required, but aids legibility
@@ -323,6 +324,7 @@ to distinguish them from functions.
 <br>
 
 ``` bash
+
 BASEDIR=~/day1 # Path to the base directory / project directory. We make this a separate variable so we can run the script no matter where on our system our working directory is located.
 
 SAMPLELIST=$BASEDIR/sample_lists/fastq_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the fastq table.
@@ -357,6 +359,7 @@ Click here to expand
 </summary>
 
 ``` bash
+
 for SAMPLEFILE in `cat $SAMPLELIST`; do   # Loop through each of the prefixes listed in our sample list
     
     # For each prefix, extract the associated sample ID (column 4) and population ID (column 5) from the table
@@ -383,6 +386,7 @@ to be specified every time we run our scripts in a new login session.
 ### Set the project directory as a variable named `BASEDIR`
 
 ``` bash
+
 BASEDIR=~/day1 # Note that no spaces are allowed!
 ```
 
@@ -393,10 +397,11 @@ BASEDIR=~/day1 # Note that no spaces are allowed!
 When running these scripts on the Physalia server, run the following:
 
 ``` bash
+
 FASTQC=fastqc
 TRIMMOMATIC=trimmomatic
 PICARD=PicardCommandLine
-SAMTOOLS=/home/ubuntu/Software/bin/samtools
+SAMTOOLS=~/Software/bin/samtools
 BOWTIEBUILD=bowtie2-build
 BOWTIE=bowtie2
 BAMUTIL=bam
@@ -422,17 +427,16 @@ Now let’s get started processing the data!
 
 A FASTQ file normally contains four lines per sequence read.
 
--   Line 1 contains the sequence read identifier, with information on
-    the sequencing run and the cluster. The exact content of this line
-    varies depending on how fastq files are generated from the
-    sequencer.
--   Line 2 is the raw sequence.
--   Line 3 often consists of a single `+` symbol.
--   Line 4 encodes the quality of each base in the sequence in Line 2
-    (i.e. the probability of sequencing error in log scale). For most
-    current sequencers, these base qualities are encoded in the [Phred33
-    format](https://drive5.com/usearch/manual/quality_score.html), but
-    always check to make sure how your quality scores are encoded.
+- Line 1 contains the sequence read identifier, with information on the
+  sequencing run and the cluster. The exact content of this line varies
+  depending on how fastq files are generated from the sequencer.
+- Line 2 is the raw sequence.
+- Line 3 often consists of a single `+` symbol.
+- Line 4 encodes the quality of each base in the sequence in Line 2
+  (i.e. the probability of sequencing error in log scale). For most
+  current sequencers, these base qualities are encoded in the [Phred33
+  format](https://drive5.com/usearch/manual/quality_score.html), but
+  always check to make sure how your quality scores are encoded.
 
 Now read the code below, guess what it does, and run it on your own.
 Does it do what you expect it to do? Inspect the output and try to
@@ -441,6 +445,7 @@ identify the group of four lines for each read.
 <br>
 
 ``` bash
+
 SAMPLELIST=$BASEDIR/sample_lists/fastq_list.txt # Path to the sample list.
 RAWFASTQSUFFIX1=_1.fastq.gz # Suffix to raw fastq files. Use forward reads with paired-end data.
 
@@ -473,6 +478,7 @@ read directions.
 <br>
 
 ``` bash
+
 SAMPLELIST=$BASEDIR/sample_lists/fastq_list.txt # Path to the sample list.
 RAWFASTQSUFFIX1=_1.fastq.gz # Suffix to raw fastq files. We'll only look at the forward reads here
 
@@ -558,6 +564,7 @@ clipping.
 <br>
 
 ``` bash
+
 SAMPLELIST=$BASEDIR/sample_lists/fastq_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
 SAMPLETABLE=$BASEDIR/sample_lists/fastq_table.tsv # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. The 6th column should be data type, which is either pe or se. 
 RAWFASTQDIR=$BASEDIR/raw_fastq/ # Path to raw fastq files. 
@@ -677,6 +684,7 @@ the sequence alignment. So we will start by indexing our reference.
 <br>
 
 ``` bash
+
 REFERENCE=$BASEDIR/reference/mme_physalia_testdata_chr24.fa   # This is a fasta file with the reference genome sequence we will map to 
 REFBASENAME="${REFERENCE%.*}"
 $SAMTOOLS faidx $REFERENCE
@@ -715,6 +723,7 @@ copy and run it.
 <br>
 
 ``` bash
+
 SAMPLELIST=$BASEDIR/sample_lists/fastq_list.txt # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table.
 SAMPLETABLE=$BASEDIR/sample_lists/fastq_table.tsv # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. The 6th column should be data type, which is either pe or se. 
 FASTQDIR=$BASEDIR/adapter_clipped/ # Path to the directory where fastq file are stored. 
@@ -808,6 +817,7 @@ command can be used to inspect the first eight lines the sorted bam file
 for this sample.
 
 ``` bash
+
 $SAMTOOLS view $BASEDIR/bam/985_PANY_1_lane1_pe_bt2_mme_physalia_testdata_chr24_minq20_sorted.bam | head -n 8
 ```
 
@@ -824,6 +834,7 @@ of all the sorted bam files that you generated in the last step. You can
 use the general template code below as a starting point.
 
 ``` bash
+
 $SAMTOOLS view $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'_minq20_sorted.bam' | head -n 3
 ```
 
@@ -848,6 +859,7 @@ merge](http://www.htslib.org/doc/samtools-merge.html) with the following
 parameters \[this is generic example syntax, not code we will run\]:
 
 ``` bash
+
 $SAMTOOLS merge output.bam input1.bam input2.bam   # We replace the output.bam with the name we want to give the output merged bam and the two input names with the names of the bam files we want to merge.
 ```
 
@@ -940,7 +952,8 @@ for (i in 1:length(duplicated_samples)){
 To execute the merging, run the bash script with the following command:
 
 ``` bash
-bash $BASEDIR/scripts/merge_bam.sh $BASEDIR
+
+bash $BASEDIR/scripts/merge_bam.sh $BASEDIR $SAMTOOLS
 ```
 
 <br>
@@ -955,6 +968,7 @@ Run on our server, for the merged bam file for sample 985, the command
 would look like
 
 ``` bash
+
 $SAMTOOLS view $BASEDIR/bam/985_PANY_merged_bt2_mme_physalia_testdata_chr24_minq20_sorted.bam | wc -l
 ```
 
@@ -962,6 +976,7 @@ Check the line count in the two unmerged bam files for sample 985 and
 see if the numbers add up.
 
 ``` bash
+
 $SAMTOOLS view $BASEDIR/bam/985_PANY_1_lane2_pe_bt2_mme_physalia_testdata_chr24_minq20_sorted.bam | wc -l
 $SAMTOOLS view $BASEDIR/bam/985_PANY_1_lane1_pe_bt2_mme_physalia_testdata_chr24_minq20_sorted.bam | wc -l
 ```
@@ -1020,6 +1035,7 @@ clipOverlap](https://genome.sph.umich.edu/wiki/BamUtil:_clipOverlap)
 <br>
 
 ``` bash
+
 BAMLIST=$BASEDIR/sample_lists/merged_bam_list.txt # Path to a list of merged bam files.
 REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files
 
@@ -1028,7 +1044,7 @@ for SAMPLEBAM in `cat $BAMLIST`; do
     
     ## Remove duplicates and print dupstat file
     $PICARD MarkDuplicates I=$BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted.bam' O=$BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' M=$BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dupstat.txt' REMOVE_DUPLICATES=true
-
+    
     
     ## Clip overlapping paired end reads (only necessary for paired-end data, so if you're only running se samples, you can comment this step out)
     $BAMUTIL clipOverlap --in $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' --out $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam' --stats
@@ -1039,7 +1055,7 @@ done
 <br>
 
 Please note that the deduplication step is rather memory-consuming and
-only \~15 participants can run it at the same time. It should only take
+only ~15 participants can run it at the same time. It should only take
 about a minute to run though, so if you see the following error
 messages, please wait for a minute and try to rerun your code.
 
@@ -1079,7 +1095,7 @@ takes all the aligned sequences from all samples in to account to
 validate the indels discovered from the mapping process and then
 realigns each read locally. This is not a mandatory step and tends to be
 very time-consuming if you have a large dataset, but the code is
-provided here if you want to give it a try (it takes \~3 minutes for our
+provided here if you want to give it a try (it takes ~3 minutes for our
 small sample dataset). We will not use this output for the rest of this
 course though.
 
@@ -1150,12 +1166,13 @@ First, **on the Amazon Cloud system**, run `samtools depth` to get depth
 per sample per position.
 
 ``` bash
+
 BAMLIST=$BASEDIR/sample_lists/merged_bam_list.txt # Path to a list of unique sample prefixes for merged bam files.  
 REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files 
 
 for SAMPLEBAM in `cat $BAMLIST`; do 
     ## Count per position depth per sample
-    samtools depth -aa $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam' | cut -f 3 | gzip > $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam.depth.gz'
+    $SAMTOOLS depth -aa $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam' | cut -f 3 | gzip > $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam.depth.gz'
 
 done
 ```
