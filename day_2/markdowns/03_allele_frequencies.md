@@ -85,7 +85,7 @@ $angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY_wbams \
 
 In general, `-GL 1`, `-doMaf 1/2`, and `-doMajorMinor 1` should be the preferred choice when data uncertainty is high.
 
-Take a look at the MAF file with `less $RESDIR/PANY_rename.mafs.gz`. The first 20 lines of the file should look like
+Take a look at the MAF file with `less $RESDIR/PANY.mafs.gz`. The first 20 lines of the file should look like
 
 ```
 chromo	position	major	minor	knownEM	nInd
