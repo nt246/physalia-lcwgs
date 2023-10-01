@@ -5,7 +5,7 @@ First, we will learn **how to build a command line in ANGSD**.
 
 To see a full list of options in ANGSD type:
 ```
-angsd --help
+$angsd --help
 ```
 and you should see something like
 ```
