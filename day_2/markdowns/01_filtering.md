@@ -60,7 +60,7 @@ ANGSD can also perform some basic data filtering bassed on:
 * [SNP quality](http://popgen.dk/angsd/index.php/SnpFilters)
 * [user-specified site lists](http://popgen.dk/angsd/index.php/Sites)
 
-Let's quickly familiarize ourselves with input data.
+Let's quickly familiarize ourselves with the input data.
 
 Have a look at our list of BAM files:
 ```bash
