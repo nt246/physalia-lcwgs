@@ -87,7 +87,7 @@ scaled to the most likely genotype, so the most likely genotype has a value of 0
 
 **QUESTION**
 We are analyzing 15 individuals so we should have 152 fields in the glf file. You should confirm this and try to print the likelihoods
-for the individual called PANY_04 at position chr24::34213 (each bam file is named by the individual, i.e. <idividual ID>.bam). What is 
+for the individual called PANY_04 at position chr24:34213 (each bam file is named by the individual, i.e. <idividual ID>.bam). What is 
 their most likely genotype? If you need help you can click below.
 
 <details>
@@ -146,7 +146,7 @@ $angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY_binary \
 ```
 
 The binary .glf file is not human readable (it will look like a bunch of gibberish if you try to look at it). The compressed binary .glf is 
-slightly smaller (66M) compared to the compressed text version (68M). While this size difference is small for this test dataset it can be 
+smaller (66M) compared to the compressed text version (68M). While this size difference is small for this test dataset it can be 
 appreciable for larger datasets. 
 
 </details>
