@@ -119,7 +119,6 @@ Let's build an ANGSD run. Note that arguments can be supplied in any order (the 
 Define input and output files (please note that we do not run the following intermediate steps, as they are preceded with ```#```):
 ```
 # $angsd -b ALL.bams -out Results/ALL \
-...
 ```
 We provide a list of bam files (with their full paths) with `-b`, while `-out` states the prefix for all output files that will be generated.
 
@@ -127,7 +126,6 @@ Next we specify some basic read filtering criteria.
 ```
 # $angsd -b ALL.bams -ref $REF -out Results/ALL \
 #        -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
-...
 ```
 These filters will retain only uniquely mapped reads (`uniqueOnly`) that map as a proper pair (`only_proper_pairs`) and are not tagged with a SAM flag above 255 (`remove_bads`).
 No bases are trimmed from the ends of reads `-trim 0` and we downgrade mapping and base qualities in problematic mapping regions (`-C` and `-baq`).
@@ -139,12 +137,10 @@ to short read mapping and must be handled with care. In this scenario you may wa
 altogether to avoid erroneous inference. You may also want to remove bases with exceptionally low base quality with `minQ`.
 
 
-```bash
-...
+```
 # $angsd -b ALL.bams -ref $REF -out Results/ALL \
 #        -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
 #        -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
-...
 ```
 
 Parameter | Meaning |
