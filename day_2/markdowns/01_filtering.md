@@ -60,17 +60,19 @@ ANGSD can also perform some basic data filtering bassed on:
 * [SNP quality](http://popgen.dk/angsd/index.php/SnpFilters)
 * [user-specified site lists](http://popgen.dk/angsd/index.php/Sites)
 
+Let's quickly familiarize ourselves with input data.
+
 Have a look at our list of BAM files:
 ```bash
 cat $DIR/ALL_bams.txt
 ```
 
-Count how many BAM files we have
+Count how many BAM files we have:
 ```bash
 wc -l $DIR/ALL_bams.txt
 ```
 
-List the text file that list different subsets of BAM files
+List the text file that list different subsets of BAM files:
 ```bash
 ls -l $DIR/*_bams.txt
 ```
