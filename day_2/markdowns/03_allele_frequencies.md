@@ -74,7 +74,7 @@ Now you should be able to run ANGSD without problems. When supplying a glf file 
 need to provide the number of individuals in the file with `-nInd` and the reference index file with `-fai`.
 
 ```bash
-angsd -glf10_text $RESDIR/PANY_rename.glf.gz -out $RESDIR/PANY_rename \
+$angsd -glf10_text $RESDIR/PANY_rename.glf.gz -out $RESDIR/PANY_rename \
    -nInd 15 -fai $DATDIR/Ref_rename.fa.fai -doMajorMinor 1 -doMaf 1 \
    -minInd 5
 ```
