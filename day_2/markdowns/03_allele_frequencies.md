@@ -57,7 +57,7 @@ abcMajorMinor.cpp:
 	-skipTriallelic	0
 ```
 
-Let's estimate minor allele frequences (MAF) using the GLs that we calculated from the last section as input. When supplying a glf file as input we also
+Let's estimate minor allele frequences (MAFs) using the GLs that we calculated from the last section as input. When supplying a glf file as input we also
 need to provide the number of individuals in the file with `-nInd` and the reference index file with `-fai`.
 
 ```bash
