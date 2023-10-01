@@ -39,10 +39,9 @@ Set some other environment variables
 ```
 DIR=/home/ubuntu/Share/physalia-lcwgs/data
 DATA=$DIR/BAMS_RENAME
-REF=$DIR/Ref.fa
-ANC=$DIR/outgrp_ref.fa
+REF=$DIR/Ref_rename.fa
+ANC=$DIR/outgrp_ref_rename.fa
 angsd=/home/ubuntu/angsd/angsd
-SAMTOOLS=/home/ubuntu/Software/bin/samtools
 ```
 
 The **workflow** is roughly divided into four steps:
