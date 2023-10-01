@@ -74,7 +74,7 @@ wc -l $DIR/ALL_bams_rename.txt
 
 List the text files that contain the names (and paths) of different subsets of BAM files:
 ```bash
-ls -l $DIR/*rename_bams.txt
+ls -l $DIR/*bams_rename.txt
 ```
 
 Possible options when using BAM files as input:
