@@ -38,7 +38,7 @@ Let's first work with only the PANY samples.
 A possible command to calculate genotype likelihoods is
 
 ```
-$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
+$angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY \
         -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
         -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
         -GL 1 -doGlf 4
@@ -87,7 +87,7 @@ scaled to the most likely genotype, so the most likely genotype has a value of 0
 
 **QUESTION**
 We are analyzing 15 individuals so we should have 152 fields in the glf file. You should confirm this and try to print the likelihoods
-for the individual called PANY_04 at position Mme_chr24:2558528-4558528:34213 (each bam file is named by the individual, i.e. <idividual ID>.bam). What is 
+for the individual called PANY_04 at position chr24::34213 (each bam file is named by the individual, i.e. <idividual ID>.bam). What is 
 their most likely genotype? If you need help you can click below.
 
 <details>
@@ -110,14 +110,14 @@ echo "$INDNUM"
 So this individual is at row 4 in the bam list. Now we can extract their likelihoods.
 
 ```bash
-zcat $RESDIR/PANY.glf.gz | grep -m 1 $'^Mme_chr24:2558528-4558528\t34213\t' | cut -f 3- | perl -se '$start=($n-1)*10; @arr = split(/\t/,<>); print "@arr[$start .. $start+9]\n"' -- -n=$INDNUM
+zcat $RESDIR/PANY.glf.gz | grep -m 1 $'^chr24\t34213\t' | cut -f 3- | perl -se '$start=($n-1)*10; @arr = split(/\t/,<>); print "@arr[$start .. $start+9]\n"' -- -n=$INDNUM
 ```
 For PANY_04 the 5th likelihood is zero, corresponding to the genotype 'CC'.
 
 </details>
 
 **QUESTION**
-If you were to carry out what you just did for PANY_09 at site Mme_chr24:2558528-4558528 34213 you would see that there GLs are 
+If you were to carry out what you just did for PANY_09 at site chr24:34213 you would see that there GLs are 
 `0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000`. What does this mean?
 
 <details>
@@ -139,7 +139,7 @@ Look at the file sizes of text vs binary format. Which one is smaller?
 Use `-doGlf 1` to output genotype likelihoods in binary. So the full command would be
 
 ```
-$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_binary \
+$angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY_binary \
         -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
         -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
         -GL 1 -doGlf 1
