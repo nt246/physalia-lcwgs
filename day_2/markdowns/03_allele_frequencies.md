@@ -209,11 +209,11 @@ So let's first extract this set of variable sites from the MAFs file.
 ```bash
 # extract positions from the mafs file
 
-zcat $RESDIR/ALL.mafs.gz | cut -f1,2 | tail -n+2 > $DIR/biallelic_snps.pos
+zcat $RESDIR/ALL.mafs.gz | cut -f1,2 | tail -n+2 > $RESDIR/biallelic_snps.pos
 
 # index the sites file
 
-$angsd sites index $DIR/biallelic_snps.pos
+$angsd sites index $RESDIR/biallelic_snps.pos
 
 ```
 
@@ -224,13 +224,16 @@ Now you can calculate allele frequencies that would be comparable between popula
 
 $angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY_derived \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -minMapQ 20 -minQ 20 \
-   -GL 1 -doMajorMinor 5 -anc $ANC -doMaf 1 -sites $DATDIR/biallelic_snps.pos
+   -GL 1 -doMajorMinor 5 -anc $ANC -doMaf 1 -sites $RESDIR/biallelic_snps.pos
 
+'''
+
+'''bash
 # Calculate derived allele frequencies for JIGA
 
 $angsd -b $DIR/JIGA_bams_rename.txt -ref $REF -out $RESDIR/JIGA_derived \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -minMapQ 20 -minQ 20 \
-   -GL 1 -doMajorMinor 5 -anc $ANC -doMaf 1 -sites $DATDIR/biallelic_snps.pos
+   -GL 1 -doMajorMinor 5 -anc $ANC -doMaf 1 -sites $RESDIR/biallelic_snps.pos
 
 ```
 
