@@ -5,7 +5,7 @@ In this session you will learn how to:
 * Call SNPs in the face of high genotyping uncertainty
 
 We are using the program [ANGSD](http://popgen.dk/angsd/index.php/ANGSD) (Analysis of Next Generation Sequencing Data).
-More information about the methods implemented ANGSD can be found in its associated [paper](http://www.ncbi.nlm.nih.gov/pubmed/25420514).
+More information about the methods implemented in ANGSD can be found in its associated [paper](http://www.ncbi.nlm.nih.gov/pubmed/25420514).
 
 Quoted from the ANGSD website: *ANGSD is a software for analyzing next generation sequencing data. The software can handle a number of different input 
 types from mapped reads to imputed genotype probabilities. Most methods take genotype uncertainty into account instead of basing the analysis on called genotypes. 
