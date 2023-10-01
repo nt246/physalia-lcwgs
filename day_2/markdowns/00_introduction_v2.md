@@ -41,6 +41,7 @@ DIR=/home/ubuntu/physalia-lcwgs/data
 DATA=$DIR/BAMS
 REF=$DIR/Ref.fa
 ANC=$DIR/outgrp_ref.fa
+angsd=/home/ubuntu/angsd/angsd
 ```
 
 The **workflow** is roughly divided into four steps:
