@@ -38,7 +38,7 @@ Extras:
 NB These frequency estimators requires major/minor -doMajorMinor
 ```
 
-It's also useful to know how ANGSD can identify major and minor alleles, `angsd -doMajorMinor`
+It's also useful to know how ANGSD identifies major and minor alleles, `angsd -doMajorMinor`
 
 ```
 	-> angsd version: 0.931 (htslib: 1.9) build(Oct 25 2019 18:02:57)
@@ -74,9 +74,8 @@ Now you should be able to run ANGSD without problems. When supplying a glf file 
 need to provide the number of individuals in the file with `-nInd` and the reference index file with `-fai`.
 
 ```bash
-$angsd -glf10_text $RESDIR/PANY_rename.glf.gz -out $RESDIR/PANY_rename \
-   -nInd 15 -fai $DATDIR/Ref_rename.fa.fai -doMajorMinor 1 -doMaf 1 \
-   -minInd 5
+$angsd -glf10_text $RESDIR/PANY.glf.gz -out $RESDIR/PANY \
+   -nInd 15 -fai $DIR/Ref_rename.fa.fai -doMajorMinor 1 -doMaf 1 -minInd 5
 ```
 
 <details>
@@ -88,7 +87,7 @@ you want to change the filtering parameters, genotype likelihood model, etc.
 
 ```bash
 
-$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
+$angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY_wbams \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
    -GL 1 -doMajorMinor 1 -doMaf 1
