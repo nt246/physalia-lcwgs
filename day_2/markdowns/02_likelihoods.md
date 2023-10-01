@@ -136,7 +136,6 @@ Look at the file sizes of text vs binary format. Which one is smaller?
 
 <summary> click for help </summary>
 
-
 Use `-doGlf 1` to output genotype likelihoods in binary. So the full command would be
 
 ```
