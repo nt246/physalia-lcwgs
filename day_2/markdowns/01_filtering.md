@@ -62,7 +62,7 @@ ANGSD can also perform some basic data filtering bassed on:
 
 Let's quickly familiarize ourselves with the input data.
 
-Have a look at our list of BAM files:
+Have a look at our BAM files on the filesystem:
 ```bash
 cat $DIR/ALL_bams.txt
 ```
