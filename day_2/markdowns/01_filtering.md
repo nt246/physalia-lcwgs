@@ -1,5 +1,5 @@
 
-## 1. Data filtering and I/O
+## 1. Data filtering and input/output
 
 First, we will learn **how to build a command line in ANGSD**.
 
@@ -49,15 +49,16 @@ Examples:
 
 ANGSD can accept several input files, as described [here](http://popgen.dk/angsd/index.php/Input):
 
-* BAM, CRAM, mpileup
-* VCF, GLF, beagle
+* BAM/CRAM
+* mpileup
+* VCF
+* GLF/beagle
 
-Here we show how ANGSD can also perform some basic filtering of the data.
-These filters are based on:
+ANGSD can also perform some basic data filtering bassed on:
 
-* quality and depth, see [here](http://www.popgen.dk/angsd/index.php/Filters)
-* SNP quality, see [here](http://popgen.dk/angsd/index.php/SnpFilters)
-* sites, see [here](http://popgen.dk/angsd/index.php/Sites)
+* [depth and missing data](http://www.popgen.dk/angsd/index.php/Filters) and [base/map qualities](http://www.popgen.dk/angsd/index.php/Input)
+* [SNP quality](http://popgen.dk/angsd/index.php/SnpFilters)
+* [user-specified site lists](http://popgen.dk/angsd/index.php/Sites)
 
 Have a look at our list of BAM files:
 ```bash
@@ -70,7 +71,7 @@ wc -l $DIR/ALL_bams.txt
 ls -l $DIR/*_bams.txt
 ```
 
-If the input file is in BAM format, the possible options are:
+Possible options when using BAM files as input:
 ```
 angsd -bam
 ...
@@ -107,28 +108,29 @@ Examples for region specification:
 		chr:site	Use single site on chromosome: chr
 ```
 
-First we need to define input and output files (please note that we do not run the following intermediate steps, as they are preceded with ```#```):
+Let's build an ANGSD run. Note that arguments can be supplied in any order (the order presented here is arbitrary).
+
+Define input and output files (please note that we do not run the following intermediate steps, as they are preceded with ```#```):
 ```
 # angsd -b ALL.bams -out Results/ALL \
 ...
 ```
 We provide a list of bam files (with their full paths) with `-b`, while `-out` states the prefix for all output files that will be generated.
 
-Next we specify some basic filtering options.
-First we define filters based on aspects of read quality.
+Next we specify some basic read filtering criteria.
 ```
 # angsd -b ALL.bams -ref $REF -out Results/ALL \
 #        -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
 ...
 ```
 These filters will retain only uniquely mapped reads (`uniqueOnly`) that map as a proper pair (`only_proper_pairs`) and are not tagged with a SAM flag above 255 (`remove_bads`).
-No bases are trimmed from the ends of reads `-trim 0` and we downgrading mapping and base qualities in problematic mapping regions (`-C` and `-baq`).
+No bases are trimmed from the ends of reads `-trim 0` and we downgrade mapping and base qualities in problematic mapping regions (`-C` and `-baq`).
 `-C INT` downgrades mapping quality when there are excessive mismatches based on sqrt((INT-q)/INT)*INT, while `-baq 1` 
 adjusts base qualities around INDELS ([BAQ](https://academic.oup.com/bioinformatics/article/27/8/1157/227268?login=false)).
 
-Low mapping qualities as well as exceptionally low or high sequencing depth generally signal regions of the genome that are refractory 
-to short read mapping and must be handled with care. In this scenario you may want to discard reads with low mapping quality or discard these sites 
-altogether to avoid erroneous inference. You may also want to remove bases with exceptionally low base quality as below.
+Low map qualities as well as exceptionally low or high sequencing depth generally signal regions of the genome that are refractory 
+to short read mapping and must be handled with care. In this scenario you may want to discard reads with low map quality (`minMapQ`) or discard these sites 
+altogether to avoid erroneous inference. You may also want to remove bases with exceptionally low base quality with `minQ`.
 
 
 ```bash
@@ -148,7 +150,7 @@ Parameter | Meaning |
 
 More sophisticated filtering can be performed, but this is outside the scope of this practical.
 
-You have now learned how to build a basic pipeline in ANGSD.
+You have now learned how to read in and output data in ANGSD.
 Next you are going to learn how to calculate genotype likelihoods.
 
 [click here](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/02_likelihoods.md) to move to the next session.

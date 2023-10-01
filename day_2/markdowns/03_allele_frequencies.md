@@ -2,7 +2,7 @@
 
 #### Allele Frequency Estimation
 
-Now you will estimate allele frequencies using the GLs that just calculated as input.
+Now you will estimate allele frequencies using the GLs that you just calculated as input.
 
 We can get some information about how to estimate allele frequencies with `angsd -doMaf`.
 
@@ -81,6 +81,9 @@ angsd -glf10_text $RESDIR/PANY_rename.glf.gz -out $RESDIR/PANY_rename \
 
 <details>
 
+Note: You can always use bams as input but you need to recalculate the likelihoods (with `-GL` as before), which is redundant unless 
+you want to change the filtering parameters, genotype likelihood model, etc.
+
 <summary> Click to see how to calculate allele frequencies using the bams as input </summary>
 
 ```bash
@@ -92,14 +95,14 @@ angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
 
 ```
 
-Note that the allele frequencies are still being calculated from the genotype likelihoods, which are 
-first being calculated from the bams.
+When using BAMS as input the allele frequencies are still being calculated from the genotype likelihoods, which are 
+first being calculated from the BAMs.
 
 </details>
 
 In general, `-GL 1`, `-doMaf 1/2`, and `-doMajorMinor 1` should be the preferred choice when data uncertainty is high.
 
-Take a look at the file with `less $RESDIR/PANY_rename.mafs.gz`. The first 20 lines of the file should look like
+Take a look at the MAF file with `less $RESDIR/PANY_rename.mafs.gz`. The first 20 lines of the file should look like
 
 ```
 chromo	position	major	minor	knownEM	nInd
@@ -125,17 +128,21 @@ chr24	49	T	A	0.000004	6
 ```
 
 The columns are (1) chromosome/ref sequence name, (2) position, (3) the major allele, (4) the minor allele, (5) the allele frequency, 
-(6) the number of indivdiuals with data used in the calculation of allele frequency. Note that the number of individuals in the last 
+(6) the number of indivdiuals with data used in the calculation of allele frequency. The number of individuals in the last 
 column should never be below 5 since you specified `-minInd 5`.
 
-You'll notice that many sites have very low frequency suggesting that they are likely monomorphic. You can probably start guessing then 
+You'll notice that many sites have very low frequency suggesting that they are likely monomorphic. You can probably start guessing 
 how you can use these frequencies to call SNPs, so we'll do that next.
+
+<details>
+<summary> Click here for a bonus note on using MAF files for calculating Dxy  </summary>
+</details>
 
 ## SNP calling
 
 You can statistically test for whether a site is variable in ANGSD using a likelihood ratio (LR) test, which compares the likelihood that the 
 minor allele frequency (MAF) is zero (the null) to the likelihood of the estimated MAF (with `-doMaf`). Under the null, -2log(LR statistic) 
-is distributed according to a chi-square(1 d.f.), and so we can calculate a p-value for whether the estimated MAF is statistically 
+is chi-square distributed with one degree of freedom, and so we can calculate a p-value for whether the estimated MAF is statistically 
 different from zero, in which case the site is a SNP.
 
 Let's call biallelic PANY SNPs at four different significance levels:
@@ -152,9 +159,9 @@ do
 done
 ```
 
-Sites that could likely have more than two alleles are purged using `-rmTriallelic` in our example above.
+Sites that may have more than two alleles are purged using `-rmTriallelic` in our example above.
 
-Have a look at the outputs, e.g. `less $RESDIR/PANY_0.05.mafs.gz`. You'll notice two additional columns in the MAF file: 
+Have a look at the outputs, e.g. `less $RESDIR/PANY_0.05.mafs.gz`. You'll notice two additional columns in the MAF file. 
 There is now a field, 'ref', with the reference allele, and a "pK-EM" field, which shows the p-value for the likelihood 
 ratio test of whether the site is variable.
 
@@ -174,8 +181,8 @@ SNP_pval Number_SNPs
 1e-6 6263
 ```
 
-Here's a representative image of what the SNP MAF density under different `SNP_pval` cutoffs may look like. Note that sites 
-with MAF below a certain cutoff can be discarded with `-minMaf`. This can be useful for PCA, admixture, or GWAS-type analyses where a 
+Here's a representative image of what happens to the distribution of allele frequencies as you become more stringent in calling SNPs.
+Note that sites with MAF below a certain cutoff can be discarded with `-minMaf`. This can be useful for PCA, admixture, or GWAS-type analyses where a 
 minimum MAF (e.g. 5%) can help reduce noise and improve inference.
 
 
@@ -202,7 +209,7 @@ allele. We can do this with `-doMajorMinor 3, 4, or 5`.
 
 **QUESTION**
 
-How could you compare the **derived** allele frequencies between the PANY and JIGA populations? Try doing this.
+How could you compare the **derived** allele frequencies at sites segregating among the PANY and JIGA populations? Try doing this.
 
 Hint: You can have ANGSD analyze a subset of sites using the `-sites` argument. You can read about it [here](http://www.popgen.dk/angsd/index.php/Sites)
 
@@ -213,7 +220,8 @@ Hint: You can have ANGSD analyze a subset of sites using the `-sites` argument. 
 You would need to use `-doMajorMinor 5` and pass the ancestral reference with `-anc` when calling `-doMaf`. If this is done for sites that are biallelic 
 then the frequency for the same derived allele (i.e. non-ancestral allele) at each site can be compared between populations.
 
-First we need to extract the set of biallelic sites in our dataset.
+Since we know which sites are segregating among all individuals we can restrict the output of ANGSD to this subset of sites by passing a `sites` file. 
+So let's first extract this set of variable sites from the MAFs file.
 
 ```bash
 # extract positions from the mafs file

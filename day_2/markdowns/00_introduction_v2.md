@@ -1,19 +1,19 @@
 
 In this session you will learn how to:
-* Call genotypes in a probabilistic framework
+* Calculate genotype likelihoods and call genotypes in a probabilistic framework
 * Estimate allele frequencies
 * Call SNPs in the face of high genotyping uncertainty
 
 We are using the program [ANGSD](http://popgen.dk/angsd/index.php/ANGSD) (Analysis of Next Generation Sequencing Data).
-More information about its rationale and implemented methods can be found [here](http://www.ncbi.nlm.nih.gov/pubmed/25420514).
+More information about the methods implemented ANGSD can be found in its associated [paper](http://www.ncbi.nlm.nih.gov/pubmed/25420514).
 
-According to its website *ANGSD is a software for analyzing next generation sequencing data. The software can handle a number of different input 
+*ANGSD is a software for analyzing next generation sequencing data. The software can handle a number of different input 
 types from mapped reads to imputed genotype probabilities. Most methods take genotype uncertainty into account instead of basing the analysis on called genotypes. 
-This is especially useful for low and medium depth data.*
+This is especially useful for low and medium depth data* (quoted from the ANGSD website).
 
-Please make sure to follow these preparatory instructions below before continuing with the exercises. 
-Briefly, you need to set the path to the software and various data that will be used.
-Also, you will have to create two folders on your working directory, one for your results and one for your intermediate data.
+Please make sure to follow the preparatory instructions below before continuing with the exercises. 
+You need to set the path to the software and various data that will be used.
+You also need to create two folders in your home user directory; one for your results and one for your intermediate data.
 
 Make sure you are in your home directory.
 ```
@@ -24,9 +24,10 @@ and create a folder for this session and enter it
 mkdir day2
 cd day2
 ```
-and you should be in `~/day2`.
+You should now be in `~/day2`. You can confirm this with `pwd`, which will print your location in the filesystem.
 
-Also, you will have to create two folders on your working directory, one for your results and one for your intermediate data.
+Now create two folders in your home user directory, one for your results and one for your intermediate data, and set 
+environmental variables that point to these directories.
 ```
 mkdir Results
 RESDIR=~/day2/Results
@@ -34,7 +35,7 @@ RESDIR=~/day2/Results
 mkdir Data
 DATDIR=~/day2/Data
 ```
-Let's set all environment variables
+Set some other environment variables
 ```
 DIR=/home/ubuntu/Share/physalia-lcwgs/data
 DATA=$DIR/BAMS

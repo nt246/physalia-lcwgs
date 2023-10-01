@@ -1,8 +1,9 @@
 
 ## 2. Genotype likelihoods
 
-Many of the calculations that you perform with ANGSD are based on ***genotype likelihoods*** (GL)s, which improves accuracy over hard-called genotypes (avoids snowballing errors). 
-We will now calculate GLs for each individual at all sites in our test dataset. 
+Many of the calculations that you perform with ANGSD are based on **genotype likelihoods** (GL)s, which improves accuracy over hard-called genotypes when depth is low 
+(see for instance [this paper](https://doi.org/10.1534/genetics.113.154740)). 
+We will now calculate GLs for each individual at all sites in our dataset. 
 
 To do so you need to specify which genotype likelihood model to use.
 ```
@@ -28,13 +29,13 @@ Filedumping:
 	3: binary 3 times likelihood	.glf.gz
 	4: text version (10 log likes)	.glf.gz
 ```
-A rough description of these different models can be found [here](http://www.popgen.dk/angsd/index.php/Genotype_likelihoods).
+A brief description of these different models can be found [here](http://www.popgen.dk/angsd/index.php/Genotype_likelihoods).
 The GATK model is based on the one from the first GATK paper, SAMtools uses a more sophisticated error model (does not assume errors are independent), 
 SOAPsnp requires a reference sequence for recalibration of quality scores, SYK is error-type specific.
 In most cases, GATK and SAMtools models should give similar results.
 
 Let's first work with only the PANY samples.
-A possible command line to calculate genotype likelihoods might be:
+A possible command to calculate genotype likelihoods is
 
 ```
 angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
@@ -47,7 +48,7 @@ where we specify:
 * -GL 1: genotype likelihood model as in SAMtools
 * -doGlf 4: output in text format
 
-You can usually speed up computation with `-nThreads INT`.
+Note that you can usually speed up computation with `-nThreads INT` when working with real data.
 
 The `-C` option adjusts mapping quality for reads with excessive mismatches. The [samtools](http://www.htslib.org/doc/samtools-mpileup.html)
 documentation recommends setting this to 50 for reads mapped with BWA. `-C` and `-baq` (not used here, but see below) require that you supply the reference genome with `-ref`.
@@ -58,7 +59,7 @@ documentation recommends setting this to 50 for reads mapped with BWA. `-C` and 
 
 
 **QUESTION**
-Looking at the standard output. What percentage of the sites provided to ANGSD were actually retained after imposing the filters?
+Looking at the standard output. What percentage of the sites provided to ANGSD were actually retained after applying the filters?
 
 <details>
 

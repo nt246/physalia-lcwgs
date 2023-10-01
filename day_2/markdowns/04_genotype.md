@@ -1,7 +1,9 @@
 ## 3. Genotype calling
 
 Now that you know how to calculate allele frequencies we'll use these estimates to obtain prior probabilities 
-for genotypes, which ultimately allows us to calculate genotype posterior probabilities and call genotypes.
+for genotypes, which allows us to calculate genotype posterior probabilities and call genotypes. *Generally hard calling 
+genotypes should be avoided when working with low coverage data, but this tutorial will show you how to at least improve 
+accuracy for genotype calling when necessary*.
 
 In ANGSD, the option to call genotypes is `-doGeno`:
 
@@ -27,7 +29,7 @@ angsd -doGeno
         NB geno_maxDepth requires -doCounts
 ```
 
-Therefore, if we set `-doGeno 2`, genotypes are coded as '0', '1', or '2' minor alleles. If we wanted to instead print the posterior 
+If we use `-doGeno 2`, genotypes are coded as '0', '1', or '2' minor alleles. If we wanted to instead print the posterior 
 probability of the genotype we could use '-doGeno 16'. The numeric arguments to `-doGeno` are additive so if we wanted to print *both*
 the called genotype as 0, 1, or 2 *and* the probability of that genotype, we could use `-doGeno 18` (2 + 16). If we also wanted to 
 print the major and minor allele we would use `-doGeno 19` (2 + 16 + 1).
@@ -46,7 +48,7 @@ angsd -doPost
 ```
 
 We'll calculate genotype posterior probabilities using a HWE prior (`-doPost 1`) based on the allele frequencies estimated with `-doMaf 1`
-and then output the posterior probabilities for the major/major, major/minor, minor/minor genotypes for each individual with `-doGeno 8` for
+and then output the posterior probabilities for the {major,major}, {major,minor}, {minor,minor} genotypes for each individual with `-doGeno 8` for
 the PANY population. We'll limit our analysis to PANY biallelic SNPs (`SNP_pval 1e-6`). We'll use the BAM files as input (meaning that we have 
 to recalculate GLs with `-GL`). You could also use pre-calculated genotype likelihoods as input with `-glf` (binary) or `-glf10_text` (text). 
 We'll use many of the same quality controls that we've been using throughout.
@@ -62,7 +64,7 @@ angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
    -GL 1 -doMajorMinor 1 -doMaf 1 -SNP_pval 1e-6 -rmTriallelic 0.05 -doPost 1 -doGeno 8
 ```
 The first two columns of the output are the chromosome and position. The following columns list the the posterior probabilites
-for the major/major, major/minor, and minor/minor for each individual in the same order as they appeared from the top of the bam list.
+for the {major,major}, {major,minor}, and {minor,minor} for each individual in the same order as they appeared from the top of the bam list.
 
 Take a look at the ouput:
 ```bash
@@ -259,11 +261,11 @@ How many sites are in the file now?
 
 Calculate a spectrum for the number of individuals with uncalled genotypes as above. What do you make of this?
 
-In general the `postCutoff` threshold will depend on the mean sequencing depth of your data as well as your application, i.e. 
-how much miscalled genotypes could throw off an analysis.
+In general the `postCutoff` threshold will depend on the sequencing depth of your data as well as 
+how much genotyping inaccuracy could throw off an analysis.
 
 Now you know how to
-* Impose data quality filtering parameters
+* Apply data quality filtering
 * Calculate genotype likelihoods
 * Estimate allele frequencies and call SNPs based on these frequencies
 * Incorporate allele frequencies into a genotype prior to calculate genotype posterior probabilities
