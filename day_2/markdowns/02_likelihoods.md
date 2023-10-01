@@ -7,7 +7,7 @@ We will now calculate GLs for each individual at all sites in our dataset.
 
 To do so you need to specify which genotype likelihood model to use.
 ```
-angsd -GL
+$angsd -GL
 ...
 -GL=0: 
 	1: SAMtools
@@ -38,7 +38,7 @@ Let's first work with only the PANY samples.
 A possible command to calculate genotype likelihoods is
 
 ```
-angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
+$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
         -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
         -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
         -GL 1 -doGlf 4
