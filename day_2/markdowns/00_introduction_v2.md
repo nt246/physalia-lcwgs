@@ -42,6 +42,7 @@ DATA=$DIR/BAMS
 REF=$DIR/Ref.fa
 ANC=$DIR/outgrp_ref.fa
 angsd=/home/ubuntu/angsd/angsd
+SAMTOOLS=/home/ubuntu/Software/bin/samtools
 ```
 
 The **workflow** is roughly divided into four steps:
