@@ -57,20 +57,7 @@ abcMajorMinor.cpp:
 	-skipTriallelic	0
 ```
 
-ANGSD does not like how we named the chromosomes in this test dataset when it uses `-fai` so we have to carry out some commands to modify the 
-chromosome name in the glf and make a copy of the reference with a modified name as well. You can always use bams as input but you need to 
-recalculate the likelihoods (with `-GL` as before), which is redundant unless you want to change the filtering parameters or the genotype 
-likelihood model, etc.
-
-```bash
-# Make new .glf.gz file with modified chromosome name
-zcat $RESDIR/PANY.glf.gz | sed 's/Mme_chr24:2558528-4558528/chr24/' | gzip > $RESDIR/PANY_rename.glf.gz
-
-# Change chromosome name in reference fasta and index it
-sed 's/Mme_chr24:2558528-4558528/chr24/' $REF > $DATDIR/Ref_rename.fa
-$SAMTOOLS faidx $DATDIR/Ref_rename.fa
-```
-Now you should be able to run ANGSD without problems. When supplying a glf file as input we also
+Let's estimate minor allele frequences using the GLs that we calculated from the last section as input. When supplying a glf file as input we also
 need to provide the number of individuals in the file with `-nInd` and the reference index file with `-fai`.
 
 ```bash
