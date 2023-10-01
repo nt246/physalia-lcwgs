@@ -65,8 +65,8 @@ $angsd -glf10_text $RESDIR/PANY.glf.gz -out $RESDIR/PANY \
    -nInd 15 -fai $DIR/Ref_rename.fa.fai -doMajorMinor 1 -doMaf 1 -minInd 5
 ```
 
-Note: You can always use bams as input but you need to recalculate the likelihoods (with `-GL` as before), which is redundant unless
-you want to change the filtering parameters, genotype likelihood model, etc.
+Note: You can always use bams as input but you need to recalculate the genotype likelihoods (with `-GL` as before), which is redundant unless
+you want to change the filtering parameters, genotype likelihood model, etc. MAF estimation uses the GLs.
 
 <details>
 
@@ -80,9 +80,6 @@ $angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY_wbams \
    -GL 1 -doMajorMinor 1 -doMaf 1
 
 ```
-
-When using BAMS as input the allele frequencies are still being calculated from the genotype likelihoods, which are 
-first being calculated from the BAMs.
 
 </details>
 
