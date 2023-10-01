@@ -140,7 +140,7 @@ altogether to avoid erroneous inference. You may also want to remove bases with 
 ```
 # $angsd -b ALL.bams -ref $REF -out Results/ALL \
 #        -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
-#        -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
+#        -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1
 ```
 
 Parameter | Meaning |
