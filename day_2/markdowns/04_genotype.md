@@ -93,6 +93,7 @@ So PANY_07 is at row 7 of the BAM list. Now extract their genotype probabilities
 
 ```bash
 zcat $RESDIR/PANY.geno.gz | grep -m 1 $'^chr24\t459780\t' | cut -f 3- | perl -se '$start=($n-1)*3; @arr = split(/\t/,<>); print "@arr[$start .. $start+2]\n"' -- -n=$INDNUM
+
 ```
 
 The most probable genotype configuration is major/major with a posterior probability of 0.984109.
@@ -121,6 +122,7 @@ INDNUM=$(grep -n "PANY_03.bam$" $DIR/PANY_bams_rename.txt | cut -f1 -d':')
 
 # Extract the PANY_03's genotype posterior probabilities
 zcat $RESDIR/PANY.geno.gz | grep -m 1 $'^chr24\t459780\t' | cut -f 3- | perl -se '$start=($n-1)*3; @arr = split(/\t/,<>); print "@arr[$start .. $start+2]\n"' -- -n=$INDNUM
+
 ```
 The genotype posterior probabilities are 0.631517 0.326327 0.042156.
 
@@ -154,10 +156,11 @@ genotype probabilities?
 
 ```bash
 # find position of PANY_07 in the BAM file
-INDNUM=$(grep -n "PANY_07.bam$" $DIR/PANY_bams.txt | cut -f1 -d':')
+INDNUM=$(grep -n "PANY_07.bam$" $DIR/PANY_bams_rename.txt | cut -f1 -d':')
 
 # Extract the genotype probablities
 zcat $RESDIR/PANY_unif.geno.gz | grep -m 1 $'^chr24\t459780\t' | cut -f 3- | perl -se '$start=($n-1)*3; @arr = split(/\t/,<>); print "@arr[$start .. $start+2]\n"' -- -n=$INDNUM
+
 ```
 The three genotype posterior probabilities are 0.969698 0.030302 0.000000.
 
