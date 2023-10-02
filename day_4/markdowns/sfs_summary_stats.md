@@ -31,6 +31,7 @@ DATDIR=~/day4/Data
 ANGSD=/home/ubuntu/angsd/angsd
 REALSFS=/home/ubuntu/angsd/misc/realSFS
 THETASTAT=/home/ubuntu/angsd/misc/thetaStat
+SCRIPTS=$DIR/day_4
 ```
 
 ### Data
@@ -214,7 +215,7 @@ These are the *expected* number of sites in the PANY sample with 0 (value 1), 1 
 Let's plot the SFS as a barplot:
 
 ```bash
-/home/ubuntu/Share/plotSFS.R $RESDIR/PANY.sfs PANY_SFS 0
+$SCRIPTS/plotSFS.R $RESDIR/PANY.sfs PANY_SFS 0
 
 # note that the plotSFS.R script is found in the github repo at https://github.com/nt246/physalia-lcwgs/tree/main/day_4
 ```
