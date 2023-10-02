@@ -413,7 +413,7 @@ probablities are log transformed.
 
 **QUESTION**
 
-What is the most probable number of derived alleles at chr24 61?
+What is the most probable number of derived alleles at chr24:61?
 
 <details>
 
@@ -425,13 +425,13 @@ What is the most probable number of derived alleles at chr24 61?
 
 **QUESTION**
 
-What is the posterior probability that position chr24 61 has 1 derived allele (i.e. is a singleton)?
+What is the posterior probability that position chr24:61 has 1 derived allele (i.e. is a singleton)?
 
 <details>
 
 <summary> Click for answer </summary>
 
-The second value in the probabillity vector for chr24 61 is the probability of 1 derived allele in log space. 
+The second value in the probabillity vector for chr24:61 is the probability of 1 derived allele in log space. 
 This value is -1.844222. So the probability that this site is a singleton is exp(-1.844222) = **0.1581483**.
 
 </details>
@@ -440,9 +440,11 @@ This value is -1.844222. So the probability that this site is a singleton is exp
 
 What is the probability that the following sites are variable?
 
-24	39
-24	48
-24	61
+24:39
+</br>
+24:48
+</br>
+24:61
 
 <details>
 
