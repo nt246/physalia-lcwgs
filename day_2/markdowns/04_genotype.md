@@ -120,7 +120,15 @@ INDNUM=$(grep -n "PANY_03.bam$" $DIR/PANY_bams_rename.txt | cut -f1 -d':')
 zcat $RESDIR/PANY.geno.gz | grep -m 1 $'^chr24\t459780\t' | cut -f 3- | perl -se '$start=($n-1)*3; @arr = split(/\t/,<>); print "@arr[$start .. $start+2]\n"' -- -n=$INDNUM
 
 ```
-The genotype posterior probabilities are 0.631517 0.326327 0.042156.
+The genotype posterior probabilities are 0.333333 0.333333 0.333333. What do you think this means?
+
+</details>
+
+<summary> click for answer </summary>
+
+Uniform genotype probabilities mean the individual had missing data (no genotype is more probable than any other).
+
+<details>
 
 </details>
 
