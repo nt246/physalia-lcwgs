@@ -14,6 +14,9 @@ For today's exercises please generate the following directories
 mkdir ~/day4
 mkdir ~/day4/Results
 mkdir ~/day4/Data
+
+cd ~/day4
+
 ```
 
 and set the following environment variables
@@ -21,9 +24,9 @@ and set the following environment variables
 
 ```bash
 DIR=/home/ubuntu/Share/data
-DATA=$DIR/BAMS
-REF=$DIR/Ref.fa
-ANC=$DIR/outgrp_ref.fa
+DATA=$DIR/BAMS_RENAME
+REF=$DIR/Ref_rename.fa
+ANC=$DIR/outgrp_ref_rename.fa
 RESDIR=~/day4/Results
 DATDIR=~/day4/Data
 ANGSD=/home/ubuntu/Share/angsd/angsd
