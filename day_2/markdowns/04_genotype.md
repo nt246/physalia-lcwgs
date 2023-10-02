@@ -134,7 +134,7 @@ Uniform genotype probabilities mean the individual had missing data (no genotype
 
 **EXERCISE**
 
-Calculate the posterior probabilities for the PANY samples again, but this time using a uniform prior.
+Calculate the posterior probabilities for the PANY samples again, but this time using a uniform prior, note `-doPost 2`.
 
 <details>
 
@@ -186,20 +186,6 @@ zcat $RESDIR/PANY_unif.geno.gz | grep -m 1 $'^chr24\t459780\t' | cut -f 3- | per
 ```
 
 The genotype posterior probabilites are 0.333333 0.333333 0.333333.
-
-</details>
-
-
-**QUESTION**
-
-What do the posterior genotype probabilities of `0.333333 0.333333 0.333333` under the uniform prior mean?
-
-<details>
-
-<summary> Click for answer </summary>
-
-It means that the individual has missing data. There is no way of knowing what their genotype is or could be 
-under an uninformative prior so the same probability is assigned to every genotype.
 
 </details>
 
