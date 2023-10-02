@@ -127,7 +127,7 @@ chr24:61
 
 **QUESTION**
 
-What is the most likely number of derived alleles at position chr24 61?
+What is the most likely number of derived alleles at position chr24:61?
 
 <details>
 
