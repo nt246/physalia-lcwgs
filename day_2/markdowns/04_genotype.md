@@ -184,7 +184,7 @@ The genotype posterior probabilites are 0.333333 0.333333 0.333333.
 
 Now we'll call genotypes based on their maximum posterior probability and output the genotype in 0, 1, 2 format. We 
 can set the genotype for an indivdiual to missing (-1) if the maximum posterior probability is less than a certain value. 
-In this example we'll use a cutoff of 0.95. We'll also go ahead and write the major and minor alleles as well.
+In this example we'll use a cutoff of 0.95. We'll also write the major and minor alleles as well.
 
 ```bash
 $angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY_call \
