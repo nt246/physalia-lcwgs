@@ -182,20 +182,6 @@ The genotype posterior probabilites are 0.333333 0.333333 0.333333.
 
 </details>
 
-**QUESTION**
-
-What happens when individuals having missing data when using a HWE prior `-doPost 1`?
-
-<details>
-
-<summary> Click for answer </summary>
-
-Each possible genotype is assigned its probability under the Hardy-Weinberg model based on the minor 
-allele frequency estimated with `-doMaf`.
-
-</details>
-
-
 Now we'll call genotypes based on their maximum posterior probability and output the genotype in 0, 1, 2 format. We 
 can set the genotype for an indivdiual to missing (-1) if the maximum posterior probability is less than a certain value. 
 In this example we'll use a cutoff of 0.95. We'll also go ahead and write the major and minor alleles as well.
