@@ -122,13 +122,13 @@ zcat $RESDIR/PANY.geno.gz | grep -m 1 $'^chr24\t459780\t' | cut -f 3- | perl -se
 ```
 The genotype posterior probabilities are 0.333333 0.333333 0.333333. What do you think this means?
 
-</details>
+<details>
 
 <summary> click for answer </summary>
 
 Uniform genotype probabilities mean the individual had missing data (no genotype is more probable than any other).
 
-<details>
+</details>
 
 </details>
 
