@@ -1109,6 +1109,7 @@ BAMLIST=$BASEDIR/sample_lists/bam_list_dedup_overlapclipped.list # Path to a lis
 REFERENCE=$BASEDIR/reference/mme_physalia_testdata_chr24.fa # Path to reference fasta file and file name
 REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files
 
+rm -f $BAMLIST
 for SAMPLEBAM in `cat $BASEDIR/sample_lists/merged_bam_list.txt`; do
 echo $BASEDIR'/bam/'$SAMPLEBAM'_bt2_mme_physalia_testdata_chr24_minq20_sorted_dedup_overlapclipped.bam' >> $BAMLIST
 done
