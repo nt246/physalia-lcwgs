@@ -126,7 +126,7 @@ The genotype posterior probabilities are 0.333333 0.333333 0.333333. What do you
 
 <summary> click for answer </summary>
 
-Uniform genotype probabilities mean the individual had missing data (no genotype is more probable than any other).
+Uniform genotype probabilities mean the individual had missing data (you have no way of knowing if one genotype is more probable than any other).
 
 </details>
 
