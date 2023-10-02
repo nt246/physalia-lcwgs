@@ -346,7 +346,7 @@ if (plottype == "bar") {
 
 </details>
 
-This will dump png files containing the images, which are also shown below.
+This will dump pdf files containing the images as before, which are also shown below.
 
 ![PANY_SFS_compare_barplot](../files/PANY_SFS_compare_barplot.png)
 
