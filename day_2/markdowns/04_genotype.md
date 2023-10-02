@@ -47,7 +47,7 @@ angsd -doPost
 
 ```
 
-**GENOTYPE POSTERIOR PROBABILITIES**
+**Genotype posterior probabilities**
 
 We'll calculate genotype posterior probabilities using a HWE prior (`-doPost 1`) based on the allele frequencies estimated with `-doMaf 1`
 and then output the posterior probabilities for the {major,major}, {major,minor}, {minor,minor} genotypes for each individual with `-doGeno 8` for
@@ -70,7 +70,7 @@ Take a look at the ouput:
 less -S $RESDIR/PANY.geno.gz
 ```
 
-**QUESTION**
+**Question**
 
 What are the three posterior probabilites for PANY_07 at chr24:459780? Think back to how you extracted information 
 from the glf files.
@@ -134,7 +134,7 @@ Uniform genotype probabilities mean the individual had missing data (you don't k
 
 </details>
 
-**GENOTYPE POSTERIOR PROBABILITIES WITH UNINFORMATIVE PRIOR**
+**Genotype posterior probabilities with an uninformative prior**
 
 Calculate the posterior probabilities for the PANY samples again, but this time use a uniform genotype prior, note `-doPost 2`.
 
@@ -184,7 +184,7 @@ The genotype posterior probabilites are 0.333333 0.333333 0.333333.
 
 </details>
 
-**HARD CALLING GENOTYPES**
+**Hard calling genotypes**
 
 Now we'll call genotypes based on their maximum posterior probability and output the genotype in 0, 1, 2 format. We 
 can set the genotype for an indivdiual to missing (-1) if the maximum posterior probability is less than a certain value. 
