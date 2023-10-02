@@ -272,10 +272,10 @@ We can also compare our observed SFS to what we would expect for a neutrally evo
 
 ```bash
 # barplot
-/home/ubuntu/Share/compare_sfs.R $RESDIR/PANY.sfs PANY_SFS_compare 0 bar
+$SCRIPTS/compare_sfs.R $RESDIR/PANY.sfs PANY_SFS_compare 0 bar
 
 # scatterplot
-/home/ubuntu/Share/compare_sfs.R $RESDIR/PANY.sfs PANY_SFS_compare 0 scatter
+$SCRIPTS/compare_sfs.R $RESDIR/PANY.sfs PANY_SFS_compare 0 scatter
 
 # note that the compare_sfs.R script is found in the github repo at https://github.com/nt246/physalia-lcwgs/tree/main/day_4
 ```
@@ -345,6 +345,7 @@ if (plottype == "bar") {
 
 </details>
 
+This will dump png files containing the images, which are also shown below.
 
 ![PANY_SFS_compare_barplot](../files/PANY_SFS_compare_barplot.png)
 
