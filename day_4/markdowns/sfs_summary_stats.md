@@ -627,7 +627,7 @@ The columns are (1) Chromomsome, (2) position, (3) a<sub>s</sub> (between popula
 
 **QUESTION**
 
-What is the value of F<sub>ST</sub> at position chr24 365?
+What is the value of F<sub>ST</sub> at position chr24:365?
 
 <details>
 
