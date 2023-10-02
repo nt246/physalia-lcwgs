@@ -119,8 +119,9 @@ Can you tell which are the first two sites that look to be variable?
 
 <summary> Click for answer </summary>
 
-chr24	48
-chr24	61
+chr24:48
+<\br>
+chr24:61
 
 </details>
 
