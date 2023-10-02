@@ -262,11 +262,13 @@ invisible(dev.off())
 
 </details>
 
+This will dump a PANY_SFS.pdf file containing the plot that you can scp onto your local machine to look at or view with e.g. `evince` remotely. 
+The SFS barplot is shown below for convenience.
 
 ![PANY_SFS](../files/PANY_SFS.png)
 
 
-We can also compare our obsered SFS to what we would expect for a neutrally evolving, constant-size population.
+We can also compare our observed SFS to what we would expect for a neutrally evolving, constant-size population.
 
 ```bash
 # barplot
