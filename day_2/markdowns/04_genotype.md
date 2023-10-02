@@ -74,7 +74,7 @@ less -S $RESDIR/PANY.geno.gz
 
 **QUESTION**
 
-What are the three posterior probabilites for PANY_07 at Mme_chr24:2558528-4558528 459780? Think back to how you extracted information 
+What are the three posterior probabilites for PANY_07 at chr24:459780? Think back to how you extracted information 
 from the glf files.
 
 <details>
@@ -89,14 +89,14 @@ echo "$INDNUM"
 
 ```
 
-So PANY_07 is at row 7 of the BAM list. Now extract their genotype probabilities from the .geno file for chr24 459780.
+So PANY_07 is at row 7 of the BAM list. Now extract their genotype probabilities from the .geno file for chr24:459780.
 
 ```bash
 zcat $RESDIR/PANY.geno.gz | grep -m 1 $'^chr24\t459780\t' | cut -f 3- | perl -se '$start=($n-1)*3; @arr = split(/\t/,<>); print "@arr[$start .. $start+2]\n"' -- -n=$INDNUM
 
 ```
 
-The most probable genotype configuration is major/major with a posterior probability of 0.984109.
+The most probable genotype configuration is {major,major} with a posterior probability of 0.984109.
 
 </details> 
 
@@ -174,10 +174,11 @@ Now extract the genotype posterior probabilities for PANY_03 at chr24:459780.
 
 ```bash
 # find position of PANY_03 in the BAM file
-INDNUM=$(grep -n "PANY_03.bam$" $DIR/PANY_bams.txt | cut -f1 -d':')
+INDNUM=$(grep -n "PANY_03.bam$" $DIR/PANY_bams_rename.txt | cut -f1 -d':')
 
 # Extract the genotype probablities
 zcat $RESDIR/PANY_unif.geno.gz | grep -m 1 $'^chr24\t459780\t' | cut -f 3- | perl -se '$start=($n-1)*3; @arr = split(/\t/,<>); print "@arr[$start .. $start+2]\n"' -- -n=$INDNUM
+
 ```
 
 The genotype posterior probabilites are 0.333333 0.333333 0.333333.
@@ -221,6 +222,7 @@ $angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY_call \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
    -GL 1 -doMajorMinor 1 -doMaf 1 -SNP_pval 1e-6 -rmTriallelic 0.05 -doPost 1 -doGeno 3 -postCutoff 0.95
+
 ```
 Have a look at the file:
 ```bash
@@ -253,11 +255,13 @@ Write a for loop to to calculate how many sites have missing data for 1,2,3,...,
 <summary> Click for help </summary>
 
 ```bash
+
 for NMISSING in {1..15};
 do
 	if [ $NMISSING == 1 ]; then printf "%s\t%s\n" 'NUMBER_MISSING_IND' 'NUMBER_SITES'; fi
 	printf "%d\t%d\n" $NMISSING `zcat $RESDIR/PANY_call.geno.gz | perl -ne '$n = () = $_ =~ /\t\-1/g; print "$n\n"' | grep -c "$NMISSING$"`
 done
+
 ```
 
 </details>
