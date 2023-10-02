@@ -406,7 +406,7 @@ BOWTIEBUILD=bowtie2-build
 BOWTIE=bowtie2
 BAMUTIL=bam
 JAVA=java
-GATK=~/Share/GenomeAnalysisTK-3.7-0/GenomeAnalysisTK.jar
+GATK=~/Share/GenomeAnalysisTK.jar
 ```
 
 <br> If you will be running these programs on a different system, you
