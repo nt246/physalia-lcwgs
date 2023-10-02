@@ -278,6 +278,7 @@ $SCRIPTS/compare_sfs.R $RESDIR/PANY.sfs PANY_SFS_compare 0 bar
 $SCRIPTS/compare_sfs.R $RESDIR/PANY.sfs PANY_SFS_compare 0 scatter
 
 # note that the compare_sfs.R script is found in the github repo at https://github.com/nt246/physalia-lcwgs/tree/main/day_4
+
 ```
 
 <details>
