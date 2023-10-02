@@ -31,7 +31,7 @@ DATDIR=~/day4/Data
 ANGSD=/home/ubuntu/angsd/angsd
 REALSFS=/home/ubuntu/angsd/misc/realSFS
 THETASTAT=/home/ubuntu/angsd/misc/thetaStat
-SCRIPTS=$DIR/day_4
+SCRIPTS=/home/ubuntu/Share/physalia-lcwgs/day_4
 ```
 
 ### Data
