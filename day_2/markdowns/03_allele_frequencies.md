@@ -1,5 +1,20 @@
 ## 3. Allele frequencies and SNP calling
 
+Before getting started, if this is a new session, set evironment variables
+
+```
+RESDIR=~/day2/Results
+DATDIR=~/day2/Data
+DIR=/home/ubuntu/Share/physalia-lcwgs/data
+DATA=$DIR/BAMS_RENAME
+REF=$DIR/Ref_rename.fa
+ANC=$DIR/outgrp_ref_rename.fa
+angsd=/home/ubuntu/angsd/angsd
+
+cd ~/day2
+
+```
+
 #### Allele Frequency Estimation
 
 Now you will estimate allele frequencies using the GLs that you just calculated as input.

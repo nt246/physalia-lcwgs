@@ -1,5 +1,21 @@
 ## 3. Genotype calling
 
+Before getting started, if this is a new session, set evironment variables
+
+```
+RESDIR=~/day2/Results
+DATDIR=~/day2/Data
+DIR=/home/ubuntu/Share/physalia-lcwgs/data
+DATA=$DIR/BAMS_RENAME
+REF=$DIR/Ref_rename.fa
+ANC=$DIR/outgrp_ref_rename.fa
+angsd=/home/ubuntu/angsd/angsd
+
+cd ~/day2
+
+```
+
+
 Now that you know how to calculate allele frequencies we'll use these estimates to obtain prior probabilities 
 for genotypes, which allows us to calculate genotype posterior probabilities and call genotypes. *Generally hard calling 
 genotypes should be avoided when working with low coverage data, but this tutorial will show you how to at least improve 
@@ -161,26 +177,8 @@ INDNUM=$(grep -n "PANY_07.bam$" $DIR/PANY_bams_rename.txt | cut -f1 -d':')
 zcat $RESDIR/PANY_unif.geno.gz | grep -m 1 $'^chr24\t459780\t' | cut -f 3- | perl -se '$start=($n-1)*3; @arr = split(/\t/,<>); print "@arr[$start .. $start+2]\n"' -- -n=$INDNUM
 
 ```
-The three genotype posterior probabilities are 0.969698 0.030302 0.000000.
-
-</details>
-
-Now extract the genotype posterior probabilities for PANY_03 at chr24:459780.
-
-<details>
-
-<summary> Click for help </summary>
-
-```bash
-# find position of PANY_03 in the BAM file
-INDNUM=$(grep -n "PANY_03.bam$" $DIR/PANY_bams_rename.txt | cut -f1 -d':')
-
-# Extract the genotype probablities
-zcat $RESDIR/PANY_unif.geno.gz | grep -m 1 $'^chr24\t459780\t' | cut -f 3- | perl -se '$start=($n-1)*3; @arr = split(/\t/,<>); print "@arr[$start .. $start+2]\n"' -- -n=$INDNUM
-
-```
-
-The genotype posterior probabilites are 0.333333 0.333333 0.333333.
+The three genotype posterior probabilities are 0.969698 0.030302 0.000000. How do these compare to the probabilities obtained using using a pior 
+based on the allele frequencies?
 
 </details>
 
