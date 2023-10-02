@@ -29,9 +29,9 @@ REF=$DIR/Ref_rename.fa
 ANC=$DIR/outgrp_ref_rename.fa
 RESDIR=~/day4/Results
 DATDIR=~/day4/Data
-ANGSD=/home/ubuntu/Share/angsd/angsd
-REALSFS=/home/ubuntu/Share/angsd/misc/realSFS
-THETASTAT=/home/ubuntu/Share/angsd/misc/thetaStat
+ANGSD=/home/ubuntu/angsd/angsd
+REALSFS=/home/ubuntu/angsd/misc/realSFS
+THETASTAT=/home/ubuntu/angsd/misc/thetaStat
 ```
 
 ### Data
