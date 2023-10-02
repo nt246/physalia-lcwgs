@@ -136,10 +136,6 @@ Uniform genotype probabilities mean the individual had missing data (no genotype
 
 Calculate the posterior probabilities for the PANY samples again, but this time use a uniform genotype prior, note `-doPost 2`.
 
-<details>
-
-<summary> Click for help </summary>
-
 ```bash
 $angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY_unif \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
@@ -147,9 +143,6 @@ $angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY_unif \
    -GL 1 -doMajorMinor 1 -doMaf 1 -SNP_pval 1e-6 -rmTriallelic 0.05 -doPost 2 -doGeno 8
 
 ```
-
-</details>
-
 
 Now extract the genotype probabilities for PANY_07 at chr24:459780 from this new .geno file. What are the 
 genotype probabilities?
