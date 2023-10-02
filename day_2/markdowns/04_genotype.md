@@ -134,7 +134,7 @@ Uniform genotype probabilities mean the individual had missing data (no genotype
 
 **EXERCISE**
 
-Calculate the posterior probabilities for the PANY samples again, but this time using a uniform prior, note `-doPost 2`.
+Calculate the posterior probabilities for the PANY samples again, but this time use a uniform genotype prior, note `-doPost 2`.
 
 <details>
 
