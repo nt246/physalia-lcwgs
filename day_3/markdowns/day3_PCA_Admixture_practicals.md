@@ -177,6 +177,9 @@ varPC3 <- (mme.pca$values[3]/pca.eigenval.sum)*100 #Variance explained by PC3
 varPC4 <- (mme.pca$values[4]/pca.eigenval.sum)*100 #Variance explained by PC4
 ```
 
+You can quit R using by typing `q()` and you can open the plot on your own computer by downloading it as we did before.  
+
+
 <br>
 
 #### Question
