@@ -1,5 +1,5 @@
 # physalia-lcwgs
-Files for the the [Physalia course on Population genomic inference from low-coverage whole-genome sequencing data](https://www.physalia-courses.org/courses-workshops/course64/), 10-13 October, 2022
+Files for the the [Physalia course on Population genomic inference from low-coverage whole-genome sequencing data](https://www.physalia-courses.org/courses-workshops/course64/), 2-5 October, 2023
 
 <br>
 
