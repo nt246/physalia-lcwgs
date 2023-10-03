@@ -1,27 +1,28 @@
 Linkage disequilibrium estimation
 ================
 
--   [Define paths to the project directory and
-    programs](#define-paths-to-the-project-directory-and-programs)
-    -   [Set the project directory as a variable named
-        `BASEDIR`](#set-the-project-directory-as-a-variable-named-basedir)
-    -   [Specify the path to required programs as
-        variables](#specify-the-path-to-required-programs-as-variables)
--   [Estimate LD](#estimate-ld)
-    -   [Prepare the input files](#prepare-the-input-files)
-    -   [Run ngsLD](#run-ngsld)
--   [Visualize LD blocks](#visualize-ld-blocks)
-    -   [Transfer the input file and the script to your local
-        computer](#transfer-the-input-file-and-the-script-to-your-local-computer)
-    -   [Install required R packages on your local
-        computer](#install-required-r-packages-on-your-local-computer)
-    -   [Run `LD_blocks.sh` on your local
-        computer](#run-ld_blockssh-on-your-local-computer)
--   [LD pruning](#ld-pruning)
-    -   [Run LD pruning](#run-ld-pruning)
-    -   [Generate an LD-pruned SNP
-        list](#generate-an-ld-pruned-snp-list)
--   [Practical considerations](#practical-considerations)
+- <a href="#define-paths-to-the-project-directory-and-programs"
+  id="toc-define-paths-to-the-project-directory-and-programs">Define paths
+  to the project directory and programs</a>
+  - <a href="#set-the-project-directory-as-a-variable-named-basedir"
+    id="toc-set-the-project-directory-as-a-variable-named-basedir">Set the
+    project directory as a variable named <code>BASEDIR</code></a>
+  - <a href="#specify-the-path-to-required-programs-as-variables"
+    id="toc-specify-the-path-to-required-programs-as-variables">Specify the
+    path to required programs as variables</a>
+- <a href="#estimate-ld" id="toc-estimate-ld">Estimate LD</a>
+  - <a href="#prepare-the-input-files"
+    id="toc-prepare-the-input-files">Prepare the input files</a>
+  - <a href="#run-ngsld" id="toc-run-ngsld">Run ngsLD</a>
+- <a href="#visualize-ld-blocks" id="toc-visualize-ld-blocks">Visualize LD
+  blocks</a>
+- <a href="#ld-pruning" id="toc-ld-pruning">LD pruning</a>
+  - <a href="#run-ld-pruning" id="toc-run-ld-pruning">Run LD pruning</a>
+  - <a href="#generate-an-ld-pruned-snp-list"
+    id="toc-generate-an-ld-pruned-snp-list">Generate an LD-pruned SNP
+    list</a>
+- <a href="#practical-considerations"
+  id="toc-practical-considerations">Practical considerations</a>
 
 <br> <br>
 
@@ -85,14 +86,14 @@ ls
 When running these scripts on the AWS server, run the following:
 
 ``` bash
-NGSLD=~/Share/ngsTools/ngsLD/
+NGSLD=~/Software/ngsLD/
 ```
 
 <br>
 
 If you will be running these programs on a different system, you will
 have to specify the paths to the different programs on that system (or
-add them to your $PATH).
+add them to your \$PATH).
 
 <br>
 
@@ -148,17 +149,17 @@ check the content of these input files.
 
 Important ngsLD parameters (default values shown in square brackets):
 
--   `--probs`: specification of whether the input is genotype
-    probabilities (likelihoods or posteriors).
--   `--n_ind INT`: sample size (number of individuals).
--   `--n_sites INT`: total number of sites.
--   `--max_kb_dist DOUBLE`: maximum distance between SNPs (in Kb) to
-    calculate LD. Set to 0 (zero) to disable filter. \[100\]
--   `--max_snp_dist INT`: maximum distance between SNPs (in number of
-    SNPs) to calculate LD. Set to 0 (zero) to disable filter. \[0\]
--   `--n_threads INT`: number of threads to use. Using more threads will
-    speed up the computation. \[1\]
--   `--out FILE`: output file name. \[stdout\]
+- `--probs`: specification of whether the input is genotype
+  probabilities (likelihoods or posteriors).
+- `--n_ind INT`: sample size (number of individuals).
+- `--n_sites INT`: total number of sites.
+- `--max_kb_dist DOUBLE`: maximum distance between SNPs (in Kb) to
+  calculate LD. Set to 0 (zero) to disable filter. \[100\]
+- `--max_snp_dist INT`: maximum distance between SNPs (in number of
+  SNPs) to calculate LD. Set to 0 (zero) to disable filter. \[0\]
+- `--n_threads INT`: number of threads to use. Using more threads will
+  speed up the computation. \[1\]
+- `--out FILE`: output file name. \[stdout\]
 
 ``` bash
 $NGSLD/ngsLD \
@@ -184,64 +185,6 @@ algorithm is the one that is going to be the most useful.
 
 ## Visualize LD blocks
 
-For this exercise and **this exercise only**, you will run the script on
-your **local computer** because we could not make the necessary packages
-work in the version of R available on the server.
-
-<br>
-
-### Transfer the input file and the script to your local computer
-
-First, on your computer, use the `cd` command to switch to a directory
-where you would like to receive these files.
-
-Then, edit the pem file path and name, user name, IP address of the
-following script and run it.
-
-``` bash
-# scp -i "c1.pem" user1@35.89.70.53:~/day3/ngsld/MME_ANGSD_PCA_subsampled.ld ./
-# scp -i "c1.pem" user1@35.89.70.53:~/day3/scripts/LD_blocks.sh ./
-```
-
-<br>
-
-### Install required R packages on your local computer
-
-Run the following commands in R. You might need to upgrade your base R
-to a version \> 4.0 to be able to install these packages.
-
-``` r
-install.packages("LDheatmap")
-install.packages("reshape2")
-install.packages("gtools")
-```
-
-<details>
-<summary>
-Click here if you are having trouble installing LDheatmap
-</summary>
-
-If you see the following error message when installing `LDheatmap`
-
-    ERROR: dependency ‘snpStats’ is not available for package ‘LDheatmap’
-
-You can try to install `snpStats` using
-
-``` r
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-BiocManager::install("snpStats")
-```
-
-Once `snpStats` is installed, you can run
-`install.packages("LDheatmap")` again.
-
-</details>
-
-<br>
-
-### Run `LD_blocks.sh` on your local computer
-
 We will use a script slightly modified from the original `LD_blocks.sh`
 script provided by ngsLD to generate a plot of LD blocks in our data. It
 takes three argument in the following order:
@@ -250,13 +193,21 @@ takes three argument in the following order:
 2.  starting position
 3.  ending position
 
-Run the following script in command line on your local computer.
-
 ``` bash
-cat MME_ANGSD_PCA_subsampled.ld | bash LD_blocks.sh \
+cd $BASEDIR/ngsld
+cat $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.ld | bash $BASEDIR/scripts/LD_blocks.sh \
 Mme_chr24_2558528-4558528 \
 200000 \
 1400000
+```
+
+To view the resulting plot, you can use `scp` to transfer the pdf file
+to your local computer. Note that you will need to edit the pem file
+path and name, user name, IP address, and the destination path in the
+following script, and run it on your local computer
+
+``` bash
+## scp -i c1.pem user1@35.164.117.54:/home/user1/day3/ngsld/LD_blocks.r2.pdf ./
 ```
 
 <br>
@@ -281,14 +232,13 @@ provided in ngsLD. This script takes the LD estimation output (in our
 case `MME_ANGSD_PCA.ld`) as its input. Some important parameters
 include:
 
--   `--input FILE`: Path to input file (i.e. `.ld` file generated from
-    the LD estimation step)
--   `--max_dist INT`: Maximum distance between two SNPs to assume they
-    are potentially in strong LD
--   `--min_weight FLOAT`: Minimum LD estimates between two SNPs to
-    assume that they are in strong LD (and thus one of them will be
-    pruned)
--   `--output FILE`: Path to output file \[STDOUT\]
+- `--input FILE`: Path to input file (i.e. `.ld` file generated from the
+  LD estimation step)
+- `--max_dist INT`: Maximum distance between two SNPs to assume they are
+  potentially in strong LD
+- `--min_weight FLOAT`: Minimum LD estimates between two SNPs to assume
+  that they are in strong LD (and thus one of them will be pruned)
+- `--output FILE`: Path to output file \[STDOUT\]
 
 <br>
 
@@ -341,20 +291,22 @@ Note that this is a simple example with only one chromosome. If multiple
 chromosomes are considered, both the chromosome name and position in the
 SNP list need to match to the LD pruning output.
 
+<br>
+
 ## Practical considerations
 
 LD estimation and pruning tend to be computationally expensive because
 for a chromosome with n SNPs, there are n<sup>2</sup> pairs of SNPs. To
 make this computationally tractable, it is important to:
 
--   consider downsampling your SNP list.
--   impose stringent filters on minor allele frequencies since rare
-    alleles are not helpful for LD estimation or for many of the
-    downstream analyses. This can be done with the `--min_maf` flag
-    (e.g. `--min_maf 0.05`).
--   take advantage of the `--max_kb_dist` and `--max_snp_dist` flags for
-    LD estimation and the `--max_dist` flag in LD pruning to limit the
-    pairs of SNPs the program needs to consider.
+- consider downsampling your SNP list.
+- impose stringent filters on minor allele frequencies since rare
+  alleles are not helpful for LD estimation or for many of the
+  downstream analyses. This can be done with the `--min_maf` flag
+  (e.g. `--min_maf 0.05`).
+- take advantage of the `--max_kb_dist` and `--max_snp_dist` flags for
+  LD estimation and the `--max_dist` flag in LD pruning to limit the
+  pairs of SNPs the program needs to consider.
 
 Below are some specific recommendations with regard to two LD-related
 applications.
