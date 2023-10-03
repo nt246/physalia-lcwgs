@@ -81,7 +81,7 @@ $angsd -glf10_text $RESDIR/PANY.glf.gz -out $RESDIR/PANY \
 ```
 
 Note: You can always use bams as input but you need to recalculate the genotype likelihoods (with `-GL` as before), which is redundant unless
-you want to change the filtering parameters, genotype likelihood model, etc. because the GLs are used in the allele frequency estimation.
+you want to change the filtering parameters, genotype likelihood model, etc.
 
 <details>
 
