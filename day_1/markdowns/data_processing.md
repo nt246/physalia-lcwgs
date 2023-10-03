@@ -284,7 +284,7 @@ A `for loop` is a bash programming language statement which allows code
 to be repeatedly executed. If you’ve never worked with `for loops` in
 bash before, it might be helpful to look over a tutorial, e.g. [this one
 from Software
-Carpentry](https://swcarpentry.github.io/shell-novice/05-loop/index.html).
+Carpentry](https://swcarpentry.github.io/shell-novice/05-loop.html).
 Here is a key extract inspired from that tutorial:
 
 <br>
@@ -406,7 +406,7 @@ BOWTIEBUILD=bowtie2-build
 BOWTIE=bowtie2
 BAMUTIL=bam
 JAVA=java
-GATK=~/Share/GenomeAnalysisTK-3.7-0/GenomeAnalysisTK.jar
+GATK=~/Share/GenomeAnalysisTK.jar
 ```
 
 <br> If you will be running these programs on a different system, you

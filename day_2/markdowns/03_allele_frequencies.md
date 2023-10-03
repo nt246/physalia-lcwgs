@@ -1,5 +1,20 @@
 ## 3. Allele frequencies and SNP calling
 
+Before getting started, if this is a new session, set evironment variables
+
+```
+RESDIR=~/day2/Results
+DATDIR=~/day2/Data
+DIR=/home/ubuntu/Share/physalia-lcwgs/data
+DATA=$DIR/BAMS_RENAME
+REF=$DIR/Ref_rename.fa
+ANC=$DIR/outgrp_ref_rename.fa
+angsd=/home/ubuntu/angsd/angsd
+
+cd ~/day2
+
+```
+
 #### Allele Frequency Estimation
 
 Now you will estimate allele frequencies using the GLs that you just calculated as input.
@@ -66,7 +81,7 @@ $angsd -glf10_text $RESDIR/PANY.glf.gz -out $RESDIR/PANY \
 ```
 
 Note: You can always use bams as input but you need to recalculate the genotype likelihoods (with `-GL` as before), which is redundant unless
-you want to change the filtering parameters, genotype likelihood model, etc. because the GLs are used in the allele frequency estimation.
+you want to change the filtering parameters, genotype likelihood model, etc.
 
 <details>
 
@@ -118,7 +133,83 @@ You'll notice that many sites have very low frequency suggesting that they are l
 how you can use these frequencies to call SNPs, so we'll do that next.
 
 <details>
+
 <summary> Click here for a bonus note on using MAF files for calculating Dxy  </summary>
+
+
+Absolute sequence divergence between two populations can be quantified using the Dxy statistic. There is currently no built-in 
+function to calculate this with ANGSD, however, given estimates of the allele frequencies for two populations you can calculate 
+Dxy globally or in windows using the dxyWindow program available in the [PopGenomicsTools](https://github.com/tplinderoth/PopGenomicsTools) repository.
+
+
+An example (which you will not run, this is only a reference) for calculating Dxy in 10kb sliding windows with a step size of 5k between the PANY and MAQU 
+populations follows. It is important to ensure that the frequency for the same allele is being considered in both populations, which we can achieve 
+for biallelic sites by setting the major allele to the reference allele with `-doMajorMinor 4`.
+
+
+```
+# estimate PANY alternate allele frequencies (-ref is required for -doMajorMinor 4)
+
+#$angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out PANY_refmajor \
+#   -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
+#   -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 -skipTriallelic 1\
+#   -GL 1 -doMajorMinor 4 -doMaf 1
+```
+
+```
+# estimate MAQU alternate allele frequencies (-ref is required for -doMajorMinor 4)
+
+#$angsd -b $DIR/MAQU_bams_rename.txt -ref $REF -out MAQU_refmajor \
+#   -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
+#   -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 -skipTriallelic 1\
+#   -GL 1 -doMajorMinor 4 -doMaf 1
+```
+
+Now use the MAF files with the alternate allele frequencies with dxyWindow
+
+```
+#dxyWindow -winsize 10000 -stepsize 5000 -fixedsite 0 -sizefile Ref_chr_lengths.txt -skip_missing 1 \
+#PANY.mafs.gz MAQU.mafs.gz > dxy.txt
+```
+
+<details>
+
+<summary> click for dxyWindow program info </summary>
+
+```
+dxyWindow [options] <pop1 maf file> <pop2 maf file>
+
+Options:
+-winsize      INT     Window size in base pairs (0 for global calculation) [0]
+-stepsize     INT     Number of base pairs to progress window [0]
+-minind       INT     Minimum number of individuals in each population with data [1]
+-fixedsite    INT     (1) Use fixed number of sites from MAF input for each window (window sizes may vary) or (0) constant window size [0]
+-sizefile     FILE    Two-column TSV file with each row having (1) chromsome name (2) chromosome size in base pairs
+-skip_missing INT     Do not print windows with zero effective sites if INT=1 [0]
+
+Notes:
+* -winsize 1 -stepsize 1 calculates per site dxy
+* -sizefile is REQUIRED(!) with -fixedsite 0 (the default)
+* Both input MAF files need to have the same chromosomes in the same order
+* Assumes SNPs are biallelic across populations
+* For global Dxy calculations only columns 4, 5, and 6 below are printed
+* Input MAF files can contain all sites (including monomorphic sites) or just variable sites
+* -fixedsite 1 -winsize 500 would for example ensure that all windows contain 500 SNPs
+
+Output:
+(1) chromosome
+(2) Window start
+(3) Window end
+(4) dxy
+(5) number sites in MAF input that were analyzed
+(6) number of sites in MAF input that were skipped due to too few individuals
+```
+
+</details>
+
+That's it. Not only is Dxy useful for identifying exceptionally divergent regions, it can also be useful for finding 
+putative regions of introgression (low divergence).
+
 </details>
 
 ## SNP calling
@@ -217,7 +308,7 @@ $angsd sites index $RESDIR/biallelic_snps.pos
 
 ```
 
-Now you can calculate allele frequencies that would be comparable between populations.
+Now you can calculate allele frequencies that are comparable between populations.
 
 ```bash
 # Calculate derived allele frequencies for PANY

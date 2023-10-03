@@ -47,10 +47,10 @@ And then we set all the rest of the paths:
 ```
 DIR=/home/ubuntu/Share/physalia-lcwgs/data
 DATA=$DIR/BAMS
-REF=$DIR/Ref.fa
-ANC=$DIR/outgrp_ref.fa
-NGSadmix=/
-ANGSD=/home/ubuntu/Share/angsd/angsd
+REF=$DIR/Ref_rename.fa
+ANC=$DIR/outgrp_ref_rename.fa
+NGSadmix=/home/ubuntu/Software/NGSadmix
+angsd=/home/ubuntu/angsd/angsd
 ```
 
 
@@ -176,6 +176,9 @@ varPC2 <- (mme.pca$values[2]/pca.eigenval.sum)*100 #Variance explained by PC2
 varPC3 <- (mme.pca$values[3]/pca.eigenval.sum)*100 #Variance explained by PC3
 varPC4 <- (mme.pca$values[4]/pca.eigenval.sum)*100 #Variance explained by PC4
 ```
+
+You can quit R using by typing `q()` and you can open the plot on your own computer by downloading it as we did before.  
+
 
 <br>
 

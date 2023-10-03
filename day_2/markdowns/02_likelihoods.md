@@ -1,6 +1,21 @@
 
 ## 2. Genotype likelihoods
 
+Before getting started, if this is a new session, set evironment variables
+
+```
+RESDIR=~/day2/Results
+DATDIR=~/day2/Data
+DIR=/home/ubuntu/Share/physalia-lcwgs/data
+DATA=$DIR/BAMS_RENAME
+REF=$DIR/Ref_rename.fa
+ANC=$DIR/outgrp_ref_rename.fa
+angsd=/home/ubuntu/angsd/angsd
+
+cd ~/day2
+
+```
+
 Many of the calculations that you perform with ANGSD are based on **genotype likelihoods** (GL)s, which improves accuracy over hard-called genotypes when depth is low 
 (see for instance [this paper](https://doi.org/10.1534/genetics.113.154740)). 
 We will now calculate GLs for each individual at all sites in our dataset. 
