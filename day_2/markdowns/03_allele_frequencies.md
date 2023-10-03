@@ -308,7 +308,7 @@ $angsd sites index $RESDIR/biallelic_snps.pos
 
 ```
 
-Now you can calculate allele frequencies that would be comparable between populations.
+Now you can calculate allele frequencies that are comparable between populations.
 
 ```bash
 # Calculate derived allele frequencies for PANY
