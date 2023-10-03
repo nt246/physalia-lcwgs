@@ -25,8 +25,8 @@ You should now be in `~/day2`. You can confirm this with `pwd`, which will print
 
 Now create two folders in your home user directory, one for your results and one for your intermediate data.
 ```
-mkdir ~/Results
-mkdir ~/Data
+mkdir ~/day2/Results
+mkdir ~/day2/Data
 
 ```
 Set environment variables to point to these directories, files that we'll use, and software.
