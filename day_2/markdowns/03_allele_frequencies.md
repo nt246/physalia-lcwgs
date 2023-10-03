@@ -143,8 +143,8 @@ Dxy globally or in windows using the dxyWindow program available in the [PopGeno
 <br>
 An example (which you will not run, this is only a reference) for calculating Dxy in 10kb sliding windows with a step size of 5k between the PANY and MAQU 
 populations follows. It is important to ensure that the frequency for the same allele is being considered in both populations, which we can achieve 
-for biallelic sites by setting the major allele to the reference allele with `doMajorMinor 4`.
-
+for biallelic sites by setting the major allele to the reference allele with `-doMajorMinor 4`.
+<br>
 ```
 # estimate PANY alternate allele frequencies (-ref is required for -doMajorMinor 4)
 
