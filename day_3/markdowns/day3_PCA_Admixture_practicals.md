@@ -49,7 +49,7 @@ DIR=/home/ubuntu/Share/physalia-lcwgs/data
 DATA=$DIR/BAMS
 REF=$DIR/Ref_rename.fa
 ANC=$DIR/outgrp_ref_rename.fa
-NGSadmix=~/Software/NGSadmix
+NGSadmix=/Software/NGSadmix
 angsd=/home/ubuntu/angsd/angsd
 ```
 
