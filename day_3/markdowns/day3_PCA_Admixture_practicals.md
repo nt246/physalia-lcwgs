@@ -47,10 +47,10 @@ And then we set all the rest of the paths:
 ```
 DIR=/home/ubuntu/Share/physalia-lcwgs/data
 DATA=$DIR/BAMS
-REF=$DIR/Ref_rename.fa
-ANC=$DIR/outgrp_ref_rename.fa
-NGSadmix=/home/ubuntu/Software/NGSadmix
-angsd=/home/ubuntu/angsd/angsd
+REF=$DIR/Ref.fa
+ANC=$DIR/outgrp_ref.fa
+NGSADMIX=/home/ubuntu/Software/NGSadmix
+ANGSD=/home/ubuntu/angsd/angsd
 ```
 
 
@@ -141,7 +141,7 @@ For the PCA, we are most interested in the `.covMat` file, which contains the co
 
 We can look at the covariance matrix in R, where we will also perform the PCA using the `eigen` function. 
 
-We have to load the covariance matrix into R and then we can optionally provide population assignments for each individual (rows in same order as input bam file list `-b $DIR/ALL_bams.txt`). We can start R in the server by typing `R` (end the session by typing `quit()`)
+We have to load the covariance matrix into R and then we can optionally provide population assignments for each individual (rows in same order as input bam file list `-b $DIR/ALL_bams.txt`). We can start R in the server by typing `/usr/bin/R` (end the session by typing `quit()`)
 
 ```
 /usr/bin/R
@@ -331,7 +331,7 @@ ngsAdmix uses a genotype likelihood file in beagle format (same as for PCAngsd) 
 In addition, there are a range of parameters that can be adjusted. Here we only set the number of ancestry clusters using the `-K` option to K=2. In reality, it is advisable to compare different numbers of ancestry clusters by iterating over different values of K. 
 
 ```
-NGSadmix -likes $BASEDIR'/Results/MME_ANGSD_PCA_LDpruned.beagle.gz' -K 2 -o $BASEDIR'/Results/MME_LDpruned_ngsAdmix_K2_out'
+$NGSADMIX -likes $BASEDIR'/Results/MME_ANGSD_PCA_LDpruned.beagle.gz' -K 2 -o $BASEDIR'/Results/MME_LDpruned_ngsAdmix_K2_out'
 ```
 
 <br>
@@ -406,7 +406,7 @@ dev.off()
 <br>
 
 ```
-NGSadmix -likes $BASEDIR'/Results/MME_ANGSD_PCA_LDpruned.beagle.gz -K 3 -o $BASEDIR'/Results/Results/MME_LDpruned_ngsAdmix_K3_out
+$NGSADMIX -likes $BASEDIR'/Results/MME_ANGSD_PCA_LDpruned.beagle.gz' -K 3 -o $BASEDIR'/Results/MME_LDpruned_ngsAdmix_K3_out'
 ```
 
 <br>
