@@ -11,7 +11,7 @@ Nina Overgaard Therkildsen, Tyler Linderoth, Arne Jacobs, and Nicolas Lou
 
 *Quick links*:
 
-* [Server log-in and data transfer](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2022.pdf)
+* [Server log-in and data transfer](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2023.pdf)
 
 * [Tutorial 1: Data processing](https://github.com/nt246/physalia-lcwgs/blob/main/day_1/markdowns/data_processing.md)
 
