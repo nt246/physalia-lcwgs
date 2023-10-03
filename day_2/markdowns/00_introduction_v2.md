@@ -15,29 +15,24 @@ Please make sure to follow the preparatory instructions below before continuing 
 You need to set the path to the software and various data that will be used.
 You also need to create two folders in your home user directory; one for your results and one for your intermediate data.
 
-Make sure you are in your home directory.
+Create a folder for this session in your home directory and enter it.
 ```
-cd ~
-```
-and create a folder for this session and enter it
-```
-mkdir day2
-cd day2
+mkdir ~/day2
+cd ~/day2
+
 ```
 You should now be in `~/day2`. You can confirm this with `pwd`, which will print your location in the filesystem.
 
-Now create two folders in your home user directory, one for your results and one for your intermediate data, and set 
-environmental variables that point to these directories.
+Now create two folders in your home user directory, one for your results and one for your intermediate data.
 ```
-mkdir Results
+mkdir ~/Results
+mkdir ~/Data
+
+```
+Set environment variables to point to these directories, files that we'll use, and software.
+```
 RESDIR=~/day2/Results
-
-mkdir Data
 DATDIR=~/day2/Data
-
-```
-Set some other environment variables
-```
 DIR=/home/ubuntu/Share/physalia-lcwgs/data
 DATA=$DIR/BAMS_RENAME
 REF=$DIR/Ref_rename.fa

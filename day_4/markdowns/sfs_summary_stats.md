@@ -14,21 +14,24 @@ For today's exercises please generate the following directories
 mkdir ~/day4
 mkdir ~/day4/Results
 mkdir ~/day4/Data
+
+cd ~/day4
+
 ```
 
 and set the following environment variables
 
 
 ```bash
-DIR=/home/ubuntu/Share/data
-DATA=$DIR/BAMS
-REF=$DIR/Ref.fa
-ANC=$DIR/outgrp_ref.fa
+DIR=/home/ubuntu/Share/physalia-lcwgs/data
+REF=$DIR/Ref_rename.fa
+ANC=$DIR/outgrp_ref_rename.fa
 RESDIR=~/day4/Results
 DATDIR=~/day4/Data
-ANGSD=/home/ubuntu/Share/angsd/angsd
-REALSFS=/home/ubuntu/Share/angsd/misc/realSFS
-THETASTAT=/home/ubuntu/Share/angsd/misc/thetaStat
+ANGSD=/home/ubuntu/angsd/angsd
+REALSFS=/home/ubuntu/angsd/misc/realSFS
+THETASTAT=/home/ubuntu/angsd/misc/thetaStat
+SCRIPTS=/home/ubuntu/Share/physalia-lcwgs/day_4
 ```
 
 ### Data
@@ -92,7 +95,7 @@ Let's calculate the allele frequency likelihoods at all sites. You will typicall
 in which case `-doSaf 2` is more accurate.
 
 ```bash
-$ANGSD -b $DIR/PANY_bams.txt -ref $REF -anc $ANC -out $RESDIR/PANY \
+$ANGSD -b $DIR/PANY_bams_rename.txt -ref $REF -anc $ANC -out $RESDIR/PANY \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 60 -doCounts 1 \
    -GL 1 -doSaf 1
@@ -117,14 +120,15 @@ Can you tell which are the first two sites that look to be variable?
 
 <summary> Click for answer </summary>
 
-chr24	48
-chr24	61
+chr24:48
+<br/>
+chr24:61
 
 </details>
 
 **QUESTION**
 
-What is the most likely number of derived alleles at position chr24 61?
+What is the most likely number of derived alleles at position chr24:61?
 
 <details>
 
@@ -211,7 +215,7 @@ These are the *expected* number of sites in the PANY sample with 0 (value 1), 1 
 Let's plot the SFS as a barplot:
 
 ```bash
-/home/ubuntu/Share/plotSFS.R $RESDIR/PANY.sfs PANY_SFS 0
+$SCRIPTS/plotSFS.R $RESDIR/PANY.sfs PANY_SFS 0
 
 # note that the plotSFS.R script is found in the github repo at https://github.com/nt246/physalia-lcwgs/tree/main/day_4
 ```
@@ -258,20 +262,23 @@ invisible(dev.off())
 
 </details>
 
+This will dump a PANY_SFS.pdf file containing the plot that you can scp onto your local machine to look at or view with e.g. `evince` remotely. 
+The SFS barplot is shown below for convenience.
 
 ![PANY_SFS](../files/PANY_SFS.png)
 
 
-We can also compare our obsered SFS to what we would expect for a neutrally evolving, constant-size population.
+We can also compare our observed SFS to what we would expect for a neutrally evolving, constant-size population.
 
 ```bash
 # barplot
-/home/ubuntu/Share/compare_sfs.R $RESDIR/PANY.sfs PANY_SFS_compare 0 bar
+$SCRIPTS/compare_sfs.R $RESDIR/PANY.sfs PANY_SFS_compare 0 bar
 
 # scatterplot
-/home/ubuntu/Share/compare_sfs.R $RESDIR/PANY.sfs PANY_SFS_compare 0 scatter
+$SCRIPTS/compare_sfs.R $RESDIR/PANY.sfs PANY_SFS_compare 0 scatter
 
 # note that the compare_sfs.R script is found in the github repo at https://github.com/nt246/physalia-lcwgs/tree/main/day_4
+
 ```
 
 <details>
@@ -339,6 +346,7 @@ if (plottype == "bar") {
 
 </details>
 
+This will dump pdf files containing the images as before, which are also shown below.
 
 ![PANY_SFS_compare_barplot](../files/PANY_SFS_compare_barplot.png)
 
@@ -353,7 +361,7 @@ the reference FASTA in the case of folding (remember, we are pretending that we 
 
 
 ```bash
-$ANGSD -b $DIR/PANY_bams.txt -ref $REF -anc $REF -out $RESDIR/PANY_fold \
+$ANGSD -b $DIR/PANY_bams_rename.txt -ref $REF -anc $REF -out $RESDIR/PANY_fold \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 60 -doCounts 1 \
    -GL 1 -doSaf 1
@@ -389,7 +397,7 @@ Let's calculate derived allele frequency posterior probabilities for the PANY po
 the SFS are a prior with '-pest':
 
 ```bash
-$ANGSD -b $DIR/PANY_bams.txt -ref $REF -anc $ANC -out $RESDIR/PANY_post \
+$ANGSD -b $DIR/PANY_bams_rename.txt -ref $REF -anc $ANC -out $RESDIR/PANY_post \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 60 -doCounts 1 \
    -GL 1 -doSaf 1 -pest $RESDIR/PANY.sfs
@@ -405,7 +413,7 @@ probablities are log transformed.
 
 **QUESTION**
 
-What is the most probable number of derived alleles at chr24 61?
+What is the most probable number of derived alleles at chr24:61?
 
 <details>
 
@@ -417,13 +425,13 @@ What is the most probable number of derived alleles at chr24 61?
 
 **QUESTION**
 
-What is the posterior probability that position chr24 61 has 1 derived allele (i.e. is a singleton)?
+What is the posterior probability that position chr24:61 has 1 derived allele (i.e. is a singleton)?
 
 <details>
 
 <summary> Click for answer </summary>
 
-The second value in the probabillity vector for chr24 61 is the probability of 1 derived allele in log space. 
+The second value in the probabillity vector for chr24:61 is the probability of 1 derived allele in log space. 
 This value is -1.844222. So the probability that this site is a singleton is exp(-1.844222) = **0.1581483**.
 
 </details>
@@ -432,20 +440,25 @@ This value is -1.844222. So the probability that this site is a singleton is exp
 
 What is the probability that the following sites are variable?
 
-24	39
-24	48
-24	61
+24:39
+</br>
+24:48
+</br>
+24:61
 
 <details>
 
 <summary> Click for answer </summary>
 
-The probabiliyt that a site is variable is given by, P(variable) = 1 - P(0 derived alleles) + P(2N derived alleles). This is because sites with either 0 or 2N derived 
+The probability that a site is variable is given by, P(variable) = 1 - P(0 derived alleles) + P(2N derived alleles). This is because sites with either 0 or 2N derived 
 alleles are fixed.
 
-P(chr24 39 is variable) = 1 - exp(-0.005389) + exp(-Inf) = 0.005374505
-P(chr24 48 is variable) = 1 - exp(-Inf) + exp(-Inf) = 1
-P(chr24 61 is variable) = 1 - exp(-0.638232) + exp(-Inf) = 0.4717745
+
+P(chr24:39 is variable) = 1 - exp(-0.005389) + exp(-Inf) = 0.005374505
+</br>
+P(chr24:48 is variable) = 1 - exp(-Inf) + exp(-Inf) = 1
+</br>
+P(chr24:61 is variable) = 1 - exp(-0.638232) + exp(-Inf) = 0.4717745
 
 Alternatively, you could take the sum over P(*x* derived alleles) for *x*=1 to *x*=2N-1. This would give the same answers.
 
@@ -577,7 +590,7 @@ We'll calculate the 2D-SFS between the PANY and MAQU populations. The first step
 separately. We've already done this for the PANY population, so let's do this calculation for the MAQU population:
 
 ```bash
-$ANGSD -b $DIR/MAQU_bams.txt -ref $REF -anc $ANC -out $RESDIR/MAQU \
+$ANGSD -b $DIR/MAQU_bams_rename.txt -ref $REF -anc $ANC -out $RESDIR/MAQU \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 60 -doCounts 1 \
    -GL 1 -doSaf 1
@@ -614,7 +627,7 @@ The columns are (1) Chromomsome, (2) position, (3) a<sub>s</sub> (between popula
 
 **QUESTION**
 
-What is the value of F<sub>ST</sub> at position chr24 365?
+What is the value of F<sub>ST</sub> at position chr24:365?
 
 <details>
 

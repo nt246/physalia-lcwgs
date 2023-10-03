@@ -1,5 +1,21 @@
 ## 3. Genotype calling
 
+Before getting started, if this is a new session, set evironment variables
+
+```
+RESDIR=~/day2/Results
+DATDIR=~/day2/Data
+DIR=/home/ubuntu/Share/physalia-lcwgs/data
+DATA=$DIR/BAMS_RENAME
+REF=$DIR/Ref_rename.fa
+ANC=$DIR/outgrp_ref_rename.fa
+angsd=/home/ubuntu/angsd/angsd
+
+cd ~/day2
+
+```
+
+
 Now that you know how to calculate allele frequencies we'll use these estimates to obtain prior probabilities 
 for genotypes, which allows us to calculate genotype posterior probabilities and call genotypes. *Generally hard calling 
 genotypes should be avoided when working with low coverage data, but this tutorial will show you how to at least improve 
@@ -47,15 +63,13 @@ angsd -doPost
 
 ```
 
+**Genotype posterior probabilities**
+
 We'll calculate genotype posterior probabilities using a HWE prior (`-doPost 1`) based on the allele frequencies estimated with `-doMaf 1`
 and then output the posterior probabilities for the {major,major}, {major,minor}, {minor,minor} genotypes for each individual with `-doGeno 8` for
 the PANY population. We'll limit our analysis to PANY biallelic SNPs (`SNP_pval 1e-6`). We'll use the BAM files as input (meaning that we have 
 to recalculate GLs with `-GL`). You could also use pre-calculated genotype likelihoods as input with `-glf` (binary) or `-glf10_text` (text). 
 We'll use many of the same quality controls that we've been using throughout.
-
-Note that we need to estimate allele frequencies but we already have a file containing them, which we don't need to write again (I/O can be expensive). In more recent
-versions of ANGSD you can suppress writing another maf file by making the value for `-doMaf` negative, e.g. `-doMaf -1`. But for the version we're currently working with we
-have to write the maf file again.
 
 ```
 $angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY \
@@ -72,7 +86,7 @@ Take a look at the ouput:
 less -S $RESDIR/PANY.geno.gz
 ```
 
-**QUESTION**
+**Question**
 
 What are the three posterior probabilites for PANY_07 at chr24:459780? Think back to how you extracted information 
 from the glf files.
@@ -124,17 +138,21 @@ INDNUM=$(grep -n "PANY_03.bam$" $DIR/PANY_bams_rename.txt | cut -f1 -d':')
 zcat $RESDIR/PANY.geno.gz | grep -m 1 $'^chr24\t459780\t' | cut -f 3- | perl -se '$start=($n-1)*3; @arr = split(/\t/,<>); print "@arr[$start .. $start+2]\n"' -- -n=$INDNUM
 
 ```
-The genotype posterior probabilities are 0.631517 0.326327 0.042156.
-
-</details>
-
-**EXERCISE**
-
-Calculate the posterior probabilities for the PANY samples again, but this time using a uniform prior.
+The genotype posterior probabilities are 0.333333 0.333333 0.333333. What do you think this means?
 
 <details>
 
-<summary> Click for help </summary>
+<summary> click for answer </summary>
+
+Uniform genotype probabilities mean the individual had missing data (you don't know if one genotype is more probable than any other).
+
+</details>
+
+</details>
+
+**Genotype posterior probabilities with an uninformative prior**
+
+Calculate the posterior probabilities for the PANY samples again, but this time use a uniform genotype prior, note `-doPost 2`.
 
 ```bash
 $angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY_unif \
@@ -143,9 +161,6 @@ $angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY_unif \
    -GL 1 -doMajorMinor 1 -doMaf 1 -SNP_pval 1e-6 -rmTriallelic 0.05 -doPost 2 -doGeno 8
 
 ```
-
-</details>
-
 
 Now extract the genotype probabilities for PANY_07 at chr24:459780 from this new .geno file. What are the 
 genotype probabilities?
@@ -162,60 +177,16 @@ INDNUM=$(grep -n "PANY_07.bam$" $DIR/PANY_bams_rename.txt | cut -f1 -d':')
 zcat $RESDIR/PANY_unif.geno.gz | grep -m 1 $'^chr24\t459780\t' | cut -f 3- | perl -se '$start=($n-1)*3; @arr = split(/\t/,<>); print "@arr[$start .. $start+2]\n"' -- -n=$INDNUM
 
 ```
-The three genotype posterior probabilities are 0.969698 0.030302 0.000000.
+The three genotype posterior probabilities are 0.969698 0.030302 0.000000. How do these compare to the probabilities obtained using using a pior 
+based on the allele frequencies?
 
 </details>
 
-Now extract the genotype posterior probabilities for PANY_03 at chr24:459780.
-
-<details>
-
-<summary> Click for help </summary>
-
-```bash
-# find position of PANY_03 in the BAM file
-INDNUM=$(grep -n "PANY_03.bam$" $DIR/PANY_bams_rename.txt | cut -f1 -d':')
-
-# Extract the genotype probablities
-zcat $RESDIR/PANY_unif.geno.gz | grep -m 1 $'^chr24\t459780\t' | cut -f 3- | perl -se '$start=($n-1)*3; @arr = split(/\t/,<>); print "@arr[$start .. $start+2]\n"' -- -n=$INDNUM
-
-```
-
-The genotype posterior probabilites are 0.333333 0.333333 0.333333.
-
-</details>
-
-
-**QUESTION**
-
-What do the posterior genotype probabilities of `0.333333 0.333333 0.333333` under the uniform prior mean?
-
-<details>
-
-<summary> Click for answer </summary>
-
-It means that the individual has missing data. There is no way of knowing what their genotype is or could be 
-under an uninformative prior so the same probability is assigned to every genotype.
-
-</details>
-
-**QUESTION**
-
-What happens when individuals having missing data when using a HWE prior `-doPost 1`?
-
-<details>
-
-<summary> Click for answer </summary>
-
-Each possible genotype is assigned its probability under the Hardy-Weinberg model based on the minor 
-allele frequency estimated with `-doMaf`.
-
-</details>
-
+**Hard calling genotypes**
 
 Now we'll call genotypes based on their maximum posterior probability and output the genotype in 0, 1, 2 format. We 
 can set the genotype for an indivdiual to missing (-1) if the maximum posterior probability is less than a certain value. 
-In this example we'll use a cutoff of 0.95. We'll also go ahead and write the major and minor alleles as well.
+In this example we'll use a cutoff of 0.95. We'll also write the major and minor alleles as well.
 
 ```bash
 $angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY_call \
