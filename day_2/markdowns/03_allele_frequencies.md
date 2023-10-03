@@ -135,12 +135,12 @@ how you can use these frequencies to call SNPs, so we'll do that next.
 <details>
 
 <summary> Click here for a bonus note on using MAF files for calculating Dxy  </summary>
-
+</br>
 Absolute sequence divergence between two populations can be quantified using the Dxy statistic. There is currently no built-in 
 function to calculate this with ANGSD, however, given estimates of the allele frequencies for two populations you can calculate 
 Dxy globally or in windows using the dxyWindow program available in the [PopGenomicsTools](https://github.com/tplinderoth/PopGenomicsTools) repository.
 
-An example (which you will not run, this is only a reference) for calculating Dxy in 10kb windows with a step size of 5k between the PANY and MAQU 
+An example (which you will not run, this is only a reference) for calculating Dxy in 10kb sliding windows with a step size of 5k between the PANY and MAQU 
 populations follows. It is important to ensure that the frequency for the same allele is being considered in both populations, which we can achieve 
 for biallelic sites by setting the major allele to the reference allele with `-doMajorMinor 4`.
 
