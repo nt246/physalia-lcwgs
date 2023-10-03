@@ -50,7 +50,7 @@ DATA=$DIR/BAMS
 REF=$DIR/Ref.fa
 ANC=$DIR/outgrp_ref.fa
 NGSadmix=/
-ANGSD=/home/ubuntu/Share/angsd/angsd
+ANGSD=/home/ubuntu/angsd/angsd
 ```
 
 
