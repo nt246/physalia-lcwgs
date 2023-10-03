@@ -85,7 +85,7 @@ ls
 When running these scripts on the AWS server, run the following:
 
 ``` bash
-NGSLD=~/Share/ngsTools/ngsLD/
+NGSLD=~/Software/ngsLD/
 ```
 
 <br>
