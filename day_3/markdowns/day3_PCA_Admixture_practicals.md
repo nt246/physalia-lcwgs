@@ -47,10 +47,10 @@ And then we set all the rest of the paths:
 ```
 DIR=/home/ubuntu/Share/physalia-lcwgs/data
 DATA=$DIR/BAMS
-REF=$DIR/Ref.fa
-ANC=$DIR/outgrp_ref.fa
-NGSadmix=/
-ANGSD=/home/ubuntu/angsd/angsd
+REF=$DIR/Ref_rename.fa
+ANC=$DIR/outgrp_ref_rename.fa
+NGSadmix=~/Software/NGSadmix
+angsd=/home/ubuntu/angsd/angsd
 ```
 
 
