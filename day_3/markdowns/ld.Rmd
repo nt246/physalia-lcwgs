@@ -30,7 +30,6 @@ We need to make sure the server knows where to find the programs we'll be runnin
 We'll copy today's data files into your home directory with the following commands
 
 ```{bash, eval = FALSE}
-
 ## Copy the shared project directory to your home directory
 cp -r ~/Share/physalia-lcwgs/day_3 ~/day3
 
@@ -39,7 +38,6 @@ BASEDIR=~/day3/ # Note that no spaces are allowed!
 
 cd $BASEDIR
 ls
-
 ```
 
 <br>
@@ -49,9 +47,7 @@ ls
 When running these scripts on the AWS server, run the following:
 
 ```{bash, eval = FALSE}
-
-NGSLD=~/Share/ngsTools/ngsLD/
-
+NGSLD=~/Software/ngsLD/
 ```
 
 <br>
@@ -71,13 +67,11 @@ ngsLD requires two input files.
 2. `--pos FILE`: input file with site coordinates (one per line), where the 1st column stands for the chromosome/contig and the 2nd for the position (bp). One convenient way to generate this is by selecting the first two columns of the `mafs` file outputted by ANGSD, with the header removed. Again, for this exercise, we will downsample the `mafs` file that were generated in the same ANGSD run that generated our genotype likelihood beagle file (`MME_ANGSD_PCA.mafs.gz`).
 
 ```{bash eval = FALSE}
-
 ## Prepare a geno file by subsampling one SNP in every 50 SNPs in the beagle file
 zcat $BASEDIR/angsd/MME_ANGSD_PCA.beagle.gz | awk 'NR % 50 == 0' | cut -f 4- | gzip  > $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.beagle.gz
 
 ## Prepare a pos file by subsampling one SNP in every 50 SNPs in the mafs filre
 zcat $BASEDIR/angsd/MME_ANGSD_PCA.mafs.gz | cut -f 1,2 |  awk 'NR % 50 == 0' | sed 's/:/_/g'| gzip > $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.pos.gz
-
 ```
 
 Don't worry if you don't understand  the `sed` command. The `:` in the chromosome name interferes with the code, so the `sed` command just replaces the `:` with `_`.
@@ -99,7 +93,6 @@ Important ngsLD parameters (default values shown in square brackets):
 * `--out FILE`: output file name. [stdout]
 
 ```{bash eval = FALSE}
-
 $NGSLD/ngsLD \
 --geno $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.beagle.gz \
 --pos $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.pos.gz \
@@ -109,7 +102,6 @@ $NGSLD/ngsLD \
 --max_kb_dist 0 \
 --n_threads 1 \
 --out $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.ld 
-
 ```
 
 This step may take a few minutes to run. In the meantime, you can take a look at the [ngsLD GitHub page](https://github.com/fgvieira/ngsLD). Particularly, read [this section](https://github.com/fgvieira/ngsLD#output) on output format, and see if you can identify the different measures of LD in the output file once it is generated. Note that the r<sup>2</sup> value from the EM algorithm is the one that is going to be the most useful. 
@@ -118,79 +110,24 @@ This step may take a few minutes to run. In the meantime, you can take a look at
 
 ## Visualize LD blocks
 
-For this exercise and **this exercise only**, you will run the script on your **local computer** because we could not make the necessary packages work in the version of R available on the server.
-
-<br>
-
-### Transfer the input file and the script to your local computer
-
-First, on your computer, use the `cd` command to switch to a directory where you would like to receive these files. 
-
-Then, edit the pem file path and name, user name, IP address of the following script and run it.
-
-```{bash eval = FALSE}
-
-# scp -i "c1.pem" user1@35.89.70.53:~/day3/ngsld/MME_ANGSD_PCA_subsampled.ld ./
-# scp -i "c1.pem" user1@35.89.70.53:~/day3/scripts/LD_blocks.sh ./
-
-```
-
-<br>
-
-### Install required R packages on your local computer
-
-Run the following commands in R. You might need to upgrade your base R to a version > 4.0 to be able to install these packages.
-
-```{r eval = FALSE}
-
-install.packages("LDheatmap")
-install.packages("reshape2")
-install.packages("gtools")
-
-```
-
-<details>
-<summary> Click here if you are having trouble installing LDheatmap </summary>
-
-If you see the following error message when installing `LDheatmap`
-
-```
-ERROR: dependency ‘snpStats’ is not available for package ‘LDheatmap’
-```
-
-You can try to install `snpStats` using
-
-```{r eval=FALSE}
-
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-BiocManager::install("snpStats")
-
-```
-
-Once `snpStats` is installed, you can run `install.packages("LDheatmap")` again.
-
-</details>
-
-<br>
-
-### Run `LD_blocks.sh` on your local computer
-
 We will use a script slightly modified from the original `LD_blocks.sh` script provided by ngsLD to generate a plot of LD blocks in our data. It takes three argument in the following order:
 
 1. chromosome / linkage group / scaffold name
 2. starting position
 3. ending position
 
-Run the following script in command line on your local computer.
-
 ```{bash eval = FALSE}
-
-cat MME_ANGSD_PCA_subsampled.ld | bash LD_blocks.sh \
+cd $BASEDIR/ngsld
+cat $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.ld | bash $BASEDIR/scripts/LD_blocks.sh \
 Mme_chr24_2558528-4558528 \
 200000 \
 1400000
+```
 
+To view the resulting plot, you can use `scp` to transfer the pdf file to your local computer. Note that you will need to edit the pem file path and name, user name, IP address, and the destination path in the following script, and run it on your local computer
+
+```{bash eval=FALSE}
+## scp -i c1.pem user1@35.164.117.54:/home/user1/day3/ngsld/LD_blocks.r2.pdf ./
 ```
 
 <br>
@@ -217,13 +154,11 @@ For many downstream analyses, independence among different SNPs is often assumed
 Run the following script **on the AWS server** to perform LD pruning with our test dataset.
 
 ```{bash eval = FALSE}
-
 python $NGSLD/scripts/prune_ngsLD.py \
 --input $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.ld \
 --max_dist 2000000 \
 --min_weight 0.5 \
 --output $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled_unlinked.id
-
 ```
 
 Check the LD pruning result. How many SNPs survived the LD pruning process and how many were lost?
@@ -237,15 +172,12 @@ We will use R to generate an LD-pruned SNP list in a format that can be used by 
 To launch R on the AWS server, run the following command.
 
 ```{bash eval=FALSE}
-
 /usr/bin/R
-
 ```
 
 Once you have launched R, run the following script in R to generate the SNP list.
 
 ```{r eval=FALSE}
-
 library(tidyverse)
 basedir="~/day3/"
 ## position of SNPs that survived LD pruning
@@ -257,10 +189,11 @@ pruned_snp_list <- read_tsv(paste0(basedir, "angsd/MME_ANGSD_PCA.mafs.gz")) %>%
   dplyr::select(1:4) %>%
   filter(position %in% pruned_position)
 write_tsv(pruned_snp_list, paste0(basedir, "ngsld/LDpruned_snps.list"), col_names = F)
-
 ```
 
 Note that this is a simple example with only one chromosome. If multiple chromosomes are considered, both the chromosome name and position in the SNP list need to match to the LD pruning output. 
+
+<br>
 
 ## Practical considerations
 
