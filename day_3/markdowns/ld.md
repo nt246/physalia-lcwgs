@@ -1,28 +1,20 @@
 Linkage disequilibrium estimation
 ================
 
-- <a href="#define-paths-to-the-project-directory-and-programs"
-  id="toc-define-paths-to-the-project-directory-and-programs">Define paths
-  to the project directory and programs</a>
-  - <a href="#set-the-project-directory-as-a-variable-named-basedir"
-    id="toc-set-the-project-directory-as-a-variable-named-basedir">Set the
-    project directory as a variable named <code>BASEDIR</code></a>
-  - <a href="#specify-the-path-to-required-programs-as-variables"
-    id="toc-specify-the-path-to-required-programs-as-variables">Specify the
-    path to required programs as variables</a>
-- <a href="#estimate-ld" id="toc-estimate-ld">Estimate LD</a>
-  - <a href="#prepare-the-input-files"
-    id="toc-prepare-the-input-files">Prepare the input files</a>
-  - <a href="#run-ngsld" id="toc-run-ngsld">Run ngsLD</a>
-- <a href="#visualize-ld-blocks" id="toc-visualize-ld-blocks">Visualize LD
-  blocks</a>
-- <a href="#ld-pruning" id="toc-ld-pruning">LD pruning</a>
-  - <a href="#run-ld-pruning" id="toc-run-ld-pruning">Run LD pruning</a>
-  - <a href="#generate-an-ld-pruned-snp-list"
-    id="toc-generate-an-ld-pruned-snp-list">Generate an LD-pruned SNP
-    list</a>
-- <a href="#practical-considerations"
-  id="toc-practical-considerations">Practical considerations</a>
+- [Define paths to the project directory and
+  programs](#define-paths-to-the-project-directory-and-programs)
+  - [Set the project directory as a variable named
+    `BASEDIR`](#set-the-project-directory-as-a-variable-named-basedir)
+  - [Specify the path to required programs as
+    variables](#specify-the-path-to-required-programs-as-variables)
+- [Estimate LD](#estimate-ld)
+  - [Prepare the input files](#prepare-the-input-files)
+  - [Run ngsLD](#run-ngsld)
+- [Visualize LD blocks](#visualize-ld-blocks)
+- [LD pruning](#ld-pruning)
+  - [Run LD pruning](#run-ld-pruning)
+  - [Generate an LD-pruned SNP list](#generate-an-ld-pruned-snp-list)
+- [Practical considerations](#practical-considerations)
 
 <br> <br>
 
@@ -45,7 +37,7 @@ al. 2019](https://science.sciencemag.org/content/365/6452/487) and
 [Wilder et
 al. 2020](https://onlinelibrary.wiley.com/doi/10.1002/evl3.189). The
 sequencing data from these individuals have been mapped to a 2Mb section
-of chromosome 24. The entire genome is \~650 Mb, so this is just a small
+of chromosome 24. The entire genome is ~650 Mb, so this is just a small
 snippet, but it’s an interesting one because it harbours a large
 polymorphic inversion that varies substantially in frequency across the
 species distribution range. Our test dataset spans one breakpoint of
@@ -202,9 +194,10 @@ Mme_chr24_2558528-4558528 \
 ```
 
 To view the resulting plot, you can use `scp` to transfer the pdf file
-to your local computer. Note that you will need to edit the pem file
+to your local computer. Note that you will need to edit the .pem file
 path and name, user name, IP address, and the destination path in the
-following script, and run it on your local computer
+following script, and run it on your local computer \[i.e. not in the
+Terminal window you are logged into the server with\].
 
 ``` bash
 ## scp -i c1.pem user1@35.164.117.54:/home/user1/day3/ngsld/LD_blocks.r2.pdf ./
@@ -212,7 +205,7 @@ following script, and run it on your local computer
 
 <br>
 
-Examine the pdf file that the script outputs. If you have not got the
+Examine the pdf file that the script outputs. If you can not get the
 code to work, see the [plot that we have
 generated](https://github.com/nt246/physalia-lcwgs/blob/main/day_3/ngsld/LD_blocks.r2.pdf).
 
