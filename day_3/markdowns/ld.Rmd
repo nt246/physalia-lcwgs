@@ -124,7 +124,7 @@ Mme_chr24_2558528-4558528 \
 1400000
 ```
 
-To view the resulting plot, you can use `scp` to transfer the pdf file to your local computer. Note that you will need to edit the pem file path and name, user name, IP address, and the destination path in the following script, and run it on your local computer
+To view the resulting plot, you can use `scp` to transfer the pdf file to your local computer. Note that you will need to edit the .pem file path and name, user name, IP address, and the destination path in the following script, and run it on your local computer [i.e. not in the Terminal window you are logged into the server with].
 
 ```{bash eval=FALSE}
 ## scp -i c1.pem user1@35.164.117.54:/home/user1/day3/ngsld/LD_blocks.r2.pdf ./
@@ -132,7 +132,7 @@ To view the resulting plot, you can use `scp` to transfer the pdf file to your l
 
 <br>
 
-Examine the pdf file that the script outputs. If you have not got the code to work, see the [plot that we have generated](https://github.com/nt246/physalia-lcwgs/blob/main/day_3/ngsld/LD_blocks.r2.pdf).
+Examine the pdf file that the script outputs. If you can not get the code to work, see the [plot that we have generated](https://github.com/nt246/physalia-lcwgs/blob/main/day_3/ngsld/LD_blocks.r2.pdf).
 
 Do you notice any interesting pattern in this plot of LD blocks? What do you think is causing this pattern and why?
 
