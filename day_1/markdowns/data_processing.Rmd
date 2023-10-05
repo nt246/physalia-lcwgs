@@ -154,7 +154,7 @@ With our small fastq table and fastq list here, we can easily look this up manua
 
 In low-coverage whole genome sequencing datasets, we'll typically have data from hundreds of individuals, so we need an efficient way to process all of these files without having to write a separate line of code for each file. `for loops` are a powerful way to achieve this, and we will be using them in every step of our pipeline, so let's first take a moment to make sure we understand the syntax.
 
-A `for loop` is a bash programming language statement which allows code to be repeatedly executed. If you've never worked with `for loops` in bash before, it might be helpful to look over a tutorial, e.g. [this one from Software Carpentry](https://swcarpentry.github.io/shell-novice/05-loop/index.html). Here is a key extract inspired from that tutorial:
+A `for loop` is a bash programming language statement which allows code to be repeatedly executed. If you've never worked with `for loops` in bash before, it might be helpful to look over a tutorial, e.g. [this one from Software Carpentry](https://swcarpentry.github.io/shell-novice/05-loop.html). Here is a key extract inspired from that tutorial:
 
 <br>
 

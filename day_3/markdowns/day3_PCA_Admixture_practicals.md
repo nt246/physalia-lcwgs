@@ -49,8 +49,8 @@ DIR=/home/ubuntu/Share/physalia-lcwgs/data
 DATA=$DIR/BAMS
 REF=$DIR/Ref.fa
 ANC=$DIR/outgrp_ref.fa
-NGSadmix=/
-ANGSD=/home/ubuntu/Share/angsd/angsd
+NGSADMIX=/home/ubuntu/Software/NGSadmix
+ANGSD=/home/ubuntu/angsd/angsd
 ```
 
 
@@ -141,7 +141,7 @@ For the PCA, we are most interested in the `.covMat` file, which contains the co
 
 We can look at the covariance matrix in R, where we will also perform the PCA using the `eigen` function. 
 
-We have to load the covariance matrix into R and then we can optionally provide population assignments for each individual (rows in same order as input bam file list `-b $DIR/ALL_bams.txt`). We can start R in the server by typing `R` (end the session by typing `quit()`)
+We have to load the covariance matrix into R and then we can optionally provide population assignments for each individual (rows in same order as input bam file list `-b $DIR/ALL_bams.txt`). We can start R in the server by typing `/usr/bin/R` (end the session by typing `quit()`)
 
 ```
 /usr/bin/R
@@ -176,6 +176,9 @@ varPC2 <- (mme.pca$values[2]/pca.eigenval.sum)*100 #Variance explained by PC2
 varPC3 <- (mme.pca$values[3]/pca.eigenval.sum)*100 #Variance explained by PC3
 varPC4 <- (mme.pca$values[4]/pca.eigenval.sum)*100 #Variance explained by PC4
 ```
+
+You can quit R using by typing `q()` and you can open the plot on your own computer by downloading it as we did before.  
+
 
 <br>
 
@@ -328,7 +331,7 @@ ngsAdmix uses a genotype likelihood file in beagle format (same as for PCAngsd) 
 In addition, there are a range of parameters that can be adjusted. Here we only set the number of ancestry clusters using the `-K` option to K=2. In reality, it is advisable to compare different numbers of ancestry clusters by iterating over different values of K. 
 
 ```
-NGSadmix -likes $BASEDIR'/Results/MME_ANGSD_PCA_LDpruned.beagle.gz' -K 2 -o $BASEDIR'/Results/MME_LDpruned_ngsAdmix_K2_out'
+$NGSADMIX -likes $BASEDIR'/Results/MME_ANGSD_PCA_LDpruned.beagle.gz' -K 2 -o $BASEDIR'/Results/MME_LDpruned_ngsAdmix_K2_out'
 ```
 
 <br>
@@ -403,7 +406,7 @@ dev.off()
 <br>
 
 ```
-NGSadmix -likes $BASEDIR'/Results/MME_ANGSD_PCA_LDpruned.beagle.gz -K 3 -o $BASEDIR'/Results/Results/MME_LDpruned_ngsAdmix_K3_out
+$NGSADMIX -likes $BASEDIR'/Results/MME_ANGSD_PCA_LDpruned.beagle.gz' -K 3 -o $BASEDIR'/Results/MME_LDpruned_ngsAdmix_K3_out'
 ```
 
 <br>
