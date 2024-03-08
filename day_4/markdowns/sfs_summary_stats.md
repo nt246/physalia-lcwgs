@@ -613,12 +613,16 @@ with a heatmap. We're going to use these probabilities of jointly observing comb
 F<sub>ST</sub> between them. F<sub>ST</sub> is a commonly used measure of genetic differentiation based on allele frequencies that spans from 0 when the allele frequencies are the same 
 in both populations to 1 when the populations are fixed for different alleles. F<sub>ST</sub> can be expressed in terms of the genetic variance within subpopulations 
 (denoted here as *b<sub>s</sub>*) and between subpopulations (denoted here as *a<sub>s</sub>*) and between subpopulations: F<sub>ST</sub> = a<sub>s</sub> / (a<sub>s</sub> + b<sub>s</sub>).
+
 We can calculate these genetic variances with `realSFS` for our two example populations like so:
 
 ```bash
 $REALSFS fst index $RESDIR/PANY.saf.idx $RESDIR/MAQU.saf.idx -sfs $RESDIR/PANY_vs_MAQU.2dsfs -fstout $RESDIR/PANY_vs_MAQU
 ```
 We can view the genetic variance components at each site with `realSFS`:
+
+UPDATE: The output of `realSFS fst print` gives the between population genetic variance (*a<sub>s</sub>*) in column 3 and the the total genetic variance (*c<sub>s</sub>* = *b<sub>s</sub>* + *a<sub>s</sub>*)
+in column 4, such that F<sub>ST</sub> = *a<sub>s</sub>*/*c<sub>s</sub>*, i.e. column 3 value divided by column 4 value.
 
 ```bash
 $REALSFS fst print $RESDIR/PANY_vs_MAQU.fst.idx | less -S
@@ -640,8 +644,7 @@ F<sub>ST</sub> = a<sub>365</sub> / (a<sub>365</sub> + b<sub>365</sub>) = 0.01793
 
 </details>
 
-To calculate F<sub>ST</sub> for a region you sum all a<sub>s</sub> for the region, and then divide that by the sum of all (a<sub>s</sub> + b<sub>s</sub>)
-in that region.
+To calculate F<sub>ST</sub> for a region you sum all a<sub>s</sub> for the region, and then divide that by the sum of all c<sub>s</sub> in that region.
 
 You can calculate the genome-wide F<sub>ST</sub> between the PANY and MAQU populations using `realSFS`:
 
