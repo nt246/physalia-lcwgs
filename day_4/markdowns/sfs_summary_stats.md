@@ -614,6 +614,9 @@ F<sub>ST</sub> between them. F<sub>ST</sub> is a commonly used measure of geneti
 in both populations to 1 when the populations are fixed for different alleles. F<sub>ST</sub> can be expressed in terms of the genetic variance within subpopulations 
 (denoted here as *b<sub>s</sub>*) and between subpopulations (denoted here as *a<sub>s</sub>*) and between subpopulations: F<sub>ST</sub> = a<sub>s</sub> / (a<sub>s</sub> + b<sub>s</sub>).
 
+UPDATE: `realSFS fst print` now prints the between population genetic variance (a<sub>s</sub>) in column 3 and the total population variance (c<sub>s</sub> = a<sub>s</sub> + b<sub>s</sub>) 
+in column 4 such that F<sub>ST</sub> =  a<sub>s</sub> / c<sub>s</sub>, i.e. column 3 value divided by column 4 value.
+
 We can calculate these genetic variances with `realSFS` for our two example populations like so:
 
 ```bash
@@ -637,10 +640,13 @@ What is the value of F<sub>ST</sub> at position chr24:365?
 
 <summary> Click for answer </summary>
 
-a<sub>365</sub> = 0.017935
-b<sub>365</sub> = 0.224872
+#a<sub>365</sub> = 0.017935
+#b<sub>365</sub> = 0.224872
 
-F<sub>ST</sub> = a<sub>365</sub> / (a<sub>365</sub> + b<sub>365</sub>) = 0.017935 / (0.017935 + 0.224872) = 0.07386525
+#F<sub>ST</sub> = a<sub>365</sub> / (a<sub>365</sub> + b<sub>365</sub>) = 0.017935 / (0.017935 + 0.224872) = 0.07386525
+
+#UPDATE:
+F<sub>ST</sub> = a<sub>365</sub> / (c<sub>365</sub>)
 
 </details>
 
