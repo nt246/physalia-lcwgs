@@ -615,7 +615,7 @@ in both populations to 1 when the populations are fixed for different alleles. F
 (denoted here as *b<sub>s</sub>*) and between subpopulations (denoted here as *a<sub>s</sub>*) and between subpopulations: F<sub>ST</sub> = a<sub>s</sub> / (a<sub>s</sub> + b<sub>s</sub>).
 
 UPDATE: `realSFS fst print` now prints the between population genetic variance (a<sub>s</sub>) in column 3 and the total population variance (c<sub>s</sub> = a<sub>s</sub> + b<sub>s</sub>) 
-in column 4 such that F<sub>ST</sub> =  a<sub>s</sub> / c<sub>s</sub>, i.e. column 3 value divided by column 4 value.
+in column 4 such that F<sub>ST</sub> = a<sub>s</sub> / c<sub>s</sub>, i.e. column 3 value divided by column 4 value.
 
 We can calculate these genetic variances with `realSFS` for our two example populations like so:
 
@@ -623,9 +623,6 @@ We can calculate these genetic variances with `realSFS` for our two example popu
 $REALSFS fst index $RESDIR/PANY.saf.idx $RESDIR/MAQU.saf.idx -sfs $RESDIR/PANY_vs_MAQU.2dsfs -fstout $RESDIR/PANY_vs_MAQU
 ```
 We can view the genetic variance components at each site with `realSFS`:
-
-UPDATE: The output of `realSFS fst print` gives the between population genetic variance (a<sub>s</sub>) in column 3 and the the total genetic variance (c<sub>s</sub> = b<sub>s</sub> + a<sub>s</sub>)
-in column 4, such that F<sub>ST</sub> = a<sub>s</sub>/c<sub>s</sub>, i.e. column 3 value divided by column 4 value.
 
 ```bash
 $REALSFS fst print $RESDIR/PANY_vs_MAQU.fst.idx | less -S
@@ -641,6 +638,7 @@ What is the value of F<sub>ST</sub> at position chr24:365?
 <summary> Click for answer </summary>
 
 a<sub>365</sub> = 0.017935
+
 c<sub>365</sub> = 0.224872
 
 F<sub>ST</sub> = a<sub>365</sub> / (c<sub>365</sub>) = 0.017935 / 0.224872 = 0.07975648
