@@ -624,13 +624,13 @@ $REALSFS fst index $RESDIR/PANY.saf.idx $RESDIR/MAQU.saf.idx -sfs $RESDIR/PANY_v
 ```
 We can view the genetic variance components at each site with `realSFS`:
 
-UPDATE: The output of `realSFS fst print` gives the between population genetic variance (*a<sub>s</sub>*) in column 3 and the the total genetic variance (*c<sub>s</sub>* = *b<sub>s</sub>* + *a<sub>s</sub>*)
-in column 4, such that F<sub>ST</sub> = *a<sub>s</sub>*/*c<sub>s</sub>*, i.e. column 3 value divided by column 4 value.
+UPDATE: The output of `realSFS fst print` gives the between population genetic variance (a<sub>s</sub>) in column 3 and the the total genetic variance (c<sub>s</sub> = b<sub>s</sub> + a<sub>s</sub>)
+in column 4, such that F<sub>ST</sub> = a<sub>s</sub>/c<sub>s</sub>, i.e. column 3 value divided by column 4 value.
 
 ```bash
 $REALSFS fst print $RESDIR/PANY_vs_MAQU.fst.idx | less -S
 ```
-The columns are (1) Chromomsome, (2) position, (3) a<sub>s</sub> (between population genetic variance), (4) b<sub>s</sub> (within population variance).
+The columns are (1) Chromomsome, (2) position, (3) a<sub>s</sub> (between population genetic variance), (4) c<sub>s</sub> (total population variance).
 
 **QUESTION**
 
@@ -640,13 +640,10 @@ What is the value of F<sub>ST</sub> at position chr24:365?
 
 <summary> Click for answer </summary>
 
-#a<sub>365</sub> = 0.017935
-#b<sub>365</sub> = 0.224872
+a<sub>365</sub> = 0.017935
+c<sub>365</sub> = 0.224872
 
-#F<sub>ST</sub> = a<sub>365</sub> / (a<sub>365</sub> + b<sub>365</sub>) = 0.017935 / (0.017935 + 0.224872) = 0.07386525
-
-#UPDATE:
-F<sub>ST</sub> = a<sub>365</sub> / (c<sub>365</sub>)
+F<sub>ST</sub> = a<sub>365</sub> / (c<sub>365</sub>) = 0.017935 / 0.224872 = 0.07975648
 
 </details>
 
