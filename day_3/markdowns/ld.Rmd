@@ -47,7 +47,12 @@ ls
 When running these scripts on the AWS server, run the following:
 
 ```{bash, eval = FALSE}
-NGSLD=~/Software/ngsLD/
+NGSLD=~/Share/ngsLD/
+## launch the conda environment that contains the dependencies of ngsLD submodules
+conda activate ngsLD
+## add library paths
+export LIBRARY_PATH=/home/ubuntu/src/conda/envs/ngsLD/lib/
+export LD_LIBRARY_PATH=/home/ubuntu/src/conda/envs/ngsLD/lib/:$LD_LIBRARY_PATH
 ```
 
 <br>
@@ -154,8 +159,11 @@ For many downstream analyses, independence among different SNPs is often assumed
 Run the following script **on the AWS server** to perform LD pruning with our test dataset.
 
 ```{bash eval = FALSE}
+## remove the header line from LD estimates (because the python script had issues with it)
+tail -n +2 $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.ld > $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.no_header.ld
+## run LD pruning script
 python $NGSLD/scripts/prune_ngsLD.py \
---input $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.ld \
+--input $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.no_header.ld \
 --max_dist 2000000 \
 --min_weight 0.5 \
 --output $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled_unlinked.id
@@ -172,7 +180,9 @@ We will use R to generate an LD-pruned SNP list in a format that can be used by 
 To launch R on the AWS server, run the following command.
 
 ```{bash eval=FALSE}
-/usr/bin/R
+conda deactivate
+conda activate lcwgs
+R
 ```
 
 Once you have launched R, run the following script in R to generate the SNP list.

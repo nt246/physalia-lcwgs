@@ -1,20 +1,28 @@
 Linkage disequilibrium estimation
 ================
 
-- [Define paths to the project directory and
-  programs](#define-paths-to-the-project-directory-and-programs)
-  - [Set the project directory as a variable named
-    `BASEDIR`](#set-the-project-directory-as-a-variable-named-basedir)
-  - [Specify the path to required programs as
-    variables](#specify-the-path-to-required-programs-as-variables)
-- [Estimate LD](#estimate-ld)
-  - [Prepare the input files](#prepare-the-input-files)
-  - [Run ngsLD](#run-ngsld)
-- [Visualize LD blocks](#visualize-ld-blocks)
-- [LD pruning](#ld-pruning)
-  - [Run LD pruning](#run-ld-pruning)
-  - [Generate an LD-pruned SNP list](#generate-an-ld-pruned-snp-list)
-- [Practical considerations](#practical-considerations)
+- <a href="#define-paths-to-the-project-directory-and-programs"
+  id="toc-define-paths-to-the-project-directory-and-programs">Define paths
+  to the project directory and programs</a>
+  - <a href="#set-the-project-directory-as-a-variable-named-basedir"
+    id="toc-set-the-project-directory-as-a-variable-named-basedir">Set the
+    project directory as a variable named <code>BASEDIR</code></a>
+  - <a href="#specify-the-path-to-required-programs-as-variables"
+    id="toc-specify-the-path-to-required-programs-as-variables">Specify the
+    path to required programs as variables</a>
+- <a href="#estimate-ld" id="toc-estimate-ld">Estimate LD</a>
+  - <a href="#prepare-the-input-files"
+    id="toc-prepare-the-input-files">Prepare the input files</a>
+  - <a href="#run-ngsld" id="toc-run-ngsld">Run ngsLD</a>
+- <a href="#visualize-ld-blocks" id="toc-visualize-ld-blocks">Visualize LD
+  blocks</a>
+- <a href="#ld-pruning" id="toc-ld-pruning">LD pruning</a>
+  - <a href="#run-ld-pruning" id="toc-run-ld-pruning">Run LD pruning</a>
+  - <a href="#generate-an-ld-pruned-snp-list"
+    id="toc-generate-an-ld-pruned-snp-list">Generate an LD-pruned SNP
+    list</a>
+- <a href="#practical-considerations"
+  id="toc-practical-considerations">Practical considerations</a>
 
 <br> <br>
 
@@ -37,7 +45,7 @@ al. 2019](https://science.sciencemag.org/content/365/6452/487) and
 [Wilder et
 al. 2020](https://onlinelibrary.wiley.com/doi/10.1002/evl3.189). The
 sequencing data from these individuals have been mapped to a 2Mb section
-of chromosome 24. The entire genome is ~650 Mb, so this is just a small
+of chromosome 24. The entire genome is \~650 Mb, so this is just a small
 snippet, but it’s an interesting one because it harbours a large
 polymorphic inversion that varies substantially in frequency across the
 species distribution range. Our test dataset spans one breakpoint of
@@ -78,7 +86,12 @@ ls
 When running these scripts on the AWS server, run the following:
 
 ``` bash
-NGSLD=~/Software/ngsLD/
+NGSLD=~/Share/ngsLD/
+## launch the conda environment that contains the dependencies of ngsLD submodules
+conda activate ngsLD
+## add library paths
+export LIBRARY_PATH=/home/ubuntu/src/conda/envs/ngsLD/lib/
+export LD_LIBRARY_PATH=/home/ubuntu/src/conda/envs/ngsLD/lib/:$LD_LIBRARY_PATH
 ```
 
 <br>
@@ -239,8 +252,11 @@ Run the following script **on the AWS server** to perform LD pruning
 with our test dataset.
 
 ``` bash
+## remove the header line from LD estimates (because the python script had issues with it)
+tail -n +2 $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.ld > $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.no_header.ld
+## run LD pruning script
 python $NGSLD/scripts/prune_ngsLD.py \
---input $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.ld \
+--input $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.no_header.ld \
 --max_dist 2000000 \
 --min_weight 0.5 \
 --output $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled_unlinked.id
@@ -260,7 +276,9 @@ server**.
 To launch R on the AWS server, run the following command.
 
 ``` bash
-/usr/bin/R
+conda deactivate
+conda activate lcwgs
+R
 ```
 
 Once you have launched R, run the following script in R to generate the
