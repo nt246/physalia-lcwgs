@@ -1,37 +1,60 @@
 Tutorial 1: Data processing - from .fastq to .bam
 ================
 
-- [Case study for practicals](#case-study-for-practicals)
-- [Initial preparation](#initial-preparation)
-  - [1. Make sure you’re up to speed on basic shell
-    scripting](#1-make-sure-youre-up-to-speed-on-basic-shell-scripting)
-  - [2. Copy the working directories with the needed input
-    files](#2-copy-the-working-directories-with-the-needed-input-files)
-  - [3. Orient yourself to the formatting of our fastq table and fastq
-    list](#3-orient-yourself-to-the-formatting-of-our-fastq-table-and-fastq-list)
-  - [4. Make sure you’re familiar with `for loops` and how to assign and
-    call variables in
-    bash](#4-make-sure-youre-familiar-with-for-loops-and-how-to-assign-and-call-variables-in-bash)
-  - [5. Practice using bash `for loops` to iterate over target
-    samples](#5-practice-using-bash-for-loops-to-iterate-over-target-samples)
-  - [6. Define paths to the project directory and
-    programs](#6-define-paths-to-the-project-directory-and-programs)
-- [Data processing pipeline](#data-processing-pipeline)
-  - [Examine the raw fastq files](#examine-the-raw-fastq-files)
-  - [Adapter clipping](#adapter-clipping)
-  - [OPTIONAL: Quality trimming](#optional-quality-trimming)
-  - [Build reference index files](#build-reference-index-files)
-  - [Map to the reference, sort, and quality
-    filter](#map-to-the-reference-sort-and-quality-filter)
-  - [Examine the bam files](#examine-the-bam-files)
-  - [Merge samples that were sequenced in multiple
-    batches](#merge-samples-that-were-sequenced-in-multiple-batches)
-  - [Deduplicate and clip overlapping read
-    pairs](#deduplicate-and-clip-overlapping-read-pairs)
-  - [Indel realignment (optional)](#indel-realignment-optional)
-  - [Estimate read depth in your bam
-    files](#estimate-read-depth-in-your-bam-files)
-  - [END OF DAY 1](#end-of-day-1)
+- <a href="#case-study-for-practicals"
+  id="toc-case-study-for-practicals">Case study for practicals</a>
+- <a href="#initial-preparation" id="toc-initial-preparation">Initial
+  preparation</a>
+  - <a href="#1-make-sure-youre-up-to-speed-on-basic-shell-scripting"
+    id="toc-1-make-sure-youre-up-to-speed-on-basic-shell-scripting">1. Make
+    sure you’re up to speed on basic shell scripting</a>
+  - <a href="#2-copy-the-working-directories-with-the-needed-input-files"
+    id="toc-2-copy-the-working-directories-with-the-needed-input-files">2.
+    Copy the working directories with the needed input files</a>
+  - <a
+    href="#3-orient-yourself-to-the-formatting-of-our-fastq-table-and-fastq-list"
+    id="toc-3-orient-yourself-to-the-formatting-of-our-fastq-table-and-fastq-list">3.
+    Orient yourself to the formatting of our fastq table and fastq list</a>
+  - <a
+    href="#4-make-sure-youre-familiar-with-for-loops-and-how-to-assign-and-call-variables-in-bash"
+    id="toc-4-make-sure-youre-familiar-with-for-loops-and-how-to-assign-and-call-variables-in-bash">4.
+    Make sure you’re familiar with <code>for loops</code> and how to assign
+    and call variables in bash</a>
+  - <a
+    href="#5-practice-using-bash-for-loops-to-iterate-over-target-samples"
+    id="toc-5-practice-using-bash-for-loops-to-iterate-over-target-samples">5.
+    Practice using bash <code>for loops</code> to iterate over target
+    samples</a>
+  - <a href="#6-define-paths-to-the-project-directory-and-programs"
+    id="toc-6-define-paths-to-the-project-directory-and-programs">6. Define
+    paths to the project directory and programs</a>
+- <a href="#data-processing-pipeline"
+  id="toc-data-processing-pipeline">Data processing pipeline</a>
+  - <a href="#examine-the-raw-fastq-files"
+    id="toc-examine-the-raw-fastq-files">Examine the raw fastq files</a>
+  - <a href="#adapter-clipping" id="toc-adapter-clipping">Adapter
+    clipping</a>
+  - <a href="#optional-quality-trimming"
+    id="toc-optional-quality-trimming">OPTIONAL: Quality trimming</a>
+  - <a href="#build-reference-index-files"
+    id="toc-build-reference-index-files">Build reference index files</a>
+  - <a href="#map-to-the-reference-sort-and-quality-filter"
+    id="toc-map-to-the-reference-sort-and-quality-filter">Map to the
+    reference, sort, and quality filter</a>
+  - <a href="#examine-the-bam-files" id="toc-examine-the-bam-files">Examine
+    the bam files</a>
+  - <a href="#merge-samples-that-were-sequenced-in-multiple-batches"
+    id="toc-merge-samples-that-were-sequenced-in-multiple-batches">Merge
+    samples that were sequenced in multiple batches</a>
+  - <a href="#deduplicate-and-clip-overlapping-read-pairs"
+    id="toc-deduplicate-and-clip-overlapping-read-pairs">Deduplicate and
+    clip overlapping read pairs</a>
+  - <a href="#indel-realignment-optional"
+    id="toc-indel-realignment-optional">Indel realignment (optional)</a>
+  - <a href="#estimate-read-depth-in-your-bam-files"
+    id="toc-estimate-read-depth-in-your-bam-files">Estimate read depth in
+    your bam files</a>
+  - <a href="#end-of-day-1" id="toc-end-of-day-1">END OF DAY 1</a>
 
 <br> <br>
 
@@ -333,12 +356,12 @@ SAMPLETABLE=$BASEDIR/sample_lists/fastq_table.tsv # Path to a fastq table where 
 
 
 for SAMPLEFILE in `cat $SAMPLELIST`; do   # Loop through each of the prefixes listed in our fastq list
-    
-    # For each prefix, extract the associated sample ID (column 4) from the table
-    SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4` 
+  
+  # For each prefix, extract the associated sample ID (column 4) from the table
+  SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4` 
 
-    echo $SAMPLEFILE refers to sample $SAMPLE_ID
-    
+  echo $SAMPLEFILE refers to sample $SAMPLE_ID
+  
 done
 ```
 
@@ -361,13 +384,13 @@ Click here to expand
 ``` bash
 
 for SAMPLEFILE in `cat $SAMPLELIST`; do   # Loop through each of the prefixes listed in our sample list
-    
-    # For each prefix, extract the associated sample ID (column 4) and population ID (column 5) from the table
-    SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4` 
-    POPULATION=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 5` 
+  
+  # For each prefix, extract the associated sample ID (column 4) and population ID (column 5) from the table
+  SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4` 
+  POPULATION=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 5` 
 
-    echo $SAMPLEFILE refers to sample $SAMPLE_ID from $POPULATION
-    
+  echo $SAMPLEFILE refers to sample $SAMPLE_ID from $POPULATION
+  
 done
 ```
 
@@ -398,15 +421,15 @@ When running these scripts on the Physalia server, run the following:
 
 ``` bash
 
+conda activate lcwgs ## most programs required for this tutorial have been intalled in a conda environment called lcwgs
 FASTQC=fastqc
 TRIMMOMATIC=trimmomatic
-PICARD=PicardCommandLine
-SAMTOOLS=~/Software/bin/samtools
+PICARD=picard
+SAMTOOLS=samtools
 BOWTIEBUILD=bowtie2-build
 BOWTIE=bowtie2
 BAMUTIL=bam
-JAVA=java
-GATK=~/Share/GenomeAnalysisTK.jar
+GATK=gatk
 ```
 
 <br> If you will be running these programs on a different system, you
@@ -574,33 +597,33 @@ ADAPTERS=$BASEDIR/reference/NexteraPE_NT.fa # Path to a list of adapter/index se
 
 ## Loop over each sample
 for SAMPLEFILE in `cat $SAMPLELIST`; do
-    
-    ## Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
-    SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4`
-    POP_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 5`
-    SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
-    LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
-    SAMPLE_UNIQ_ID=$SAMPLE_ID'_'$POP_ID'_'$SEQ_ID'_'$LANE_ID  # When a sample has been sequenced in multiple lanes, we need to be able to identify the files from each run uniquely
-    
-    ## Extract data type from the sample table
-    DATATYPE=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 6`
-    
-    ## The input and output path and file prefix
-    RAWFASTQ_ID=$RAWFASTQDIR$SAMPLEFILE
-    SAMPLEADAPT=$BASEDIR'/adapter_clipped/'$SAMPLE_UNIQ_ID
-    
-    ## Adapter clip the reads with Trimmomatic
-    # The options for ILLUMINACLIP are: ILLUMINACLIP:<fastaWithAdaptersEtc>:<seed mismatches>:<palindrome clip threshold>:<simple clip threshold>:<minAdapterLength>:<keepBothReads>
-    # The MINLENGTH drops the read if it is below the specified length in bp
-    # For definitions of these options, see http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf
-    
-    if [ $DATATYPE = pe ]; then
-        $TRIMMOMATIC PE -threads 1 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $RAWFASTQ_ID$RAWFASTQSUFFIX2 $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_f_unpaired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_unpaired.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10:1:true MINLENGTH:40' 
-    
-    elif [ $DATATYPE = se ]; then
-        $TRIMMOMATIC SE -threads 1 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $SAMPLEADAPT'_adapter_clipped_se.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10 MINLENGTH:40'
-    fi
-    
+  
+  ## Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
+  SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4`
+  POP_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 5`
+  SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
+  LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
+  SAMPLE_UNIQ_ID=$SAMPLE_ID'_'$POP_ID'_'$SEQ_ID'_'$LANE_ID  # When a sample has been sequenced in multiple lanes, we need to be able to identify the files from each run uniquely
+  
+  ## Extract data type from the sample table
+  DATATYPE=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 6`
+  
+  ## The input and output path and file prefix
+  RAWFASTQ_ID=$RAWFASTQDIR$SAMPLEFILE
+  SAMPLEADAPT=$BASEDIR'/adapter_clipped/'$SAMPLE_UNIQ_ID
+  
+  ## Adapter clip the reads with Trimmomatic
+  # The options for ILLUMINACLIP are: ILLUMINACLIP:<fastaWithAdaptersEtc>:<seed mismatches>:<palindrome clip threshold>:<simple clip threshold>:<minAdapterLength>:<keepBothReads>
+  # The MINLENGTH drops the read if it is below the specified length in bp
+  # For definitions of these options, see http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf
+  
+  if [ $DATATYPE = pe ]; then
+    $TRIMMOMATIC PE -threads 1 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $RAWFASTQ_ID$RAWFASTQSUFFIX2 $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_f_unpaired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_unpaired.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10:1:true MINLENGTH:40' 
+  
+  elif [ $DATATYPE = se ]; then
+    $TRIMMOMATIC SE -threads 1 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $SAMPLEADAPT'_adapter_clipped_se.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10 MINLENGTH:40'
+  fi
+  
 done
 ```
 
@@ -735,49 +758,49 @@ REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files, e.g
 
 ## Loop over each sample
 for SAMPLEFILE in `cat $SAMPLELIST`; do
-    
-    ## Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
-    SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4`
-    POP_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 5`
-    SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
-    LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
-    SAMPLE_UNIQ_ID=$SAMPLE_ID'_'$POP_ID'_'$SEQ_ID'_'$LANE_ID  # When a sample has been sequenced in multiple lanes, we need to be able to identify the files from each run uniquely
-    
-    ## Extract data type from the sample table
-    DATATYPE=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 6`
-    
-    ## The input and output path and file prefix
-    SAMPLETOMAP=$FASTQDIR$SAMPLE_UNIQ_ID
-    SAMPLEBAM=$BASEDIR'/bam/'$SAMPLE_UNIQ_ID
-    
-    ## Define platform unit (PU), which is the lane number
-    PU=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
-    
-    ## Define reference base name
-    REFBASENAME="${REFERENCE%.*}"
-    
-    ## Map reads to the reference 
-    echo $SAMPLE_UNIQ_ID
-    
-    # Map the paired-end reads
-    if [ $DATATYPE = pe ]; then 
-    # We ignore the reads that get orphaned during adapter clipping because that is typically a very small proportion of reads. If a large proportion of reads get orphaned (loose their mate so they become single-end), these can be mapped in a separate step and the resulting bam files merged with the paired-end mapped reads.
-    $BOWTIE -q --phred33 --$MAPPINGPRESET -p 1 -I 0 -X 1500 --fr --rg-id $SAMPLE_UNIQ_ID --rg SM:$SAMPLE_ID --rg LB:$SAMPLE_ID --rg PU:$PU --rg PL:ILLUMINA -x $REFBASENAME -1 $SAMPLETOMAP$FASTQSUFFIX1 -2 $SAMPLETOMAP$FASTQSUFFIX2 -S $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam'
-    
-    # Map the single-end reads
-    elif [ $DATATYPE = se ]; then
-    $BOWTIE -q --phred33 --$MAPPINGPRESET -p 1 --rg-id $SAMPLE_UNIQ_ID --rg SM:$SAMPLE_ID --rg LB:$SAMPLE_ID --rg PU:$PU --rg PL:ILLUMINA -x $REFBASENAME -U $SAMPLETOMAP$FASTQSUFFIX1 -S $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam'
-    
-    fi
-    
-    ## Convert to bam file for storage (including all the mapped reads)
-    $SAMTOOLS view -bS -F 4 $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam' > $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.bam'
-    rm -f $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam'
-    
-    ## Filter the mapped reads (to onky retain reads with high mapping quality)
-    # Filter bam files to remove poorly mapped reads (non-unique mappings and mappings with a quality score < 20) -- do we want the quality score filter??
-    $SAMTOOLS view -h -q 20 $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.bam' | $SAMTOOLS view -buS - | $SAMTOOLS sort -o $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'_minq20_sorted.bam'
-    
+  
+  ## Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
+  SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4`
+  POP_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 5`
+  SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
+  LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
+  SAMPLE_UNIQ_ID=$SAMPLE_ID'_'$POP_ID'_'$SEQ_ID'_'$LANE_ID  # When a sample has been sequenced in multiple lanes, we need to be able to identify the files from each run uniquely
+  
+  ## Extract data type from the sample table
+  DATATYPE=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 6`
+  
+  ## The input and output path and file prefix
+  SAMPLETOMAP=$FASTQDIR$SAMPLE_UNIQ_ID
+  SAMPLEBAM=$BASEDIR'/bam/'$SAMPLE_UNIQ_ID
+  
+  ## Define platform unit (PU), which is the lane number
+  PU=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
+  
+  ## Define reference base name
+  REFBASENAME="${REFERENCE%.*}"
+  
+  ## Map reads to the reference 
+  echo $SAMPLE_UNIQ_ID
+  
+  # Map the paired-end reads
+  if [ $DATATYPE = pe ]; then 
+  # We ignore the reads that get orphaned during adapter clipping because that is typically a very small proportion of reads. If a large proportion of reads get orphaned (loose their mate so they become single-end), these can be mapped in a separate step and the resulting bam files merged with the paired-end mapped reads.
+  $BOWTIE -q --phred33 --$MAPPINGPRESET -p 1 -I 0 -X 1500 --fr --rg-id $SAMPLE_UNIQ_ID --rg SM:$SAMPLE_ID --rg LB:$SAMPLE_ID --rg PU:$PU --rg PL:ILLUMINA -x $REFBASENAME -1 $SAMPLETOMAP$FASTQSUFFIX1 -2 $SAMPLETOMAP$FASTQSUFFIX2 -S $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam'
+  
+  # Map the single-end reads
+  elif [ $DATATYPE = se ]; then
+  $BOWTIE -q --phred33 --$MAPPINGPRESET -p 1 --rg-id $SAMPLE_UNIQ_ID --rg SM:$SAMPLE_ID --rg LB:$SAMPLE_ID --rg PU:$PU --rg PL:ILLUMINA -x $REFBASENAME -U $SAMPLETOMAP$FASTQSUFFIX1 -S $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam'
+  
+  fi
+  
+  ## Convert to bam file for storage (including all the mapped reads)
+  $SAMTOOLS view -bS -F 4 $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam' > $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.bam'
+  rm -f $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam'
+  
+  ## Filter the mapped reads (to onky retain reads with high mapping quality)
+  # Filter bam files to remove poorly mapped reads (non-unique mappings and mappings with a quality score < 20) -- do we want the quality score filter??
+  $SAMTOOLS view -h -q 20 $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.bam' | $SAMTOOLS view -buS - | $SAMTOOLS sort -o $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'_minq20_sorted.bam'
+  
 done
 ```
 
@@ -912,7 +935,7 @@ target_samples <- filter(fastq_table, prefix %in% fastq_list)
 duplicated_samples <- (target_samples$sample_id)[duplicated(target_samples$sample_id)] %>% unique()
 
 # Write cd
-write_lines(c("BASEDIR=$1", "cd $BASEDIR'/bam'\n"), paste0(basedir, "scripts/merge_bam.sh"))
+write_lines(c("BASEDIR=$1", "SAMTOOLS=$2", "cd $BASEDIR'/bam'\n"), paste0(basedir, "scripts/merge_bam.sh"))
 
 
 ## Loop through all duplicated samples 
@@ -929,7 +952,7 @@ for (i in 1:length(duplicated_samples)){
     
   ## Paste together the command line
   #merging_script[i+1] <- paste("samtools merge", as.character(output), input[1], input[2], sep = " ")
-  write_lines(paste("samtools merge", as.character(output), input[1], input[2], sep = " "), paste0(basedir, "scripts/merge_bam.sh"), append = TRUE)
+  write_lines(paste("$SAMTOOLS merge", as.character(output), input[1], input[2], sep = " "), paste0(basedir, "scripts/merge_bam.sh"), append = TRUE)
   
   # Also write a target bam list that we'll use for downstream looping over merged bam files
   if (i == 1){
@@ -1041,13 +1064,13 @@ REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files
 
 ## Loop over each sample
 for SAMPLEBAM in `cat $BAMLIST`; do
-    
-    ## Remove duplicates and print dupstat file
-    $PICARD MarkDuplicates I=$BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted.bam' O=$BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' M=$BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dupstat.txt' REMOVE_DUPLICATES=true
-    
-    
-    ## Clip overlapping paired end reads (only necessary for paired-end data, so if you're only running se samples, you can comment this step out)
-    $BAMUTIL clipOverlap --in $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' --out $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam' --stats
+  
+  ## Remove duplicates and print dupstat file
+  $PICARD MarkDuplicates I=$BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted.bam' O=$BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' M=$BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dupstat.txt' REMOVE_DUPLICATES=true
+  
+  
+  ## Clip overlapping paired end reads (only necessary for paired-end data, so if you're only running se samples, you can comment this step out)
+  $BAMUTIL clipOverlap --in $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' --out $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam' --stats
 
 done
 ```
@@ -1055,7 +1078,7 @@ done
 <br>
 
 Please note that the deduplication step is rather memory-consuming and
-only ~15 participants can run it at the same time. It should only take
+only \~15 participants can run it at the same time. It should only take
 about a minute to run though, so if you see the following error
 messages, please wait for a minute and try to rerun your code.
 
@@ -1095,7 +1118,7 @@ takes all the aligned sequences from all samples in to account to
 validate the indels discovered from the mapping process and then
 realigns each read locally. This is not a mandatory step and tends to be
 very time-consuming if you have a large dataset, but the code is
-provided here if you want to give it a try (it takes ~3 minutes for our
+provided here if you want to give it a try (it takes \~3 minutes for our
 small sample dataset). We will not use this output for the rest of this
 course though.
 
@@ -1105,6 +1128,10 @@ Click here to see the GATK IndelRealigner code
 </summary>
 
 ``` bash
+## GATK-3.7 is installed in a separate conda environment
+conda deactivate
+conda activate gatk-3.7
+
 BAMLIST=$BASEDIR/sample_lists/bam_list_dedup_overlapclipped.list # Path to a list of merged, deduplicated, and overlap clipped bam files. Full paths should be included. This file has to have a suffix of ".list"
 REFERENCE=$BASEDIR/reference/mme_physalia_testdata_chr24.fa # Path to reference fasta file and file name
 REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files
@@ -1117,14 +1144,14 @@ done
 ## Loop over each sample
 cd $BASEDIR/bam/
 for SAMPLEBAM in `cat $BAMLIST`; do
-    $SAMTOOLS index $SAMPLEBAM
+  $SAMTOOLS index $SAMPLEBAM
 done
 
 ## Realign around in-dels
 # This is done across all samples at once
 
 ## Create list of potential in-dels
-$JAVA -Xmx40g -jar $GATK \
+$GATK -Xmx40g \
 -T RealignerTargetCreator \
 -R $REFERENCE \
 -I $BAMLIST \
@@ -1132,7 +1159,7 @@ $JAVA -Xmx40g -jar $GATK \
 -drf BadMate
 
 ## Run the indel realigner tool
-$JAVA -Xmx40g -jar $GATK \
+$GATK -Xmx40g \
 -T IndelRealigner \
 -R $REFERENCE \
 -I $BAMLIST \
@@ -1167,13 +1194,16 @@ First, **on the Amazon Cloud system**, run `samtools depth` to get depth
 per sample per position.
 
 ``` bash
+## remember to activate the lcwgs conda environment if you tried the GATK code before
+conda deactivate
+conda activate lcwgs
 
 BAMLIST=$BASEDIR/sample_lists/merged_bam_list.txt # Path to a list of unique sample prefixes for merged bam files.  
-REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files 
+REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files  
 
-for SAMPLEBAM in `cat $BAMLIST`; do 
-    ## Count per position depth per sample
-    $SAMTOOLS depth -aa $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam' | cut -f 3 | gzip > $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam.depth.gz'
+for SAMPLEBAM in `cat $BAMLIST`; do  
+  ## Count per position depth per sample
+  $SAMTOOLS depth -aa $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam' | cut -f 3 | gzip > $BASEDIR'/bam/'$SAMPLEBAM'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam.depth.gz'
 
 done
 ```
@@ -1188,10 +1218,10 @@ server) to download the bam list and the depth files. For example:
 
 ``` bash
 ## Edit the follow variables
-USER=user1 ## Replace this with your user name and the correct IP address
-IP=52.39.39.206 ## Replace this with today's IP address
-BASEDIR=~/day1 ## Replace this with a directory on your computer where you want to store the downloaded files
-KEY=~/keys/c1.pem ## Replace this with the path to where you have saved your pem file on your local computer
+USER=user2 ## Replace this with your user name and the correct IP address
+IP=34.217.81.210 ## Replace this with today's IP address
+BASEDIR=~/Downloads/day1 ## Replace this with a directory on your computer where you want to store the downloaded files
+KEY=~/Downloads/c2.pem ## Replace this with the path to where you have saved your pem file on your local computer
 
 ## Create $BASEDIR if it doesn't yet exist and 
 mkdir $BASEDIR
@@ -1208,7 +1238,7 @@ Now we’ll process and visualize the data in R
 ``` r
 library(tidyverse)
 
-basedir <- "~/day1/" # Make sure to edit this to match your $BASEDIR
+basedir <- "~/Downloads/day1/" # Make sure to edit this to match your $BASEDIR
 bam_list <- read_lines(paste0(basedir, "/merged_bam_list.txt"))
 
 for (i in 1:length(bam_list)){
