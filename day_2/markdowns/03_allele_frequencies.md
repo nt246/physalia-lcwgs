@@ -336,6 +336,7 @@ zcat $RESDIR/PANY_derived.mafs.gz | head -n 21
 
 # JIGA derived allele frequencies
 zcat $RESDIR/JIGA_derived.mafs.gz | head -n 21
+
 ```
 
 </details>
