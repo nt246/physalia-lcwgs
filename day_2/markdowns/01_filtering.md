@@ -7,9 +7,9 @@ Before getting started, if this is a new session, set evironment variables
 RESDIR=~/day2/Results
 DATDIR=~/day2/Data
 DIR=/home/ubuntu/Share/physalia-lcwgs/data
-DATA=$DIR/BAMS_RENAME
-REF=$DIR/Ref_rename.fa
-ANC=$DIR/outgrp_ref_rename.fa
+DATA=$DIR/BAMS
+REF=$DIR/Ref.fa
+ANC=$DIR/outgrp_ref.fa
 angsd=/home/ubuntu/angsd/angsd
 
 cd ~/day2
@@ -79,17 +79,17 @@ Let's quickly familiarize ourselves with the input data.
 
 Have a look at our BAM files on the filesystem:
 ```bash
-cat $DIR/ALL_bams_rename.txt
+cat $DIR/ALL_bams.txt
 ```
 
 Count how many BAM files we have:
 ```bash
-wc -l $DIR/ALL_bams_rename.txt
+wc -l $DIR/ALL_bams.txt
 ```
 
 List the text files that contain the names (and paths) of different subsets of BAM files:
 ```bash
-ls -l $DIR/*bams_rename.txt
+ls -l $DIR/*bams.txt
 ```
 
 Possible options when using BAM files as input:
@@ -133,13 +133,13 @@ Let's build an ANGSD run. Note that arguments can be supplied in any order (the 
 
 Define input and output files (please note that we do not run the following intermediate steps, as they are preceded with ```#```):
 ```
-# $angsd -b $DIR/ALL_bams_rename.txt -out ./Results/ALL \
+# $angsd -b $DIR/ALL_bams.txt -out ./Results/ALL \
 ```
 We provide a list of bam files (with their full paths) with `-b`, while `-out` states the prefix for all output files that will be generated.
 
 Next we specify some basic read filtering criteria.
 ```
-# $angsd -b $DIR/ALL_bams_rename.txt -ref $REF -out ./Results/ALL \
+# $angsd -b $DIR/ALL_bams.txt -ref $REF -out ./Results/ALL \
 #        -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
 ```
 These filters will retain only uniquely mapped reads (`uniqueOnly`) that map as a proper pair (`only_proper_pairs`) and are not tagged with a SAM flag above 255 (`remove_bads`).
@@ -153,7 +153,7 @@ altogether to avoid erroneous inference. You may also want to remove bases with 
 
 
 ```
-# $angsd -b $DIR/ALL_bams_rename.txt -ref $REF -out ./Results/ALL \
+# $angsd -b $DIR/ALL_bams.txt -ref $REF -out ./Results/ALL \
 #        -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
 #        -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1
 ```
