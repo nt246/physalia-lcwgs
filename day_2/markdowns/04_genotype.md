@@ -206,12 +206,12 @@ How many sites are in the PANY_call.geno.gz file?
 zcat $RESDIR/PANY_call.geno.gz  | wc -l
 ```
 
-How many sites have at least one individual with missing data?
+How many sites have at least one individual with a missing genotype?
 ```bash
 zcat $RESDIR/PANY_call.geno.gz | grep -c "\-1"
 ```
 
-How many sites have at least 10 individuals with missing data?
+How many sites have 10 individuals with missing genotypes?
 
 ```bash
 zcat $RESDIR/PANY_call.geno.gz | perl -ne '$n = () = $_ =~ /\t\-1/g; print "$n\n"' | grep -c "10$"
