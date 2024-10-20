@@ -332,10 +332,10 @@ Have a look at the first 20 SNPs in the output.
 
 ```bash
 # PANY derived allele frequencies
-zcat $RESDIR/PANY_derived.mafs.gz | head -n 20
+zcat $RESDIR/PANY_derived.mafs.gz | head -n 21
 
 # JIGA derived allele frequencies
-zcat $RESDIR/JIGA_derived.mafs.gz | head -n 20
+zcat $RESDIR/JIGA_derived.mafs.gz | head -n 21
 ```
 
 </details>
