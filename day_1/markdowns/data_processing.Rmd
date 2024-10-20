@@ -329,7 +329,7 @@ done
 <br>
 
 
-If the program ran, you should now see the output (in html format and a zip file with various files) in your `day1/fastqc` directory. To view the .html, use `scp` (as described [here](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2022.pdf)) or FileZilla (connection instructions also described [here](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2022.pdf)) to transfer the html output files to your local machine and open them in a web browser.
+If the program ran, you should now see the output (in html format and a zip file with various files) in your `day1/fastqc` directory. To view the .html, use `scp` (as described [here](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2023.pdf) or FileZilla (connection instructions also described [here](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2023.pdf)) to transfer the html output files to your local machine and open them in a web browser.
 
 If you're not able to download your own files, you can have a look at ours [here](https://github.com/nt246/physalia-lcwgs/tree/main/day_1/fastqc). We are keeping them in our GitHub repo, but GitHub doesn't render .html files, so to view the output, click on the output.html file you want to view, copy its URL and paste it into [this handy viewer](https://htmlpreview.github.io/) to see it in rendered html format.
 
@@ -474,9 +474,9 @@ $BOWTIEBUILD $REFERENCE $REFBASENAME
 
 ## Map to the reference, sort, and quality filter
 
-In this step, we align the short reads within each fastq file to the reference genome using `bowtie2`. The resulting alignment file, in `sam` format, will be converted to a binary format `bam` for more efficient storage. Each mapped read will have a mapping quality, which indicates how confident that mapper is that a read is mapped in the correct position. The [bowtie2 manual](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) defines it as "a non-negative integer Q = -10 log10 p, where p is an estimate of the probability that the alignment does not correspond to the read's true point of origin." Accordingly, a mapping quality (or MAPQ) of 10 or less indicates that there is at least a 1 in 10 chance that the read truly originated elsewhere, and a MAPQ of 20 indicates at least a 1 in 100 chance.
+In this step, we align the short reads within each fastq file to the reference genome using `bowtie2`. The resulting alignment file, in `sam` format, will be converted to a binary format `bam` for more efficient storage. Each mapped read will have a mapping quality, which indicates how confident the mapper is that a read is mapped in the correct position. The [bowtie2 manual](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) defines it as "a non-negative integer Q = -10 log10 p, where p is an estimate of the probability that the alignment does not correspond to the read's true point of origin." Accordingly, a mapping quality (or MAPQ) of 10 or less indicates that there is at least a 1 in 10 chance that the read truly originated elsewhere, and a MAPQ of 20 indicates at least a 1 in 100 chance.
 
-Here, to only retain reads for which we are reasonably certain have been mapped in the correct place, we will filter out reads with a mapping quality lower than 20, and after that sort the filtered alignment file for easier computation in the next step. 
+Here, to only retain reads for which we are reasonably certain that they have been mapped in the correct place, we will filter out reads with a mapping quality lower than 20, and after that sort the filtered alignment file for easier computation in the next step. 
 
 Look over the code and make sure you understand what it's doing, then copy and run it.
 
@@ -497,6 +497,7 @@ REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files, e.g
 for SAMPLEFILE in `cat $SAMPLELIST`; do
   
   ## Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
+  ## Then create a unique identifier name with those values we can add to our output file name
   SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4`
   POP_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 5`
   SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
@@ -853,7 +854,7 @@ done
 
 <br>  
 
-**On your local computer**, use FileZila if you have that installed (configuration instructions [here](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2022.pdf) or `scp` from a new Terminal window (where you're not logged into the server) to download the bam list and the depth files. For example:
+**On your local computer**, use FileZila if you have that installed (configuration instructions [here](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2023.pdf) or `scp` from a new Terminal window (where you're not logged into the server) to download the bam list and the depth files. For example:
 
 ```{bash eval=FALSE}
 ## Edit the follow variables
@@ -871,6 +872,18 @@ scp -i $KEY -r ${USER}@${IP}:~/day1/sample_lists/merged_bam_list.txt ./
 ```
 
 <br>  
+<br>
+
+If you're not able to your files downloaded from the server, you can download a copy of our files from the GitHub repo [here](https://github.com/nt246/physalia-lcwgs/tree/main/day_1/depth_files)
+
+<br>
+
+![](../img/download_from_github.png)
+
+
+<br>
+<br>
+
 
 Now we'll process and visualize the data in R
 
