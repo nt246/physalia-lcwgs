@@ -116,7 +116,8 @@ are scaled to the highest likelihood and log transformed (such that the most lik
 value of 0).
 
 **QUESTION**
-Can you tell which are the first two sites that look to be variable? Note that I'll refer to Mme_chr24:2558528-4558528 simply as chr24 for readability.
+
+Can you identify the first two variable sites? Note that I'll refer to Mme_chr24:2558528-4558528 simply as chr24 for readability at times throughout this tutorial.
 
 <details>
 
@@ -220,6 +221,7 @@ Let's plot the SFS as a barplot:
 $SCRIPTS/plotSFS.R $RESDIR/PANY.sfs $RESDIR/PANY_SFS 0
 
 # note that the plotSFS.R script is found in the github repo at https://github.com/nt246/physalia-lcwgs/tree/main/day_4
+
 ```
 
 <details>
@@ -367,6 +369,7 @@ $ANGSD -b $DIR/PANY_bams.txt -ref $REF -anc $REF -out $RESDIR/PANY_fold \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 60 -doCounts 1 \
    -GL 1 -doSaf 1
+
 ```
 
 Now calculate the SFS using this new .saf file as before, except this time tell `realSFS` to fold the spectrum with `-fold 1`
@@ -403,6 +406,7 @@ $ANGSD -b $DIR/PANY_bams.txt -ref $REF -anc $ANC -out $RESDIR/PANY_post \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 60 -doCounts 1 \
    -GL 1 -doSaf 1 -pest $RESDIR/PANY.sfs
+
 ```
 
 Have a look at the output:
@@ -502,26 +506,26 @@ $THETASTAT print $RESDIR/PANY.thetas.idx 2>/dev/null | head -n 21
 
 ```bash
 #Chromo	Pos	Watterson	Pairwise	thetaSingleton	thetaH	thetaL
-chr24	27	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
-chr24	28	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
-chr24	29	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
-chr24	30	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
-chr24	31	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
-chr24	32	-6.557443	-7.278310	-5.695343	-9.283727	-7.845174
-chr24	35	-6.557443	-7.278310	-5.695343	-9.283727	-7.845174
-chr24	38	-6.557443	-7.278310	-5.695343	-9.283727	-7.845174
-chr24	39	-6.602772	-7.355801	-5.716146	-9.435252	-7.931166
-chr24	40	-6.688331	-7.495578	-5.759189	-9.691832	-8.083268
-chr24	41	-6.729235	-7.559628	-5.781463	-9.803245	-8.151958
-chr24	42	-6.688332	-7.495582	-5.759189	-9.691842	-8.083272
-chr24	43	-6.729242	-7.559647	-5.781463	-9.803303	-8.151980
-chr24	44	-6.729246	-7.559657	-5.781463	-9.803333	-8.151993
-chr24	45	-6.688335	-7.495590	-5.759189	-9.691867	-8.083282
-chr24	46	-6.729248	-7.559663	-5.781463	-9.803354	-8.152000
-chr24	47	-6.729248	-7.559663	-5.781463	-9.803354	-8.152000
-chr24	48	-1.376662	-0.822030	-15.112546	-1.061792	-0.934742
-chr24	49	-6.602776	-7.355811	-5.716146	-9.435287	-7.931179
-chr24	50	-6.688341	-7.495606	-5.759189	-9.691919	-8.083302
+Mme_chr24:2558528-4558528	27	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
+Mme_chr24:2558528-4558528	28	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
+Mme_chr24:2558528-4558528	29	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
+Mme_chr24:2558528-4558528	30	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
+Mme_chr24:2558528-4558528	31	-6.557440	-7.278302	-5.695343	-9.283698	-7.845163
+Mme_chr24:2558528-4558528	32	-6.557443	-7.278310	-5.695343	-9.283727	-7.845174
+Mme_chr24:2558528-4558528	35	-6.557443	-7.278310	-5.695343	-9.283727	-7.845174
+Mme_chr24:2558528-4558528	38	-6.557443	-7.278310	-5.695343	-9.283727	-7.845174
+Mme_chr24:2558528-4558528	39	-6.602772	-7.355801	-5.716146	-9.435252	-7.931166
+Mme_chr24:2558528-4558528	40	-6.688331	-7.495578	-5.759189	-9.691832	-8.083268
+Mme_chr24:2558528-4558528	41	-6.729235	-7.559628	-5.781463	-9.803245	-8.151958
+Mme_chr24:2558528-4558528	42	-6.688332	-7.495582	-5.759189	-9.691842	-8.083272
+Mme_chr24:2558528-4558528	43	-6.729242	-7.559647	-5.781463	-9.803303	-8.151980
+Mme_chr24:2558528-4558528	44	-6.729246	-7.559657	-5.781463	-9.803333	-8.151993
+Mme_chr24:2558528-4558528	45	-6.688335	-7.495590	-5.759189	-9.691867	-8.083282
+Mme_chr24:2558528-4558528	46	-6.729248	-7.559663	-5.781463	-9.803354	-8.152000
+Mme_chr24:2558528-4558528	47	-6.729248	-7.559663	-5.781463	-9.803354	-8.152000
+Mme_chr24:2558528-4558528	48	-1.376662	-0.822030	-15.112546	-1.061792	-0.934742
+Mme_chr24:2558528-4558528	49	-6.602776	-7.355811	-5.716146	-9.435287	-7.931179
+Mme_chr24:2558528-4558528	50	-6.688341	-7.495606	-5.759189	-9.691919	-8.083302
 ```
 The columns are (1) Chromosome, (2) position, (3) Watterson's theta, (4) nucleotide diversity, (5) theta based only on singletons, (6) theta H, (7) theta L.
 The estimates of theta are linear functions of the SFS, so if you wanted to estimate theta for a region you simply sum the estimates over all sites in the region.
@@ -543,6 +547,7 @@ give different estimates of theta, followed by five columns with different neutr
 used in calculating the statistics for the given region. More information about the output can be found [here](http://www.popgen.dk/angsd/index.php/Thetas,Tajima,Neutrality_tests).
 
 **QUESTION**
+
 What are the per site estimates of Watterson's theta and nucleotide diversity for Mme_chr24:2558528-4558528? What is the estimate of 
 Tajima's D for this region?
 
@@ -554,7 +559,7 @@ The output is:
 
 ```bash
 #(indexStart,indexStop)(firstPos_withData,lastPos_withData)(WinStart,WinStop)	Chr	WinCenter	tW	tP	tF	tH	tL	Tajima	fuf	fud	fayh	zeng	nSites
-(0,1351769)(27,1999989)(0,1999989)	chr24	999994	4233.873378	3712.268273	5440.874692	4406.047859	4059.158069	-0.483002	-0.758499	-0.698366	-0.142861	-0.037702	1351769
+(0,1351769)(27,1999989)(0,1999989)	Mme_chr24:2558528-4558528	999994	4233.873378	3712.268273	5440.874692	4406.047859	4059.158069	-0.483002	-0.758499	-0.698366	-0.142861	-0.037702	1351769
 ```
 
 The total number of sites used in the statistic calculations are given in the last column, and is equal to 1351769.
@@ -596,6 +601,7 @@ $ANGSD -b $DIR/MAQU_bams.txt -ref $REF -anc $ANC -out $RESDIR/MAQU \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 60 -doCounts 1 \
    -GL 1 -doSaf 1
+
 ```
 
 Then we can use each population's respective allele frequency likelihoods to obtain a maximum likelihood estimate of the 
