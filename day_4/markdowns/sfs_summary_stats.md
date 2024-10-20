@@ -32,6 +32,7 @@ ANGSD=/home/ubuntu/angsd/angsd
 REALSFS=/home/ubuntu/angsd/misc/realSFS
 THETASTAT=/home/ubuntu/angsd/misc/thetaStat
 SCRIPTS=/home/ubuntu/Share/physalia-lcwgs/day_4
+
 ```
 
 ### Data
