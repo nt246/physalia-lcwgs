@@ -88,7 +88,7 @@ less -S $RESDIR/PANY.geno.gz
 
 **Question**
 
-What are the three posterior probabilites for PANY_07 at chr24:459780? Think back to how you extracted information 
+What are the three posterior probabilites for PANY_07 at chr24:459780 (note that I'm calling 'Mme_chr24:2558528-4558528' 'chr24' for readability)? Think back to how you extracted information 
 from the glf files.
 
 <details>
@@ -114,7 +114,7 @@ The most probable genotype configuration is {major,major} with a posterior proba
 
 </details> 
 
-What do the genotype probabilities for PANY_07 at chr24:459780 sum to? (note that I'm calling 'Mme_chr24:2558528-4558528' 'chr24' for simplicity)
+What do the genotype probabilities for PANY_07 at chr24:459780 sum to?
 
 <details>
 
