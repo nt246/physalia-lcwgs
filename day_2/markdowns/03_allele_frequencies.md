@@ -328,6 +328,16 @@ $angsd -b $DIR/JIGA_bams.txt -ref $REF -out $RESDIR/JIGA_derived \
 
 Are you able to describe what the commands above are doing?
 
+Have a look at the first 20 SNPs in the output.
+
+```bash
+# PANY derived allele frequencies
+zcat $RESDIR/PANY_derived.mafs.gz | head -n 20
+
+# JIGA derived allele frequencies
+zcat $RESDIR/JIGA_derived.mafs.gz | head -n 20
+```
+
 </details>
 
 Now you know how to estimate allele frequencies and call SNPs based on these frequencies. Next you'll learn how to call genotypes.
