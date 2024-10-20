@@ -101,26 +101,26 @@ In general, `-GL 1`, `-doMaf 1/2`, and `-doMajorMinor 1` should be the preferred
 Take a look at the MAF file with `less $RESDIR/PANY.mafs.gz`. The first 20 lines of the file should look like
 
 ```
-chromo	position	major	minor	knownEM	nInd
-chr24	27	A	C	0.000004	5
-chr24	28	T	A	0.000004	5
-chr24	29	T	A	0.000004	5
-chr24	30	T	A	0.000004	5
-chr24	31	A	C	0.000004	5
-chr24	32	T	A	0.000004	5
-chr24	35	C	A	0.000004	5
-chr24	38	A	C	0.000004	5
-chr24	39	T	A	0.000004	6
-chr24	40	G	A	0.000005	7
-chr24	41	T	A	0.000006	7
-chr24	42	G	A	0.000005	7
-chr24	43	T	A	0.000006	7
-chr24	44	T	A	0.000006	7
-chr24	45	G	A	0.000005	7
-chr24	46	A	C	0.000006	7
-chr24	47	T	A	0.000006	7
-chr24	48	C	G	0.430705	7
-chr24	49	T	A	0.000004	6
+chromo	position	major	minor	ref	knownEM	nInd
+Mme_chr24:2558528-4558528	27	A	C	A	0.000004	5
+Mme_chr24:2558528-4558528	28	T	A	T	0.000004	5
+Mme_chr24:2558528-4558528	29	T	A	T	0.000004	5
+Mme_chr24:2558528-4558528	30	T	A	T	0.000004	5
+Mme_chr24:2558528-4558528	31	A	C	A	0.000004	5
+Mme_chr24:2558528-4558528	32	T	A	T	0.000004	5
+Mme_chr24:2558528-4558528	35	C	A	C	0.000004	5
+Mme_chr24:2558528-4558528	38	A	C	A	0.000004	5
+Mme_chr24:2558528-4558528	39	T	A	T	0.000004	6
+Mme_chr24:2558528-4558528	40	G	A	G	0.000005	7
+Mme_chr24:2558528-4558528	41	T	A	T	0.000006	7
+Mme_chr24:2558528-4558528	42	G	A	G	0.000005	7
+Mme_chr24:2558528-4558528	43	T	A	T	0.000006	7
+Mme_chr24:2558528-4558528	44	T	A	T	0.000006	7
+Mme_chr24:2558528-4558528	45	G	A	G	0.000005	7
+Mme_chr24:2558528-4558528	46	A	C	A	0.000006	7
+Mme_chr24:2558528-4558528	47	T	A	T	0.000006	7
+Mme_chr24:2558528-4558528	48	C	G	C	0.430705	7
+Mme_chr24:2558528-4558528	49	T	A	T	0.000004	6
 ```
 
 The columns are (1) chromosome/ref sequence name, (2) position, (3) the major allele, (4) the minor allele, (5) the allele frequency, 
