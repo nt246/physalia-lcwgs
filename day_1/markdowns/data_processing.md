@@ -1,60 +1,37 @@
 Tutorial 1: Data processing - from .fastq to .bam
 ================
 
-- <a href="#case-study-for-practicals"
-  id="toc-case-study-for-practicals">Case study for practicals</a>
-- <a href="#initial-preparation" id="toc-initial-preparation">Initial
-  preparation</a>
-  - <a href="#1-make-sure-youre-up-to-speed-on-basic-shell-scripting"
-    id="toc-1-make-sure-youre-up-to-speed-on-basic-shell-scripting">1. Make
-    sure you’re up to speed on basic shell scripting</a>
-  - <a href="#2-copy-the-working-directories-with-the-needed-input-files"
-    id="toc-2-copy-the-working-directories-with-the-needed-input-files">2.
-    Copy the working directories with the needed input files</a>
-  - <a
-    href="#3-orient-yourself-to-the-formatting-of-our-fastq-table-and-fastq-list"
-    id="toc-3-orient-yourself-to-the-formatting-of-our-fastq-table-and-fastq-list">3.
-    Orient yourself to the formatting of our fastq table and fastq list</a>
-  - <a
-    href="#4-make-sure-youre-familiar-with-for-loops-and-how-to-assign-and-call-variables-in-bash"
-    id="toc-4-make-sure-youre-familiar-with-for-loops-and-how-to-assign-and-call-variables-in-bash">4.
-    Make sure you’re familiar with <code>for loops</code> and how to assign
-    and call variables in bash</a>
-  - <a
-    href="#5-practice-using-bash-for-loops-to-iterate-over-target-samples"
-    id="toc-5-practice-using-bash-for-loops-to-iterate-over-target-samples">5.
-    Practice using bash <code>for loops</code> to iterate over target
-    samples</a>
-  - <a href="#6-define-paths-to-the-project-directory-and-programs"
-    id="toc-6-define-paths-to-the-project-directory-and-programs">6. Define
-    paths to the project directory and programs</a>
-- <a href="#data-processing-pipeline"
-  id="toc-data-processing-pipeline">Data processing pipeline</a>
-  - <a href="#examine-the-raw-fastq-files"
-    id="toc-examine-the-raw-fastq-files">Examine the raw fastq files</a>
-  - <a href="#adapter-clipping" id="toc-adapter-clipping">Adapter
-    clipping</a>
-  - <a href="#optional-quality-trimming"
-    id="toc-optional-quality-trimming">OPTIONAL: Quality trimming</a>
-  - <a href="#build-reference-index-files"
-    id="toc-build-reference-index-files">Build reference index files</a>
-  - <a href="#map-to-the-reference-sort-and-quality-filter"
-    id="toc-map-to-the-reference-sort-and-quality-filter">Map to the
-    reference, sort, and quality filter</a>
-  - <a href="#examine-the-bam-files" id="toc-examine-the-bam-files">Examine
-    the bam files</a>
-  - <a href="#merge-samples-that-were-sequenced-in-multiple-batches"
-    id="toc-merge-samples-that-were-sequenced-in-multiple-batches">Merge
-    samples that were sequenced in multiple batches</a>
-  - <a href="#deduplicate-and-clip-overlapping-read-pairs"
-    id="toc-deduplicate-and-clip-overlapping-read-pairs">Deduplicate and
-    clip overlapping read pairs</a>
-  - <a href="#indel-realignment-optional"
-    id="toc-indel-realignment-optional">Indel realignment (optional)</a>
-  - <a href="#estimate-read-depth-in-your-bam-files"
-    id="toc-estimate-read-depth-in-your-bam-files">Estimate read depth in
-    your bam files</a>
-  - <a href="#end-of-day-1" id="toc-end-of-day-1">END OF DAY 1</a>
+- [Case study for practicals](#case-study-for-practicals)
+- [Initial preparation](#initial-preparation)
+  - [1. Make sure you’re up to speed on basic shell
+    scripting](#1-make-sure-youre-up-to-speed-on-basic-shell-scripting)
+  - [2. Copy the working directories with the needed input
+    files](#2-copy-the-working-directories-with-the-needed-input-files)
+  - [3. Orient yourself to the formatting of our fastq table and fastq
+    list](#3-orient-yourself-to-the-formatting-of-our-fastq-table-and-fastq-list)
+  - [4. Make sure you’re familiar with `for loops` and how to assign and
+    call variables in
+    bash](#4-make-sure-youre-familiar-with-for-loops-and-how-to-assign-and-call-variables-in-bash)
+  - [5. Practice using bash `for loops` to iterate over target
+    samples](#5-practice-using-bash-for-loops-to-iterate-over-target-samples)
+  - [6. Define paths to the project directory and
+    programs](#6-define-paths-to-the-project-directory-and-programs)
+- [Data processing pipeline](#data-processing-pipeline)
+  - [Examine the raw fastq files](#examine-the-raw-fastq-files)
+  - [Adapter clipping](#adapter-clipping)
+  - [OPTIONAL: Quality trimming](#optional-quality-trimming)
+  - [Build reference index files](#build-reference-index-files)
+  - [Map to the reference, sort, and quality
+    filter](#map-to-the-reference-sort-and-quality-filter)
+  - [Examine the bam files](#examine-the-bam-files)
+  - [Merge samples that were sequenced in multiple
+    batches](#merge-samples-that-were-sequenced-in-multiple-batches)
+  - [Deduplicate and clip overlapping read
+    pairs](#deduplicate-and-clip-overlapping-read-pairs)
+  - [Indel realignment (optional)](#indel-realignment-optional)
+  - [Estimate read depth in your bam
+    files](#estimate-read-depth-in-your-bam-files)
+  - [END OF DAY 1](#end-of-day-1)
 
 <br> <br>
 
@@ -517,9 +494,9 @@ done
 If the program ran, you should now see the output (in html format and a
 zip file with various files) in your `day1/fastqc` directory. To view
 the .html, use `scp` (as described
-[here](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2022.pdf))
+[here](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2023.pdf)
 or FileZilla (connection instructions also described
-[here](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2022.pdf))
+[here](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2023.pdf))
 to transfer the html output files to your local machine and open them in
 a web browser.
 
@@ -725,7 +702,7 @@ In this step, we align the short reads within each fastq file to the
 reference genome using `bowtie2`. The resulting alignment file, in `sam`
 format, will be converted to a binary format `bam` for more efficient
 storage. Each mapped read will have a mapping quality, which indicates
-how confident that mapper is that a read is mapped in the correct
+how confident the mapper is that a read is mapped in the correct
 position. The [bowtie2
 manual](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) defines
 it as “a non-negative integer Q = -10 log10 p, where p is an estimate of
@@ -735,10 +712,10 @@ less indicates that there is at least a 1 in 10 chance that the read
 truly originated elsewhere, and a MAPQ of 20 indicates at least a 1 in
 100 chance.
 
-Here, to only retain reads for which we are reasonably certain have been
-mapped in the correct place, we will filter out reads with a mapping
-quality lower than 20, and after that sort the filtered alignment file
-for easier computation in the next step.
+Here, to only retain reads for which we are reasonably certain that they
+have been mapped in the correct place, we will filter out reads with a
+mapping quality lower than 20, and after that sort the filtered
+alignment file for easier computation in the next step.
 
 Look over the code and make sure you understand what it’s doing, then
 copy and run it.
@@ -760,6 +737,7 @@ REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files, e.g
 for SAMPLEFILE in `cat $SAMPLELIST`; do
   
   ## Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
+  ## Then create a unique identifier name with those values we can add to our output file name
   SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4`
   POP_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 5`
   SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
@@ -1078,7 +1056,7 @@ done
 <br>
 
 Please note that the deduplication step is rather memory-consuming and
-only \~15 participants can run it at the same time. It should only take
+only ~15 participants can run it at the same time. It should only take
 about a minute to run though, so if you see the following error
 messages, please wait for a minute and try to rerun your code.
 
@@ -1118,7 +1096,7 @@ takes all the aligned sequences from all samples in to account to
 validate the indels discovered from the mapping process and then
 realigns each read locally. This is not a mandatory step and tends to be
 very time-consuming if you have a large dataset, but the code is
-provided here if you want to give it a try (it takes \~3 minutes for our
+provided here if you want to give it a try (it takes ~3 minutes for our
 small sample dataset). We will not use this output for the rest of this
 course though.
 
@@ -1212,7 +1190,7 @@ done
 
 **On your local computer**, use FileZila if you have that installed
 (configuration instructions
-[here](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2022.pdf)
+[here](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2023.pdf)
 or `scp` from a new Terminal window (where you’re not logged into the
 server) to download the bam list and the depth files. For example:
 
@@ -1231,7 +1209,18 @@ scp -i $KEY -r ${USER}@${IP}:~/day1/bam/*depth.gz ./
 scp -i $KEY -r ${USER}@${IP}:~/day1/sample_lists/merged_bam_list.txt ./
 ```
 
+<br>  
 <br>
+
+If you’re not able to your files downloaded from the server, you can
+download a copy of our files from the GitHub repo
+[here](https://github.com/nt246/physalia-lcwgs/tree/main/day_1/depth_files)
+
+<br>
+
+![](../img/download_from_github.png)
+
+<br> <br>
 
 Now we’ll process and visualize the data in R
 
