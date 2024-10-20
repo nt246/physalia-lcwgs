@@ -281,7 +281,7 @@ allele. We can do this with `-doMajorMinor 3, 4, or 5`.
 
 **QUESTION**
 
-How could you compare the **derived** allele frequencies at sites segregating among the PANY and JIGA populations? Try doing this.
+How do you compare the **derived** allele frequencies between PANY and JIGA at sites segregating among all populations? Try doing this.
 
 Hint: You can have ANGSD analyze a subset of sites using the `-sites` argument. You can read about it [here](http://www.popgen.dk/angsd/index.php/Sites)
 
@@ -328,7 +328,8 @@ $angsd -b $DIR/JIGA_bams.txt -ref $REF -out $RESDIR/JIGA_derived \
 
 Are you able to describe what the commands above are doing?
 
-Have a look at the first 20 SNPs in the output.
+Have a look at the first 20 SNPs in the output. Note that the "minor" or in this case the derived allele 
+identity is arbitrary when its frequency is zero or very small (effectively zero).
 
 ```bash
 # PANY derived allele frequencies
