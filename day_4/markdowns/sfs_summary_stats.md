@@ -24,8 +24,8 @@ and set the following environment variables
 
 ```bash
 DIR=/home/ubuntu/Share/physalia-lcwgs/data
-REF=$DIR/Ref_rename.fa
-ANC=$DIR/outgrp_ref_rename.fa
+REF=$DIR/Ref.fa
+ANC=$DIR/outgrp_ref.fa
 RESDIR=~/day4/Results
 DATDIR=~/day4/Data
 ANGSD=/home/ubuntu/angsd/angsd
@@ -95,7 +95,7 @@ Let's calculate the allele frequency likelihoods at all sites. You will typicall
 in which case `-doSaf 2` is more accurate.
 
 ```bash
-$ANGSD -b $DIR/PANY_bams_rename.txt -ref $REF -anc $ANC -out $RESDIR/PANY \
+$ANGSD -b $DIR/PANY_bams.txt -ref $REF -anc $ANC -out $RESDIR/PANY \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 60 -doCounts 1 \
    -GL 1 -doSaf 1
@@ -361,7 +361,7 @@ the reference FASTA in the case of folding (remember, we are pretending that we 
 
 
 ```bash
-$ANGSD -b $DIR/PANY_bams_rename.txt -ref $REF -anc $REF -out $RESDIR/PANY_fold \
+$ANGSD -b $DIR/PANY_bams.txt -ref $REF -anc $REF -out $RESDIR/PANY_fold \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 60 -doCounts 1 \
    -GL 1 -doSaf 1
@@ -397,7 +397,7 @@ Let's calculate derived allele frequency posterior probabilities for the PANY po
 the SFS are a prior with '-pest':
 
 ```bash
-$ANGSD -b $DIR/PANY_bams_rename.txt -ref $REF -anc $ANC -out $RESDIR/PANY_post \
+$ANGSD -b $DIR/PANY_bams.txt -ref $REF -anc $ANC -out $RESDIR/PANY_post \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 60 -doCounts 1 \
    -GL 1 -doSaf 1 -pest $RESDIR/PANY.sfs
@@ -590,7 +590,7 @@ We'll calculate the 2D-SFS between the PANY and MAQU populations. The first step
 separately. We've already done this for the PANY population, so let's do this calculation for the MAQU population:
 
 ```bash
-$ANGSD -b $DIR/MAQU_bams_rename.txt -ref $REF -anc $ANC -out $RESDIR/MAQU \
+$ANGSD -b $DIR/MAQU_bams.txt -ref $REF -anc $ANC -out $RESDIR/MAQU \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 60 -doCounts 1 \
    -GL 1 -doSaf 1
