@@ -89,7 +89,7 @@ need to calculate the genotype likelihoods on the fly with `-GL`.
 
 ```bash
 
-$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_wbams \
+$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
    -GL 1 -doMajorMinor 1 -doMaf 1
