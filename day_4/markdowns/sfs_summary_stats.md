@@ -100,6 +100,7 @@ $ANGSD -b $DIR/PANY_bams.txt -ref $REF -anc $ANC -out $RESDIR/PANY \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 60 -doCounts 1 \
    -GL 1 -doSaf 1
+
 ```
 
 You can have a look at the results using `realSFS` (note that realSFS is querying the index to make a human-readable 
@@ -115,7 +116,7 @@ are scaled to the highest likelihood and log transformed (such that the most lik
 value of 0).
 
 **QUESTION**
-Can you tell which are the first two sites that look to be variable?
+Can you tell which are the first two sites that look to be variable? Note that I'll refer to Mme_chr24:2558528-4558528 simply as chr24 for readability.
 
 <details>
 
@@ -216,7 +217,7 @@ These are the *expected* number of sites in the PANY sample with 0 (value 1), 1 
 Let's plot the SFS as a barplot:
 
 ```bash
-$SCRIPTS/plotSFS.R $RESDIR/PANY.sfs PANY_SFS 0
+$SCRIPTS/plotSFS.R $RESDIR/PANY.sfs $RESDIR/PANY_SFS 0
 
 # note that the plotSFS.R script is found in the github repo at https://github.com/nt246/physalia-lcwgs/tree/main/day_4
 ```
@@ -273,10 +274,10 @@ We can also compare our observed SFS to what we would expect for a neutrally evo
 
 ```bash
 # barplot
-$SCRIPTS/compare_sfs.R $RESDIR/PANY.sfs PANY_SFS_compare 0 bar
+$SCRIPTS/compare_sfs.R $RESDIR/PANY.sfs $RESDIR/PANY_SFS_compare 0 bar
 
 # scatterplot
-$SCRIPTS/compare_sfs.R $RESDIR/PANY.sfs PANY_SFS_compare 0 scatter
+$SCRIPTS/compare_sfs.R $RESDIR/PANY.sfs $RESDIR/PANY_SFS_compare 0 scatter
 
 # note that the compare_sfs.R script is found in the github repo at https://github.com/nt246/physalia-lcwgs/tree/main/day_4
 
@@ -455,11 +456,11 @@ The probability that a site is variable is given by, P(variable) = 1 - P(0 deriv
 alleles are fixed.
 
 
-P(chr24:39 is variable) = 1 - exp(-0.005389) + exp(-Inf) = 0.005374505
+P(chr24:39 is variable) = 1 - (exp(-0.005389) + exp(-Inf)) = 0.005374505
 </br>
-P(chr24:48 is variable) = 1 - exp(-Inf) + exp(-Inf) = 1
+P(chr24:48 is variable) = 1 - (exp(-Inf) + exp(-Inf)) = 1
 </br>
-P(chr24:61 is variable) = 1 - exp(-0.638232) + exp(-Inf) = 0.4717745
+P(chr24:61 is variable) = 1 - (exp(-0.638232) + exp(-Inf)) = 0.4717745
 
 Alternatively, you could take the sum over P(*x* derived alleles) for *x*=1 to *x*=2N-1. This would give the same answers.
 
@@ -537,12 +538,12 @@ Have a look at the output:
 less -S $RESDIR/PANY.thetas.idx.pestPG
 ```
 There are 14 tab-delimited fields. The first 3 columns provide information about the coordinates of the genomic region (window) that the statistic values are for. In this instance 
-these coordinates specify the entire chromosome (chr24) since we did not give any window information to `thetaStat`. The next five columns 
+these coordinates specify the entire chromosome (Mme_chr24:2558528-4558528) since we did not give any window information to `thetaStat`. The next five columns 
 give different estimates of theta, followed by five columns with different neutrality statistics calculated from the theta estimates. The last column is the number of sites with data that were 
 used in calculating the statistics for the given region. More information about the output can be found [here](http://www.popgen.dk/angsd/index.php/Thetas,Tajima,Neutrality_tests).
 
 **QUESTION**
-What are the per site estimates of Watterson's theta and nucleotide diversity for chromosome chr24? What is the estimate of 
+What are the per site estimates of Watterson's theta and nucleotide diversity for Mme_chr24:2558528-4558528? What is the estimate of 
 Tajima's D for this region?
 
 <details>
@@ -566,8 +567,8 @@ Tajima's D is given in column 9 ("Tajima") and is equal to -0.483002.
 
 </details>
 
-It is also possible to have `thetaStat` print thetas and neutrality statistics in windows along the genome. As an example, let's look at windows of 10kb along chr24 using a 
-step size of 1kb (i.e. every 10kb window will be advanced by 1kb).
+It is also possible to have `thetaStat` print thetas and neutrality statistics in windows along the genome. As an example, let's look at windows of 10kb along Mme_chr24:2558528-4558528 
+using a step size of 1kb (i.e. every 10kb window will be advanced by 1kb).
 
 ```bash
 $THETASTAT do_stat $RESDIR/PANY.thetas.idx -win 10000 -step 1000  -outnames $RESDIR/PANY.thetasWindow.gz  
