@@ -77,10 +77,10 @@ need to provide the number of individuals in the file with `-nInd` and the refer
 like that we have a colon in the chromosome name so we'll use bams as input which means the likelihoods are recalculated on the fly and is less efficient but 
 is how we must proceed for this tutorial.
 
-Here's an example for how you would use the precomputed genotype likelihoods as input (if you try to run this you will get an error because of the chromosome name).
+Here's an example for how you would use the precomputed genotype likelihoods as input (if you try to run this you will get an error because of the way the example chromosome is named).
 
-#```bash
-#$angsd -glf10_text $RESDIR/PANY.glf.gz -out $RESDIR/PANY \
+```bash
+# $angsd -glf10_text $RESDIR/PANY.glf.gz -out $RESDIR/PANY \
 #   -nInd 15 -fai $DIR/Ref.fa.fai -doMajorMinor 1 -doMaf 1 -minInd 5
 ```
 
