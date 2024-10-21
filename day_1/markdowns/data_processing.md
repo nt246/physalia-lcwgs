@@ -1,37 +1,60 @@
 Tutorial 1: Data processing - from .fastq to .bam
 ================
 
-- [Case study for practicals](#case-study-for-practicals)
-- [Initial preparation](#initial-preparation)
-  - [1. Make sure you’re up to speed on basic shell
-    scripting](#1-make-sure-youre-up-to-speed-on-basic-shell-scripting)
-  - [2. Copy the working directories with the needed input
-    files](#2-copy-the-working-directories-with-the-needed-input-files)
-  - [3. Orient yourself to the formatting of our fastq table and fastq
-    list](#3-orient-yourself-to-the-formatting-of-our-fastq-table-and-fastq-list)
-  - [4. Make sure you’re familiar with `for loops` and how to assign and
-    call variables in
-    bash](#4-make-sure-youre-familiar-with-for-loops-and-how-to-assign-and-call-variables-in-bash)
-  - [5. Practice using bash `for loops` to iterate over target
-    samples](#5-practice-using-bash-for-loops-to-iterate-over-target-samples)
-  - [6. Define paths to the project directory and
-    programs](#6-define-paths-to-the-project-directory-and-programs)
-- [Data processing pipeline](#data-processing-pipeline)
-  - [Examine the raw fastq files](#examine-the-raw-fastq-files)
-  - [Adapter clipping](#adapter-clipping)
-  - [OPTIONAL: Quality trimming](#optional-quality-trimming)
-  - [Build reference index files](#build-reference-index-files)
-  - [Map to the reference, sort, and quality
-    filter](#map-to-the-reference-sort-and-quality-filter)
-  - [Examine the bam files](#examine-the-bam-files)
-  - [Merge samples that were sequenced in multiple
-    batches](#merge-samples-that-were-sequenced-in-multiple-batches)
-  - [Deduplicate and clip overlapping read
-    pairs](#deduplicate-and-clip-overlapping-read-pairs)
-  - [Indel realignment (optional)](#indel-realignment-optional)
-  - [Estimate read depth in your bam
-    files](#estimate-read-depth-in-your-bam-files)
-  - [END OF DAY 1](#end-of-day-1)
+- <a href="#case-study-for-practicals"
+  id="toc-case-study-for-practicals">Case study for practicals</a>
+- <a href="#initial-preparation" id="toc-initial-preparation">Initial
+  preparation</a>
+  - <a href="#1-make-sure-youre-up-to-speed-on-basic-shell-scripting"
+    id="toc-1-make-sure-youre-up-to-speed-on-basic-shell-scripting">1. Make
+    sure you’re up to speed on basic shell scripting</a>
+  - <a href="#2-copy-the-working-directories-with-the-needed-input-files"
+    id="toc-2-copy-the-working-directories-with-the-needed-input-files">2.
+    Copy the working directories with the needed input files</a>
+  - <a
+    href="#3-orient-yourself-to-the-formatting-of-our-fastq-table-and-fastq-list"
+    id="toc-3-orient-yourself-to-the-formatting-of-our-fastq-table-and-fastq-list">3.
+    Orient yourself to the formatting of our fastq table and fastq list</a>
+  - <a
+    href="#4-make-sure-youre-familiar-with-for-loops-and-how-to-assign-and-call-variables-in-bash"
+    id="toc-4-make-sure-youre-familiar-with-for-loops-and-how-to-assign-and-call-variables-in-bash">4.
+    Make sure you’re familiar with <code>for loops</code> and how to assign
+    and call variables in bash</a>
+  - <a
+    href="#5-practice-using-bash-for-loops-to-iterate-over-target-samples"
+    id="toc-5-practice-using-bash-for-loops-to-iterate-over-target-samples">5.
+    Practice using bash <code>for loops</code> to iterate over target
+    samples</a>
+  - <a href="#6-define-paths-to-the-project-directory-and-programs"
+    id="toc-6-define-paths-to-the-project-directory-and-programs">6. Define
+    paths to the project directory and programs</a>
+- <a href="#data-processing-pipeline"
+  id="toc-data-processing-pipeline">Data processing pipeline</a>
+  - <a href="#examine-the-raw-fastq-files"
+    id="toc-examine-the-raw-fastq-files">Examine the raw fastq files</a>
+  - <a href="#adapter-clipping" id="toc-adapter-clipping">Adapter
+    clipping</a>
+  - <a href="#optional-quality-trimming"
+    id="toc-optional-quality-trimming">OPTIONAL: Quality trimming</a>
+  - <a href="#build-reference-index-files"
+    id="toc-build-reference-index-files">Build reference index files</a>
+  - <a href="#map-to-the-reference-sort-and-quality-filter"
+    id="toc-map-to-the-reference-sort-and-quality-filter">Map to the
+    reference, sort, and quality filter</a>
+  - <a href="#examine-the-bam-files" id="toc-examine-the-bam-files">Examine
+    the bam files</a>
+  - <a href="#merge-samples-that-were-sequenced-in-multiple-batches"
+    id="toc-merge-samples-that-were-sequenced-in-multiple-batches">Merge
+    samples that were sequenced in multiple batches</a>
+  - <a href="#deduplicate-and-clip-overlapping-read-pairs"
+    id="toc-deduplicate-and-clip-overlapping-read-pairs">Deduplicate and
+    clip overlapping read pairs</a>
+  - <a href="#indel-realignment-optional"
+    id="toc-indel-realignment-optional">Indel realignment (optional)</a>
+  - <a href="#estimate-read-depth-in-your-bam-files"
+    id="toc-estimate-read-depth-in-your-bam-files">Estimate read depth in
+    your bam files</a>
+  - <a href="#end-of-day-1" id="toc-end-of-day-1">END OF DAY 1</a>
 
 <br> <br>
 
@@ -1056,7 +1079,7 @@ done
 <br>
 
 Please note that the deduplication step is rather memory-consuming and
-only ~15 participants can run it at the same time. It should only take
+only \~15 participants can run it at the same time. It should only take
 about a minute to run though, so if you see the following error
 messages, please wait for a minute and try to rerun your code.
 
@@ -1096,7 +1119,7 @@ takes all the aligned sequences from all samples in to account to
 validate the indels discovered from the mapping process and then
 realigns each read locally. This is not a mandatory step and tends to be
 very time-consuming if you have a large dataset, but the code is
-provided here if you want to give it a try (it takes ~3 minutes for our
+provided here if you want to give it a try (it takes \~3 minutes for our
 small sample dataset). We will not use this output for the rest of this
 course though.
 
@@ -1106,9 +1129,6 @@ Click here to see the GATK IndelRealigner code
 </summary>
 
 ``` bash
-## GATK-3.7 is installed in a separate conda environment
-conda deactivate
-conda activate gatk-3.7
 
 BAMLIST=$BASEDIR/sample_lists/bam_list_dedup_overlapclipped.list # Path to a list of merged, deduplicated, and overlap clipped bam files. Full paths should be included. This file has to have a suffix of ".list"
 REFERENCE=$BASEDIR/reference/mme_physalia_testdata_chr24.fa # Path to reference fasta file and file name
@@ -1124,6 +1144,10 @@ cd $BASEDIR/bam/
 for SAMPLEBAM in `cat $BAMLIST`; do
   $SAMTOOLS index $SAMPLEBAM
 done
+
+## GATK-3.7 is installed in a separate conda environment, which we activate now
+conda deactivate
+conda activate gatk-3.7
 
 ## Realign around in-dels
 # This is done across all samples at once

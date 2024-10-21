@@ -7,9 +7,9 @@ Before getting started, if this is a new session, set evironment variables
 RESDIR=~/day2/Results
 DATDIR=~/day2/Data
 DIR=/home/ubuntu/Share/physalia-lcwgs/data
-DATA=$DIR/BAMS_RENAME
-REF=$DIR/Ref_rename.fa
-ANC=$DIR/outgrp_ref_rename.fa
+DATA=$DIR/BAMS
+REF=$DIR/Ref.fa
+ANC=$DIR/outgrp_ref.fa
 angsd=/home/ubuntu/angsd/angsd
 
 cd ~/day2
@@ -53,7 +53,7 @@ Let's first work with only the PANY samples.
 A possible command to calculate genotype likelihoods is
 
 ```
-$angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY \
+$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
         -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
         -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
         -GL 1 -doGlf 4
@@ -125,7 +125,7 @@ echo "$INDNUM"
 So this individual is at row 4 in the bam list. Now we can extract their likelihoods.
 
 ```bash
-zcat $RESDIR/PANY.glf.gz | grep -m 1 $'^chr24\t34213\t' | cut -f 3- | perl -se '$start=($n-1)*10; @arr = split(/\t/,<>); print "@arr[$start .. $start+9]\n"' -- -n=$INDNUM
+zcat $RESDIR/PANY.glf.gz | grep -m 1 $'^Mme_chr24:2558528-4558528\t34213\t' | cut -f 3- | perl -se '$start=($n-1)*10; @arr = split(/\t/,<>); print "@arr[$start .. $start+9]\n"' -- -n=$INDNUM
 ```
 For PANY_04 the 5th likelihood is zero, corresponding to the genotype 'CC'.
 
@@ -154,7 +154,7 @@ Look at the file sizes of text vs binary format. Which one is smaller?
 Use `-doGlf 1` to output genotype likelihoods in binary. So the full command would be
 
 ```
-$angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY_binary \
+$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_binary \
         -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
         -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
         -GL 1 -doGlf 1

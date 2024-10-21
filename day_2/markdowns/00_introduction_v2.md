@@ -34,9 +34,9 @@ Set environment variables to point to these directories, files that we'll use, a
 RESDIR=~/day2/Results
 DATDIR=~/day2/Data
 DIR=/home/ubuntu/Share/physalia-lcwgs/data
-DATA=$DIR/BAMS_RENAME
-REF=$DIR/Ref_rename.fa
-ANC=$DIR/outgrp_ref_rename.fa
+DATA=$DIR/BAMS
+REF=$DIR/Ref.fa
+ANC=$DIR/outgrp_ref.fa
 angsd=/home/ubuntu/angsd/angsd
 
 ```

@@ -6,9 +6,9 @@ Before getting started, if this is a new session, set evironment variables
 RESDIR=~/day2/Results
 DATDIR=~/day2/Data
 DIR=/home/ubuntu/Share/physalia-lcwgs/data
-DATA=$DIR/BAMS_RENAME
-REF=$DIR/Ref_rename.fa
-ANC=$DIR/outgrp_ref_rename.fa
+DATA=$DIR/BAMS
+REF=$DIR/Ref.fa
+ANC=$DIR/outgrp_ref.fa
 angsd=/home/ubuntu/angsd/angsd
 
 cd ~/day2
@@ -72,57 +72,55 @@ abcMajorMinor.cpp:
 	-skipTriallelic	0
 ```
 
-Let's estimate minor allele frequences (MAFs) using the GLs that we calculated from the last section as input. When supplying a glf file as input we also
-need to provide the number of individuals in the file with `-nInd` and the reference index file with `-fai`.
+You can estimate minor allele frequences (MAFs) using the GLs that we calculated from the last section as input. When supplying a glf file as input we also
+need to provide the number of individuals in the file with `-nInd` and the reference index file with `-fai`. However, the reference index parser does not 
+like that we have a colon in the chromosome name so we'll use bams as input which means the likelihoods are recalculated on the fly and is less efficient but 
+is how we must proceed for this tutorial.
+
+Here's an example for how you would use the precomputed genotype likelihoods as input (if you try to run this you will get an error because of the way the example chromosome is named).
 
 ```bash
-$angsd -glf10_text $RESDIR/PANY.glf.gz -out $RESDIR/PANY \
-   -nInd 15 -fai $DIR/Ref_rename.fa.fai -doMajorMinor 1 -doMaf 1 -minInd 5
+# $angsd -glf10_text $RESDIR/PANY.glf.gz -out $RESDIR/PANY \
+#   -nInd 15 -fai $DIR/Ref.fa.fai -doMajorMinor 1 -doMaf 1 -minInd 5
 ```
 
-Note: You can always use bams as input but you need to recalculate the genotype likelihoods (with `-GL` as before), which is redundant unless
-you want to change the filtering parameters, genotype likelihood model, etc.
-
-<details>
-
-<summary> Click to see how to calculate allele frequencies using the bams as input </summary>
+Run the command below to estimate allele frequencies. Note that when using the bams as input for downstream analyses that rely on genotype likelihods (as we are doing) you 
+need to calculate the genotype likelihoods on the fly with `-GL`.
 
 ```bash
 
-$angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY_wbams \
+$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
    -GL 1 -doMajorMinor 1 -doMaf 1
 
 ```
 
-</details>
-
 In general, `-GL 1`, `-doMaf 1/2`, and `-doMajorMinor 1` should be the preferred choice when data uncertainty is high.
 
 Take a look at the MAF file with `less $RESDIR/PANY.mafs.gz`. The first 20 lines of the file should look like
 
 ```
-chromo	position	major	minor	knownEM	nInd
-chr24	27	A	C	0.000004	5
-chr24	28	T	A	0.000004	5
-chr24	29	T	A	0.000004	5
-chr24	30	T	A	0.000004	5
-chr24	31	A	C	0.000004	5
-chr24	32	T	A	0.000004	5
-chr24	35	C	A	0.000004	5
-chr24	38	A	C	0.000004	5
-chr24	39	T	A	0.000004	6
-chr24	40	G	A	0.000005	7
-chr24	41	T	A	0.000006	7
-chr24	42	G	A	0.000005	7
-chr24	43	T	A	0.000006	7
-chr24	44	T	A	0.000006	7
-chr24	45	G	A	0.000005	7
-chr24	46	A	C	0.000006	7
-chr24	47	T	A	0.000006	7
-chr24	48	C	G	0.430705	7
-chr24	49	T	A	0.000004	6
+chromo	position	major	minor	ref	knownEM	nInd
+Mme_chr24:2558528-4558528	27	A	C	A	0.000004	5
+Mme_chr24:2558528-4558528	28	T	A	T	0.000004	5
+Mme_chr24:2558528-4558528	29	T	A	T	0.000004	5
+Mme_chr24:2558528-4558528	30	T	A	T	0.000004	5
+Mme_chr24:2558528-4558528	31	A	C	A	0.000004	5
+Mme_chr24:2558528-4558528	32	T	A	T	0.000004	5
+Mme_chr24:2558528-4558528	35	C	A	C	0.000004	5
+Mme_chr24:2558528-4558528	38	A	C	A	0.000004	5
+Mme_chr24:2558528-4558528	39	T	A	T	0.000004	6
+Mme_chr24:2558528-4558528	40	G	A	G	0.000005	7
+Mme_chr24:2558528-4558528	41	T	A	T	0.000006	7
+Mme_chr24:2558528-4558528	42	G	A	G	0.000005	7
+Mme_chr24:2558528-4558528	43	T	A	T	0.000006	7
+Mme_chr24:2558528-4558528	44	T	A	T	0.000006	7
+Mme_chr24:2558528-4558528	45	G	A	G	0.000005	7
+Mme_chr24:2558528-4558528	46	A	C	A	0.000006	7
+Mme_chr24:2558528-4558528	47	T	A	T	0.000006	7
+Mme_chr24:2558528-4558528	48	C	G	C	0.430705	7
+Mme_chr24:2558528-4558528	49	T	A	T	0.000004	6
 ```
 
 The columns are (1) chromosome/ref sequence name, (2) position, (3) the major allele, (4) the minor allele, (5) the allele frequency, 
@@ -150,7 +148,7 @@ for biallelic sites by setting the major allele to the reference allele with `-d
 ```
 # estimate PANY alternate allele frequencies (-ref is required for -doMajorMinor 4)
 
-#$angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out PANY_refmajor \
+#$angsd -b $DIR/PANY_bams.txt -ref $REF -out PANY_refmajor \
 #   -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
 #   -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 -skipTriallelic 1\
 #   -GL 1 -doMajorMinor 4 -doMaf 1
@@ -159,7 +157,7 @@ for biallelic sites by setting the major allele to the reference allele with `-d
 ```
 # estimate MAQU alternate allele frequencies (-ref is required for -doMajorMinor 4)
 
-#$angsd -b $DIR/MAQU_bams_rename.txt -ref $REF -out MAQU_refmajor \
+#$angsd -b $DIR/MAQU_bams.txt -ref $REF -out MAQU_refmajor \
 #   -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
 #   -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 -skipTriallelic 1\
 #   -GL 1 -doMajorMinor 4 -doMaf 1
@@ -225,7 +223,7 @@ Let's call biallelic PANY SNPs at four different significance levels:
 for PV in 0.05 0.01 1e-4 1e-6
 do
    if [ $PV == 0.05 ]; then echo SNP_pval Number_SNPs; fi
-   $angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY_$PV \
+   $angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_$PV \
       -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
       -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
       -GL 1 -doMajorMinor 1 -doMaf 1 -rmTriallelic 0.05 -SNP_pval $PV &> /dev/null
@@ -269,7 +267,7 @@ It's generally advisable to call SNPs among all individuals jointly to avoid bia
 
 ```bash
 
-$angsd -b $DIR/ALL_bams_rename.txt -ref $REF -out $RESDIR/ALL \
+$angsd -b $DIR/ALL_bams.txt -ref $REF -out $RESDIR/ALL \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 20 -setMinDepthInd 1 -setMinDepth 28 -setMaxDepth 120 -doCounts 1 \
    -GL 1 -doMajorMinor 1 -doMaf 1 -rmTriallelic 0.05 -SNP_pval 1e-6
@@ -283,7 +281,7 @@ allele. We can do this with `-doMajorMinor 3, 4, or 5`.
 
 **QUESTION**
 
-How could you compare the **derived** allele frequencies at sites segregating among the PANY and JIGA populations? Try doing this.
+How do you compare the **derived** allele frequencies between PANY and JIGA at sites segregating among all populations? Try doing this.
 
 Hint: You can have ANGSD analyze a subset of sites using the `-sites` argument. You can read about it [here](http://www.popgen.dk/angsd/index.php/Sites)
 
@@ -313,7 +311,7 @@ Now you can calculate allele frequencies that are comparable between populations
 ```bash
 # Calculate derived allele frequencies for PANY
 
-$angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY_derived \
+$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_derived \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -minMapQ 20 -minQ 20 \
    -GL 1 -doMajorMinor 5 -anc $ANC -doMaf 1 -sites $RESDIR/biallelic_snps.pos
 
@@ -322,13 +320,25 @@ $angsd -b $DIR/PANY_bams_rename.txt -ref $REF -out $RESDIR/PANY_derived \
 ```bash
 # Calculate derived allele frequencies for JIGA
 
-$angsd -b $DIR/JIGA_bams_rename.txt -ref $REF -out $RESDIR/JIGA_derived \
+$angsd -b $DIR/JIGA_bams.txt -ref $REF -out $RESDIR/JIGA_derived \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -minMapQ 20 -minQ 20 \
    -GL 1 -doMajorMinor 5 -anc $ANC -doMaf 1 -sites $RESDIR/biallelic_snps.pos
 
 ```
 
 Are you able to describe what the commands above are doing?
+
+Have a look at the first 20 SNPs in the output. Note that the "minor" or in this case the derived allele 
+identity is arbitrary when its frequency is zero or very small (effectively zero).
+
+```bash
+# PANY derived allele frequencies
+zcat $RESDIR/PANY_derived.mafs.gz | head -n 21
+
+# JIGA derived allele frequencies
+zcat $RESDIR/JIGA_derived.mafs.gz | head -n 21
+
+```
 
 </details>
 

@@ -33,6 +33,7 @@ Please make sure to follow these preparatory instructions below before running t
 
 First go to the day3 directory you created for the previous exercise create subdirectories for data and results:
 ```
+cd ~/day3
 mkdir Results
 mkdir Data
 ```
@@ -49,7 +50,7 @@ DIR=/home/ubuntu/Share/physalia-lcwgs/data
 DATA=$DIR/BAMS
 REF=$DIR/Ref.fa
 ANC=$DIR/outgrp_ref.fa
-NGSADMIX=/home/ubuntu/Software/NGSadmix
+NGSADMIX=/home/ubuntu/angsd/misc/NGSadmix
 ANGSD=/home/ubuntu/angsd/angsd
 ```
 
@@ -196,7 +197,9 @@ PCAngsd provides a multitude of different settings, described [here](http://www.
 We provide the path to the input file using the `-beagle` option, which also tells PCAngsd that we are working with a beagle file. The output path and output name is provided using the `-o` option. 
 
 ```
+conda activate pcangsd
 pcangsd -b ~/day3/Results/MME_ANGSD_PCA_LDpruned.beagle.gz -o ~/day3/Results/PCAngsd_LDpruned_covmat
+conda deactivate
 ```
 
 <br>
@@ -216,7 +219,7 @@ pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","
          ,"PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY"
          ,"MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS"
          ,"MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU")
-	 
+         
 mme.pca <- eigen(cov) #perform the pca using the eigen function. 
 
 eigenvectors = mme.pca$vectors #extract eigenvectors 
@@ -257,9 +260,9 @@ For this, we will only estimate the covariance matrix using single read sampling
 
 ```
 $ANGSD -b $DIR/ALL_bams.txt -anc $REF -out $BASEDIR'Results/MME_ANGSD_PCA' \
-	-minMapQ 20 -minQ 20 -doMaf 1 -minMaf 0.05 -SNP_pval 2e-6 \
-	-GL 1 -doGlf 2 -doMajorMinor 1 -doPost 1 \
-	-doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1 -P 4
+  -minMapQ 20 -minQ 20 -doMaf 1 -minMaf 0.05 -SNP_pval 2e-6 \
+  -GL 1 -doGlf 2 -doMajorMinor 1 -doPost 1 \
+  -doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1 -P 4
 ```
 
 <br>
@@ -277,7 +280,7 @@ pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","
          ,"PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY"
          ,"MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS"
          ,"MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU")
-	 
+
 mme.pca <- eigen(cov) #perform the pca using the eigen function. 
 
 eigenvectors = mme.pca$vectors #extract eigenvectors 
@@ -447,7 +450,9 @@ However, one can also set the number of clusters using the `-admix_K` option.
 <br>
 
 ```
+conda activate pcangsd
 pcangsd -b ~/day3/Results/MME_ANGSD_PCA_LDpruned.beagle.gz --admix --admix_K 2 -o ~/day3/Results/MME_PCAngsd_K2_out
+conda deactivate
 ```
 
 <br>
