@@ -60,6 +60,25 @@ make
 
 Again, note that the `LIBRARY_PATH` and `LD_LIBRARY_PATH` variables need to be specified after each login.
 
+#### NGSAdmix
+
+NGSAdmix is included in ANGSD, so it can be invoked from wherever ANGSD installed, or by having ANGSD in a conda environment. We took the former approach this year, with `NGSADMIX=/home/ubuntu/angsd/misc/NGSadmix`
+
+#### PCAngsd
+
+Use the following code to install PCANngsd in a conda environment.
+
+```bash
+cd Share/
+git clone https://github.com/Rosemeis/pcangsd.git
+cd pcangsd
+mamba env create -f environment.yml
+conda activate pcangsd
+python setup.py build_ext --inplace
+pip3 install -e . ## if you run into issues pertaining to ssl certificates, try "pip3 install --trusted-host pypi.org -e ." instead
+conda deactivate
+```
+
 ## Directory setup
 
 #### Day 1
@@ -83,4 +102,4 @@ mkdir day1/bam
 
 #### Day 3
 
-* For the LD part, students can get the files that they need directly from the GitHub repo by following to the tutorial. No preparation needed. 
+* Students can get the files that they need directly from the GitHub repo by following to the tutorial. No preparation needed. 
