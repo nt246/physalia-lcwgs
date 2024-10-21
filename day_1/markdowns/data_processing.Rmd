@@ -783,9 +783,6 @@ Unlike other variant detector programs (like the [GATK Haplotype Caller](https:/
   <summary>Click here to see the GATK IndelRealigner code</summary>
 
 ```{bash, eval = FALSE}
-## GATK-3.7 is installed in a separate conda environment
-conda deactivate
-conda activate gatk-3.7
 
 BAMLIST=$BASEDIR/sample_lists/bam_list_dedup_overlapclipped.list # Path to a list of merged, deduplicated, and overlap clipped bam files. Full paths should be included. This file has to have a suffix of ".list"
 REFERENCE=$BASEDIR/reference/mme_physalia_testdata_chr24.fa # Path to reference fasta file and file name
@@ -801,6 +798,10 @@ cd $BASEDIR/bam/
 for SAMPLEBAM in `cat $BAMLIST`; do
   $SAMTOOLS index $SAMPLEBAM
 done
+
+## GATK-3.7 is installed in a separate conda environment, which we activate now
+conda deactivate
+conda activate gatk-3.7
 
 ## Realign around in-dels
 # This is done across all samples at once
