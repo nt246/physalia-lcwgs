@@ -14,7 +14,7 @@ ssh -i Downloads/lcwgs24.pem ubuntu@34.218.244.188
 
 * Most software packages for this tutorial can be installed into a single conda environment without experiencing any conflicts.  
 * These include fastqc, trimmomatic, picard, samtools, bowtie2, bamutil, r, tidyverse  
-* Carlo installed most of these in 2024 into a conda environment called `lcwgs`,but it would be useful to generate a yaml from from this environment so that the same environment can be recreated with a single line of code when needed.
+* Carlo installed most of these in 2024 into a conda environment called `lcwgs`. I have generated [a yaml file](lcwgs.yaml) from this environment so that it can be created again. 
 
 #### GATK
 
