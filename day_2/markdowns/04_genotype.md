@@ -242,8 +242,8 @@ How many sites are in the file now?
 
 Calculate a spectrum for the number of individuals with uncalled genotypes as above. What do you make of this?
 
-In general the `postCutoff` threshold will depend on the sequencing depth of your data as well as 
-how much genotyping inaccuracy could throw off an analysis.
+In general the `postCutoff` threshold you choose will depend on the sequencing depth of your data and 
+how much genotyping inaccuracy that you think is acceptable while still being able to make correct inferences.
 
 Now you know how to
 * Apply data quality filtering
