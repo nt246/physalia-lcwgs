@@ -52,10 +52,6 @@ NB These frequency estimators requires major/minor -doMajorMinor
 It's also useful to know how ANGSD identifies major and minor alleles, `angsd -doMajorMinor`
 
 ```
-	-> angsd version: 0.931 (htslib: 1.9) build(Oct 25 2019 18:02:57)
-	-> Analysis helpbox/synopsis information:
-	-> Command: 
-angsd -doMajorMinor 	-> Sun Oct  9 21:10:56 2022
 -------------------
 abcMajorMinor.cpp:
 	-doMajorMinor	0
