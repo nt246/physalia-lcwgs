@@ -45,7 +45,7 @@ angsd -doGeno
         NB geno_maxDepth requires -doCounts
 ```
 
-If we use `-doGeno 2`, genotypes are coded as '0', '1', or '2' minor alleles. If we wanted to instead print the posterior 
+If we use `-doGeno 2`, genotypes are represented by the minor allele count: 0, 1, or 2. If we wanted to instead print the posterior 
 probability of the genotype we could use '-doGeno 16'. The numeric arguments to `-doGeno` are additive so if we wanted to print *both*
 the called genotype as 0, 1, or 2 *and* the probability of that genotype, we could use `-doGeno 18` (2 + 16). If we also wanted to 
 print the major and minor allele we would use `-doGeno 19` (2 + 16 + 1).
