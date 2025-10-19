@@ -19,13 +19,9 @@ cd ~/day2
 
 Now you will estimate allele frequencies using the GLs that you just calculated as input.
 
-We can get some information about how to estimate allele frequencies with `angsd -doMaf`.
+We can get some information about how to estimate allele frequencies with `$angsd -doMaf`.
 
 ```
-	-> angsd version: 0.931 (htslib: 1.9) build(Oct 25 2019 18:02:57)
-	-> Analysis helpbox/synopsis information:
-	-> Command: 
-angsd -doMaf 	-> Sun Oct  9 21:08:30 2022
 ------------------------
 abcFreq.cpp:
 -doMaf	0 (Calculate persite frequencies '.mafs.gz')
