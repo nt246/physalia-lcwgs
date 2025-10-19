@@ -27,7 +27,7 @@ Throughout this course, you will be working with data from the Atlantic silversi
 The Atlantic silverside is distributed along the east coast of North America and shows a remarkable degree of local adaptation in growth rates and a suite of other traits (Conover et al. 2005). You will be exploring patterns of genomic variation across the species range, which spans one of the steepest thermal gradient in the world. 
 
 ### Today's data
-Today, we will work with subsets of two different fastq files from each of three Atlantic silversides used in recent studies of fisheries-induced evolution (Therkildsen et al. 2019) and local adaptation (Wilder et al. 2020, Akopyan et al. 2022). The samples we'll use today originate from the MAQU and PANY populations shown in this map:
+Today, we will work with subsets of two different fastq files from each of three Atlantic silversides used in studies of fisheries-induced evolution (Therkildsen et al. 2019) and local adaptation (Wilder et al. 2020, Akopyan et al. 2022). The samples we'll use today originate from the MAQU and PANY populations shown in this map:
 
 <br>
 
