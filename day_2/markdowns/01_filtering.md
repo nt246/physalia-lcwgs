@@ -144,7 +144,7 @@ Next we specify some basic read filtering criteria.
 ```
 These filters will retain only uniquely mapped reads (`uniqueOnly`) that map as a proper pair (`only_proper_pairs`) and are not tagged with a SAM flag above 255 (`remove_bads`).
 No bases are trimmed from the ends of reads `-trim 0` and we downgrade mapping and base qualities in problematic mapping regions (`-C` and `-baq`).
-`-C INT` downgrades mapping quality when there are excessive read mismatches to the reference based on sqrt((INT-q)/INT)*INT, where q relates to the base qualities, while `-baq 1` 
+`-C INT` downgrades mapping quality when there are excessive read mismatches to the reference based on sqrt((INT-*q*)/INT)*INT, where *q* relates to the base qualities, while `-baq 1` 
 adjusts base qualities around INDELS ([BAQ](https://academic.oup.com/bioinformatics/article/27/8/1157/227268?login=false)).
 
 Low read mapping qualities as well as exceptionally low or high sequencing depth generally signal regions of the genome that are refractory 
