@@ -144,19 +144,14 @@ Next we specify some basic read filtering criteria.
 ```
 These filters will retain only uniquely mapped reads (`uniqueOnly`) that map as a proper pair (`only_proper_pairs`) and are not tagged with a SAM flag above 255 (`remove_bads`).
 No bases are trimmed from the ends of reads `-trim 0` and we downgrade mapping and base qualities in problematic mapping regions (`-C` and `-baq`).
-`-C INT` downgrades mapping quality when there are excessive mismatches based on sqrt((INT-q)/INT)*INT, while `-baq 1` 
+`-C INT` downgrades mapping quality when a read has excessive mismatches to the reference based on sqrt((INT-*q*)/INT)*INT, where *q* relates to the base qualities, while `-baq 1` 
 adjusts base qualities around INDELS ([BAQ](https://academic.oup.com/bioinformatics/article/27/8/1157/227268?login=false)).
 
-Low map qualities as well as exceptionally low or high sequencing depth generally signal regions of the genome that are refractory 
-to short read mapping and must be handled with care. In this scenario you may want to discard reads with low map quality (`minMapQ`) or discard these sites 
+Low read mapping qualities as well as exceptionally low or high sequencing depth generally signal regions of the genome that are refractory 
+to short read mapping and must be handled with care. In this scenario, you may want to discard reads with low map quality (`minMapQ`) or discard these sites 
 altogether to avoid erroneous inference. You may also want to remove bases with exceptionally low base quality with `minQ`.
 
-
-```
-# $angsd -b $DIR/ALL_bams.txt -ref $REF -out ./Results/ALL \
-#        -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
-#        -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1
-```
+Some useful arguments for filtering sites based on the amount of data within and across individuals are presented in the following table:
 
 Parameter | Meaning |
 --- | --- |
@@ -164,6 +159,14 @@ Parameter | Meaning |
 -minInd INT | use only sites where at least INT individuals have data |
 -setMinDepth INT | minimum total site depth |
 -setMaxDepth INT | maximum total site depth |
+
+Putting all of this together, an ANGSD command that implements various quality controls will look something like
+
+```
+# $angsd -b $DIR/ALL_bams.txt -ref $REF -out ./Results/ALL \
+#        -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
+#        -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1
+```
 
 More sophisticated filtering can be performed, but this is outside the scope of this practical.
 
