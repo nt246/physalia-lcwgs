@@ -49,7 +49,7 @@ Extras:
 NB These frequency estimators requires major/minor -doMajorMinor
 ```
 
-It's also useful to know how ANGSD identifies major and minor alleles, `angsd -doMajorMinor`
+It's also useful to know how ANGSD identifies major and minor alleles, `$angsd -doMajorMinor`
 
 ```
 -------------------
