@@ -205,7 +205,7 @@ details based on a fastq table set up as the example you can find in
 type `cat day1/sample_lists/fastq_table.tsv`.
 
 For our scripts below to work, the **fastq table** has to be a **tab
-deliminated** table with the following six columns, strictly in this
+delimited** table with the following six columns, strictly in this
 order:
 
 - `prefix` the prefix of raw fastq file names (i.e. a part of the file
@@ -245,8 +245,8 @@ and lane_number is unique for each fastq file.
 
 We’ll also use a second file that we call a **fastq list**. This is
 simply a list of prefixes for the samples we want to analyze in a
-particular run. Our fastq table can contain data for all individuals in
-our study, but at any given time, we may only want to perform an
+particular run. Our fastq table should contain data for all individuals
+in our study, but at any given time, we may only want to perform an
 operation on a subset of them. Like today, in the interest of time, we
 only want to run 6 sets of fastq files through each processing step.
 
@@ -495,9 +495,9 @@ done
 If the program ran, you should now see the output (in html format and a
 zip file with various files) in your `day1/fastqc` directory. To view
 the .html, use `scp` (as described
-[here](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2023.pdf)
+[here](https://github.com/nt246/physalia-lcwgs/blob/main/Connection_to_the_Amazon_EC2_service.pdf)
 or FileZilla (connection instructions also described
-[here](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2023.pdf))
+[here](https://github.com/nt246/physalia-lcwgs/blob/main/Connection_to_the_Amazon_EC2_service.pdf))
 to transfer the html output files to your local machine and open them in
 a web browser.
 
@@ -790,6 +790,28 @@ done
 Have a look at the output printed to the screen. How many of our reads
 are mapping to the reference? Does it vary between samples? Is there
 anything that seems weird to you about the stats reported?
+
+<br>
+
+**Come up with your own answer first, then look here**
+
+<details>
+
+<summary>
+
+Click here to expand
+</summary>
+
+Mapping rates are fairly low for these data (~60-70%). This is because
+we’re not mapping to the full genome in this exercise, but just a small
+snippet (for computational efficiency). The fastq files are enriched for
+reads from this region, but also contain reads from other parts of the
+genome. With a full shotgun whole genome sequencing file and relatively
+complete high-quality reference genome you should typically expect to
+see much higher mapping rates, unless your input sample was contaminated
+with non-target DNA.
+
+</details>
 
 <br> <br>
 
@@ -1200,7 +1222,7 @@ done
 
 **On your local computer**, use FileZila if you have that installed
 (configuration instructions
-[here](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2023.pdf)
+[here](https://github.com/nt246/physalia-lcwgs/blob/main/Connection_to_the_Amazon_EC2_service.pdf)
 or `scp` from a new Terminal window (where you’re not logged into the
 server) to download the bam list and the depth files. For example:
 
@@ -1215,7 +1237,7 @@ KEY=~/Downloads/c2.pem ## Replace this with the path to where you have saved you
 mkdir $BASEDIR
 cd $BASEDIR
 ## Download the depth files and the bam list
-scp -i $KEY -r ${USER}@${IP}:~/day1/bam/*depth.gz ./
+scp -i $KEY -r ${USER}@${IP}:~/day1/depth_files/*depth.gz ./
 scp -i $KEY -r ${USER}@${IP}:~/day1/sample_lists/merged_bam_list.txt ./
 ```
 

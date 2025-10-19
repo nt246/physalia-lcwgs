@@ -117,7 +117,7 @@ When we get data files back from the sequencing center, the files often have obs
 
 Our pipeline is set up to link up these `prefix` names with sample details based on a fastq table set up as the example you can find in `day1/sample_lists/fastq_table.tsv`. One way to view this file is to type `cat day1/sample_lists/fastq_table.tsv`.
 
-For our scripts below to work, the **fastq table** has to be a **tab deliminated** table with the following six columns, strictly in this order:
+For our scripts below to work, the **fastq table** has to be a **tab delimited** table with the following six columns, strictly in this order:
 
   * `prefix` the prefix of raw fastq file names (i.e. a part of the file name that is unique to each sample)
   
@@ -135,7 +135,7 @@ It is important to make sure that the combination of sample_id, seq_id, and lane
 
 <br>
 
-We'll also use a second file that we call a **fastq list**. This is simply a list of prefixes for the samples we want to analyze in a particular run. Our fastq table can contain data for all individuals in our study, but at any given time, we may only want to perform an operation on a subset of them. Like today, in the interest of time, we only want to run 6 sets of fastq files through each processing step. 
+We'll also use a second file that we call a **fastq list**. This is simply a list of prefixes for the samples we want to analyze in a particular run. Our fastq table should contain data for all individuals in our study, but at any given time, we may only want to perform an operation on a subset of them. Like today, in the interest of time, we only want to run 6 sets of fastq files through each processing step. 
 
 Have a look at the list we'll be using in `day1/sample_lists/fastq_list.txt` (e.g. with the `cat` command), and note that it's just a list of fastq name prefixes, each on a separate line and there should be no header in this file.
 
@@ -329,7 +329,7 @@ done
 <br>
 
 
-If the program ran, you should now see the output (in html format and a zip file with various files) in your `day1/fastqc` directory. To view the .html, use `scp` (as described [here](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2023.pdf) or FileZilla (connection instructions also described [here](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2023.pdf)) to transfer the html output files to your local machine and open them in a web browser.
+If the program ran, you should now see the output (in html format and a zip file with various files) in your `day1/fastqc` directory. To view the .html, use `scp` (as described [here](https://github.com/nt246/physalia-lcwgs/blob/main/Connection_to_the_Amazon_EC2_service.pdf) or FileZilla (connection instructions also described [here](https://github.com/nt246/physalia-lcwgs/blob/main/Connection_to_the_Amazon_EC2_service.pdf)) to transfer the html output files to your local machine and open them in a web browser.
 
 If you're not able to download your own files, you can have a look at ours [here](https://github.com/nt246/physalia-lcwgs/tree/main/day_1/fastqc). We are keeping them in our GitHub repo, but GitHub doesn't render .html files, so to view the output, click on the output.html file you want to view, copy its URL and paste it into [this handy viewer](https://htmlpreview.github.io/) to see it in rendered html format.
 
@@ -547,6 +547,18 @@ done
 <br>
 
 Have a look at the output printed to the screen. How many of our reads are mapping to the reference? Does it vary between samples? Is there anything that seems weird to you about the stats reported?
+
+<br>
+
+**Come up with your own answer first, then look here**
+
+<details>
+  <summary>Click here to expand</summary>
+
+Mapping rates are fairly low for these data (~60-70%). This is because we're not mapping to the full genome in this exercise, but just a small snippet (for computational efficiency). The fastq files are enriched for reads from this region, but also contain reads from other parts of the genome. With a full shotgun whole genome sequencing file and relatively complete high-quality reference genome you should typically expect to see much higher mapping rates, unless your input sample was contaminated with non-target DNA.
+
+
+</details>
 
 <br>
 <br>
@@ -855,7 +867,7 @@ done
 
 <br>  
 
-**On your local computer**, use FileZila if you have that installed (configuration instructions [here](https://github.com/nt246/physalia-lcwgs/blob/main/connection_to_server_2023.pdf) or `scp` from a new Terminal window (where you're not logged into the server) to download the bam list and the depth files. For example:
+**On your local computer**, use FileZila if you have that installed (configuration instructions [here](https://github.com/nt246/physalia-lcwgs/blob/main/Connection_to_the_Amazon_EC2_service.pdf) or `scp` from a new Terminal window (where you're not logged into the server) to download the bam list and the depth files. For example:
 
 ```{bash eval=FALSE}
 ## Edit the follow variables
@@ -868,7 +880,7 @@ KEY=~/Downloads/c2.pem ## Replace this with the path to where you have saved you
 mkdir $BASEDIR
 cd $BASEDIR
 ## Download the depth files and the bam list
-scp -i $KEY -r ${USER}@${IP}:~/day1/bam/*depth.gz ./
+scp -i $KEY -r ${USER}@${IP}:~/day1/depth_files/*depth.gz ./
 scp -i $KEY -r ${USER}@${IP}:~/day1/sample_lists/merged_bam_list.txt ./
 ```
 
