@@ -148,8 +148,13 @@ We can look at the covariance matrix in R, where we will also perform the PCA us
 
 We have to load the covariance matrix into R and then we can optionally provide population assignments for each individual (rows in same order as input bam file list `-b $DIR/ALL_bams.txt`). We can start R in the server by typing `/usr/bin/R` (end the session by typing `quit()`)
 
-```
+```bash
 /usr/bin/R
+```
+
+In R, run the following: 
+
+```r
 library(tidyverse)
 #Load the covariance matrix. Don't forget to change the file path if you have downloaded the data to your own computer.
 cov <- as.matrix(read.table("~/day3/Results/MME_ANGSD_PCA_LDpruned.covMat", header = F))
@@ -209,8 +214,13 @@ pcangsd -b ~/day3/Results/MME_ANGSD_PCA_LDpruned.beagle.gz -o ~/day3/Results/PCA
 **Optional**
 We can perform the principal components analysis and plot PC1 vs PC2 the same way we did before.
 
-```
+```bash
 /usr/bin/R
+```
+
+In R, run the following: 
+
+```r
 library(tidyverse)
 
 #Load the covariance matrix
@@ -270,8 +280,13 @@ angsd -b $DIR/ALL_bams.txt -anc $REF -out $BASEDIR'Results/MME_ANGSD_PCA' \
 <br>
 
 Again, we perform the principal components analysis using the `eigen` function in R:
-```
+```bash
 /usr/bin/R
+```
+
+In R, run the following: 
+
+```r
 library(tidyverse)
 
 #Load the covariance matrix
@@ -384,9 +399,13 @@ best like=-11324.127798 after 93 iterations
 <br>
 
 Furthermore, we can plot admixture proportions in R:
-```
+```bash
 /usr/bin/R
+```
 
+In R, run the following: 
+
+```r
 library(tidyverse) #load the tidyverse package for formatting and plotting
 
 #Load the covariance matrix
