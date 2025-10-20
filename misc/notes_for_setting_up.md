@@ -62,6 +62,15 @@ make
 
 Again, note that the `LIBRARY_PATH` and `LD_LIBRARY_PATH` variables need to be specified after each login.
 
+Also, the python script used for LD pruning uses an argument in a function (the `inverted` argument in `set_edge_filter`) that has been deprecated. To fix this issue, replace the lines 117-118 and 123-124 in prune_ngsLD.py with 
+
+```
+map_property_values(G.ep["dist"], drop_dist, lambda x: x <= int(args.max_dist))
+G.set_edge_filter(drop_dist)
+map_property_values(G.ep["weight"], drop_weight, lambda x: x >= float(args.min_weight))
+G.set_edge_filter(drop_weight)
+```
+
 #### NGSAdmix
 
 NGSAdmix is included in ANGSD, so it can be invoked from wherever ANGSD installed, or by having ANGSD in a conda environment. We took the former approach this year, with `NGSADMIX=/home/ubuntu/angsd/misc/NGSadmix`
