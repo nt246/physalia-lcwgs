@@ -86,12 +86,12 @@ ls
 When running these scripts on the AWS server, run the following:
 
 ``` bash
-NGSLD=~/Share/ngsLD/
+NGSLD=/home/ubuntu/ngsLD
 ## launch the conda environment that contains the dependencies of ngsLD submodules
 conda activate ngsLD
 ## add library paths
-export LIBRARY_PATH=/home/ubuntu/src/conda/envs/ngsLD/lib/
-export LD_LIBRARY_PATH=/home/ubuntu/src/conda/envs/ngsLD/lib/:$LD_LIBRARY_PATH
+export LIBRARY_PATH=/opt/miniconda3/envs/ngsLD/lib/
+export LD_LIBRARY_PATH=/opt/miniconda3/envs/ngsLD/lib/:$LD_LIBRARY_PATH
 ```
 
 <br>
