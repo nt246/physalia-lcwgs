@@ -45,8 +45,8 @@ angsd -doGeno
         NB geno_maxDepth requires -doCounts
 ```
 
-If we use `-doGeno 2`, genotypes are coded as '0', '1', or '2' minor alleles. If we wanted to instead print the posterior 
-probability of the genotype we could use '-doGeno 16'. The numeric arguments to `-doGeno` are additive so if we wanted to print *both*
+If we use `-doGeno 2`, genotypes are represented by the minor allele count: 0, 1, or 2. If we wanted to instead print the posterior 
+probability of the genotype we could use `-doGeno 16`. The numeric arguments to `-doGeno` are additive so if we wanted to print *both*
 the called genotype as 0, 1, or 2 *and* the probability of that genotype, we could use `-doGeno 18` (2 + 16). If we also wanted to 
 print the major and minor allele we would use `-doGeno 19` (2 + 16 + 1).
 
@@ -242,8 +242,9 @@ How many sites are in the file now?
 
 Calculate a spectrum for the number of individuals with uncalled genotypes as above. What do you make of this?
 
-In general the `postCutoff` threshold will depend on the sequencing depth of your data as well as 
-how much genotyping inaccuracy could throw off an analysis.
+In general, the `postCutoff` threshold you choose will depend on the sequencing depth of your data and 
+how much genotyping inaccuracy is permissible for accurate inference. There is often a balance between the number of individuals 
+providing genotypic information and the reliability of the information that each individual provides.
 
 Now you know how to
 * Apply data quality filtering

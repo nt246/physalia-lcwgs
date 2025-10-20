@@ -48,17 +48,28 @@ The `gatk` command is then available in the `gatk-3.7` conda environment
 ## create a separate conda environment with required dependencies
 mamba create -c bioconda -c conda-forge -c genomedk -n ngsLD gcc zlib gsl pandas graph-tool r-optparse r-ggplot2 r-reshape2 r-plyr r-gtools r-ldheatmap
 ## the installation step had problems finding these following paths, so I had to specify them. Note that the last two lines need to be run first before running ngsLD after each login.
+## also note that the exact path may differ depending on how conda is setup. For 2025, the path was /opt/miniconda3/envs/ngsLD
 export CPATH=/home/ubuntu/src/conda/envs/ngsLD/include/
 export PKG_CONFIG_PATH=/home/ubuntu/src/conda/envs/ngsLD/lib/pkgconfig/:$LD_LIBRARY_PATH
 export LIBRARY_PATH=/home/ubuntu/src/conda/envs/ngsLD/lib/
 export LD_LIBRARY_PATH=/home/ubuntu/src/conda/envs/ngsLD/lib/:$LD_LIBRARY_PATH
 ## download and install ngsLD from GitHub and compile
+## note that for 2025, the repo was cloned to /home/ubuntu/ngsLD, and this also works
 cd ~/Share
 git clone https://github.com/fgvieira/ngsLD.git
 make
 ```
 
 Again, note that the `LIBRARY_PATH` and `LD_LIBRARY_PATH` variables need to be specified after each login.
+
+Also, the python script used for LD pruning uses an argument in a function (the `inverted` argument in `set_edge_filter`) that has been deprecated. To fix this issue, replace the lines 117-118 and 123-124 in prune_ngsLD.py with 
+
+```
+map_property_values(G.ep["dist"], drop_dist, lambda x: x <= int(args.max_dist))
+G.set_edge_filter(drop_dist)
+map_property_values(G.ep["weight"], drop_weight, lambda x: x >= float(args.min_weight))
+G.set_edge_filter(drop_weight)
+```
 
 #### NGSAdmix
 
