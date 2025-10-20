@@ -71,24 +71,9 @@ map_property_values(G.ep["weight"], drop_weight, lambda x: x >= float(args.min_w
 G.set_edge_filter(drop_weight)
 ```
 
-#### NGSAdmix
+#### ANGSD, PCAngsd, and NGSAdmix
 
-NGSAdmix is included in ANGSD, so it can be invoked from wherever ANGSD installed, or by having ANGSD in a conda environment. We took the former approach this year, with `NGSADMIX=/home/ubuntu/angsd/misc/NGSadmix`
-
-#### PCAngsd
-
-Use the following code to install PCANngsd in a conda environment.
-
-```bash
-cd Share/
-git clone https://github.com/Rosemeis/pcangsd.git
-cd pcangsd
-mamba env create -f environment.yml
-conda activate pcangsd
-python setup.py build_ext --inplace
-pip3 install -e . ## if you run into issues pertaining to ssl certificates, try "pip3 install --trusted-host pypi.org -e ." instead
-conda deactivate
-```
+Use the following [yaml file](angsd.yaml) to install ANGSD and PCAngsd in a conda environment named `angsd`.
 
 ## Directory setup
 
