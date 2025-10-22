@@ -398,8 +398,8 @@ the *n*+1 to 2*n*+1 values should all be `0.000000` and can be ignored when usin
 ### Allele frequency posterior probabilities
 
 Since you were able to calculate allele frequency likelihoods with `-doSaf` you may be wondering if you can use these to calculate the posterior probabilities of the possible 
-allele frequencies at each site. You can! In order to do this you can use the site frequency spectrum calculated with `realSFS` as a prior on the allele frequencies since it tells 
-you the probability of randomly drawing a site with a given number of derived (or minor if folded) alleles in the population.
+allele frequencies at each site. You can! In order to do this you can use the site frequency spectrum calculated with `realSFS` as a prior for the allele frequencies since it tells 
+you the probability of randomly drawing a site with a given number of derived (or minor if folded) alleles in the sample.
 
 Let's calculate derived allele frequency posterior probabilities for the PANY population. This is achieved by running the per site allele frequency likelihood calculation (`-doSaf`) while supplying 
 the SFS are a prior with '-pest':
