@@ -91,7 +91,7 @@ NGSLD=/home/ubuntu/ngsLD
 conda activate ngsLD
 ## add library paths
 export LIBRARY_PATH=/opt/miniconda3/envs/ngsLD/lib/
-export LD_LIBRARY_PATH=/opt/miniconda3/envs/ngsLD/lib/:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/opt/miniconda3/envs/ngsLD/lib/:/home/ubuntu/miniconda3/pkgs/icu-58.2-he6710b0_3/lib/
 ```
 
 <br>
