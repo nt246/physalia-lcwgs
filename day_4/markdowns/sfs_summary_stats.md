@@ -363,7 +363,7 @@ This will dump pdf files ($RESDIR/PANY_SFS_compare_barplot.pdf & $RESDIR/PANY_SF
 
 What if we did not have an outgroup to polarize alleles with? In this case we could calculate the folded SFS. Let's try it.
 
-First we'll calculate the allele frequency likelihoods with `-doSaf 1`, which requires us to supply `-anc` for which we will supply 
+First we'll calculate the allele frequency likelihoods with `-doSaf 1`, which requires us to use `-anc` for which we will supply 
 the reference FASTA in the case of folding (remember, we are pretending that we don't have a reliable ancestral fasta to polarize with):
 
 
