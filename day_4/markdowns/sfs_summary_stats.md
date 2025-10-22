@@ -608,7 +608,7 @@ $ANGSD -b $DIR/MAQU_bams.txt -ref $REF -anc $ANC -out $RESDIR/MAQU \
 ```
 
 Then we can use each population's respective allele frequency likelihoods together to obtain a maximum likelihood estimate of the 
-joint allele frequency likelihoods. To do this, we provide `realSFS` the .saf.idx files of both populations:
+joint allele frequency likelihoods. To do this, we provide the .saf.idx files of both populations to `realSFS`:
 
 ```bash
 $REALSFS $RESDIR/PANY.saf.idx $RESDIR/MAQU.saf.idx > $RESDIR/PANY_vs_MAQU.2dsfs
