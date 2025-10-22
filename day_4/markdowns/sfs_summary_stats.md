@@ -619,7 +619,7 @@ Let's have a look at the output:
 less -S $RESDIR/PANY_vs_MAQU.2dsfs
 ```
 
-Now we have a prior for the probability of jointly observing *i* alleles in PANY and *j* alleles in MAQU. One common way to visualize the 2D-SFS is with a 
+Now we have a prior for the probability of jointly observing a site with *i* derived alleles in PANY and *j* PANY derived alleles in MAQU. One common way to visualize the 2D-SFS is with a 
 heatmap. We're going to use these probabilities of jointly observing allele frequencies for our two example populations to calculate 
 F<sub>ST</sub> between them. F<sub>ST</sub> is an allelic fixation index commonly used to measure genetic differentiation between populations based on allele frequencies, and 
 ranges from 0 when the allele frequencies are the same in all populations to 1 when the populations are fixed for different alleles. F<sub>ST</sub> can be expressed as the 
