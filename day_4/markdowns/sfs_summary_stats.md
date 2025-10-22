@@ -112,7 +112,7 @@ $REALSFS print $RESDIR/PANY.saf.idx | less -S
 ```
 
 The columns are (1) chromosome, (2) position, (3) likelihood of 0 derived alleles, (4) likelihood of 1 derived allele, 
-(5), likelihood of 2 derived alleles,..., (2*n*+1) likelihood of 2*n* derived alleles. Note that the likelihoods 
+(5), likelihood of 2 derived alleles,..., (2*n*+3) likelihood of 2*n* derived alleles. Note that the likelihoods 
 are scaled to the highest likelihood and log transformed (such that the most likely allele frequency will have a 
 value of 0).
 
