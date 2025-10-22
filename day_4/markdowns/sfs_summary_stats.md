@@ -565,7 +565,7 @@ The output is:
 (0,1351769)(27,1999989)(0,1999989)	Mme_chr24:2558528-4558528	999994	4233.873378	3712.268273	5440.874692	4406.047859	4059.158069	-0.483002	-0.758499	-0.698366	-0.142861	-0.037702	1351769
 ```
 
-The total number of sites used in the statistic calculations are given in the last column, and is equal to 1351769.
+The number of sites used in the statistic calculations is given in the last column, and is equal to 1351769.
 
 The per site estimate for Watterson's theta (column "tW") is 4233.873378 / 1351769 = 0.003132098.
 
