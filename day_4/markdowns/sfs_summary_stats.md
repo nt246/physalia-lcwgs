@@ -144,6 +144,8 @@ What is the most likely number of derived alleles at position chr24:61?
 
 Help information for the `realSFS` program can be seen by calling `realSFS` without arguments.
 
+`$REALSFS`
+
 ```bash
 Usage:
 	realSFS [options] deme1.saf.idx [deme2.saf.idx ...]	(calculates [multi-]SFS)
