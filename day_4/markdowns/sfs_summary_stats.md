@@ -571,7 +571,7 @@ The per site estimate for Watterson's theta (column "tW") is 4233.873378 / 13517
 
 The per site estimate of nucleotide diversity (column "tP") is 3712.268273 / 1351769 = 0.00274623.
 
-Tajima's D is given in column 9 ("Tajima") and is equal to -0.483002.
+Tajima's *D* is given in column 9 ("Tajima") and is equal to -0.483002.
 
 </details>
 
