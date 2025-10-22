@@ -594,7 +594,7 @@ In this part of the tutorial you will learn how to estimate the joint site frequ
 calculating the joint SFS between two populations, which is generally called the 2D-SFS. Note that ANGSD can estimate 
 the joint SFS for more than two populations, which is useful for inferring population-specific divergence with the population branch statistic (PBS), which we won't 
 be covering here. More information about calculating multidimensional frequency spectra with ANGSD can be found [here](http://www.popgen.dk/angsd/index.php/2d_SFS_Estimation). 
-Information about calculating F<sub>ST</sub> and and PBS can be found [here](http://www.popgen.dk/angsd/index.php/Fst)
+Information about calculating F<sub>ST</sub> and and PBS can be found [here](http://www.popgen.dk/angsd/index.php/Fst).
 
 We'll calculate the 2D-SFS between the PANY and MAQU populations. The first step is to estimate allele frequency likelihoods across all sites for each population 
 separately. We've already done this for the PANY population, so let's do this calculation for the MAQU population:
