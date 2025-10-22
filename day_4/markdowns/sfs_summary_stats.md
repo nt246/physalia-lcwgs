@@ -623,8 +623,8 @@ Now we have a prior for the probability of jointly observing a site with *i* der
 heatmap. We're going to use these probabilities of jointly observing allele frequencies for our two example populations to calculate 
 F<sub>ST</sub> between them. F<sub>ST</sub> is an allelic fixation index commonly used to measure genetic differentiation between populations based on allele frequencies, and 
 ranges from 0 when the allele frequencies are the same in all populations to 1 when the populations are fixed for different alleles. F<sub>ST</sub> can be expressed as the 
-ratio of genetic variance within subpopulations, *b<sub>s</sub>*, to the total genetic variance, *c<sub>s</sub>*. The total genetic variance is equal to the sum of the 
-within population genetic variance and the between population genetic variance, *b<sub>s</sub>*, i.e., *c<sub>s</sub>* = (*a<sub>s</sub>* + *b<sub>s</sub>*).
+ratio of genetic variance between subpopulations, *a<sub>s</sub>*, to the total genetic variance, *c<sub>s</sub>*. The total genetic variance is equal to the sum of the 
+between population genetic variance and the within-population genetic variance, *b<sub>s</sub>*, i.e., *c<sub>s</sub>* = (*a<sub>s</sub>* + *b<sub>s</sub>*).
 
 We can calculate these genetic variance components with `realSFS` for our two example populations like so:
 
