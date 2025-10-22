@@ -417,7 +417,7 @@ Have a look at the output:
 ```bash
 $REALSFS print $RESDIR/PANY_post.saf.idx 2>/dev/null | less -S
 ```
-The columns are (1) chromosome, (2) position, and then the posterior probability of having 0, 1, 2, 3, ..., 2N derived alleles in each of the subsequent columns. The posterior 
+The columns are (1) chromosome, (2) position, and then the posterior probability of having 0, 1, 2, 3, ..., 2*n* derived alleles in each of the subsequent columns. The posterior 
 probablities are log transformed.
 
 **QUESTION**
