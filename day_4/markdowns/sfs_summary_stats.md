@@ -494,7 +494,7 @@ Here we'll learn how to estimate some of these different measures of genetic div
 The methods are described [here](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-14-289).
 Since these statistics are estimated from the SFS we supply `realSFS` with the allele frequency likelihoods at all sites (.saf.idx file) as well as the 
 ML estimate of the SFS (.sfs file) as the prior for the allele frequencies. The program can then calculate posterior probabilities for different allele frequencies across all sites 
-and, ultimately, the posterior expectated SFS. This SFS is then used to calculate diversity statistics. Here we are not using the folded SFS 
+and, ultimately, the posterior expected SFS. This SFS is then used to calculate diversity statistics. Here we are not using the folded SFS 
 but if you were, you would supply the `-fold 1` argument at this stage. 
 
 ```bash
