@@ -392,8 +392,8 @@ Now your vector of expected counts should look like this (scroll to see all valu
 1403715.239733 6987.037568 2279.638485 2180.218338 1813.594151 1117.329380 697.428766 652.617721 797.370326 889.151374 744.767130 541.466942 478.770881 458.365587 405.231595 187.772023 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 ```
 
-The folded SFS is represented by the first 1 through N values. These are the expected number of sites with minor allele counts of 0, 1, 2, ..., N. `realSFS` still prints 2N+1 values but 
-the N+1 to 2N+1 values should all be `0.000000` and can be ignored when using `-fold 1` because these categories don't really exist in the folded SFS.
+The folded SFS is represented by the first 1, ..., *n* values. These are the expected number of sites with minor allele counts of 0, 1, 2, ..., *n*. `realSFS` still prints 2*n*+1 values but 
+the *n*+1 to 2*n*+1 values should all be `0.000000` and can be ignored when using `-fold 1` because these categories don't really exist in the folded SFS.
 
 ### Allele frequency posterior probabilities
 
