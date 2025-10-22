@@ -227,6 +227,9 @@ $SCRIPTS/plotSFS.R $RESDIR/PANY.sfs $RESDIR/PANY_SFS 0
 
 ```
 
+The command below produces a $RESDIR/PANY_SFS.pdf file that you can download and look at (but I've also included the image 
+below).
+
 <details>
 
 <summary> click for plotSFS.R code </summary>
