@@ -636,7 +636,7 @@ We can view the genetic variance components at each site with `realSFS`:
 ```bash
 $REALSFS fst print $RESDIR/PANY_vs_MAQU.fst.idx | less -S
 ```
-The columns are (1) chromomsome name, (2) position, (3) a<sub>s</sub> (between population genetic variance), (4) c<sub>s</sub> (total population variance).
+The columns are (1) chromosome name, (2) position, (3) a<sub>s</sub> (between population genetic variance), (4) c<sub>s</sub> (total population variance).
 
 **QUESTION**
 
