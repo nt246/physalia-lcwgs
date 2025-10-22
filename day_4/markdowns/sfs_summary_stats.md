@@ -227,9 +227,6 @@ $SCRIPTS/plotSFS.R $RESDIR/PANY.sfs $RESDIR/PANY_SFS 0
 
 ```
 
-The command below produces a $RESDIR/PANY_SFS.pdf file that you can download and look at (but I've also included the image 
-below).
-
 <details>
 
 <summary> click for plotSFS.R code </summary>
@@ -272,7 +269,7 @@ invisible(dev.off())
 
 </details>
 
-This will dump a PANY_SFS.pdf file containing the plot that you can scp onto your local machine to look at or view with e.g. `evince` remotely. 
+This will dump a $RESDIR/PANY_SFS.pdf file containing the plot that you can scp onto your local machine to look at or view with e.g. `evince` remotely. 
 The SFS barplot is shown below for convenience.
 
 ![PANY_SFS](../files/PANY_SFS.png)
@@ -356,7 +353,7 @@ if (plottype == "bar") {
 
 </details>
 
-This will dump pdf files containing the images as before, which are also shown below.
+This will dump pdf files ($RESDIR/PANY_SFS_compare_barplot.pdf & $RESDIR/PANY_SFS_compare_scatter.pdf) containing the images, which are also shown below.
 
 ![PANY_SFS_compare_barplot](../files/PANY_SFS_compare_barplot.png)
 
