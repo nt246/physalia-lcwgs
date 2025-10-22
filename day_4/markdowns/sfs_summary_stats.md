@@ -216,7 +216,7 @@ You should observe the following vector of 2N+1 values (you'll need to scroll ri
 ```
 
 
-These are the *expected* number of sites in the PANY sample with 0 (value 1), 1 (value 2), 3 (value 3), ..., 2N (value 2N+1) derived alleles.
+These are the **expected** number of sites in the PANY sample with 0 (1st value), 1 (2nd value), 2 (3rd value), ..., 2*n* (2*n*+1th value) derived alleles.
 
 Let's plot the SFS as a barplot:
 
