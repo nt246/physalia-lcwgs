@@ -68,7 +68,7 @@ The general workflow is
 ![stats1](../files/stats1.png)
 
 We will estimate the unfolded SFS for the PANY population. To do this first we need to estimate the likelihood of sampling *k* derived alleles for *k*=0, *k*=1, *k*=2, ...,*k*=2*n* at 
-every site. This is accomplished using `-doSaf`. We will start with BAMs as input and as usual we will use `-GL` to calculate genotype likelihoods, which we can use to estimate the allele frequency likelihoods.
+every site. This is accomplished using `-doSaf`. We will start with BAMs as input and as usual we will use `-GL` to calculate genotype likelihoods.
 
 `-doSaf`
 
