@@ -459,7 +459,7 @@ What is the probability that the following sites are variable?
 
 <summary> Click for answer </summary>
 
-The probability that a site is variable is given by, P(variable) = 1 - P(0 derived alleles) + P(2N derived alleles). This is because sites with either 0 or 2N derived 
+The probability that a site is variable is given by, P(variable) = 1 - P(0 derived alleles) + P(2*n* derived alleles). This is because sites with either 0 or 2*n* derived 
 alleles are fixed.
 
 
@@ -469,7 +469,7 @@ P(chr24:48 is variable) = 1 - (exp(-Inf) + exp(-Inf)) = 1
 </br>
 P(chr24:61 is variable) = 1 - (exp(-0.638232) + exp(-Inf)) = 0.4717745
 
-Alternatively, you could take the sum over P(*x* derived alleles) for *x*=1 to *x*=2N-1. This would give the same answers.
+Alternatively, you could take the sum over P(*k* derived alleles) for *k*=1 to *k*=2*n*-1. This would give the same answers.
 
 </details>
 
