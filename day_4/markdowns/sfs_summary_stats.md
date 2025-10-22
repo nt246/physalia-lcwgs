@@ -54,9 +54,9 @@ The SFS characterizes the distribution of sample allele frequencies. Specificall
 frequency categories. This summary of allele frequencies has many uses including assessing data quality, inferring demography, and detecting selection.
 The "unfolded" SFS characterizes the frequency of derived alleles and requires some way to "polarize" alleles, i.e. decide which allelic state is 
 ancestral and which is derived. It's common to use an outgroup sequence for this. The SFS can also be folded, in which case it characterizes the 
-distribution of minor allele frequencies in a population. The folded SFS consists of allele frequency classes of 1/2N to 0.5 (where N is the diploid sample size). 
-To fold the spectrum, sites with derived allele frequencies of (2N-1)/2N are in the same class as 1/2N sites, (2N-2)/2N sites are in the same class as a 2/2N 
-site, (2N-3)/2N sites are in the same class as 3/2N sites, up to a class of 0.5 allele frequency (the highest frequency a minor allele can 
+distribution of minor allele frequencies in a population. The folded SFS consists of allele frequency classes of 1/2*n* to 0.5 (where *n* is the diploid sample size). 
+To fold the spectrum, sites with derived allele frequencies of (2*n*-1)/2*n* are in the same class as 1/2*n* sites, (2*n*-2)/2*n* sites are in the same class as a 2/2*n* 
+site, (2*n*-3)/2N sites are in the same class as 3/2N sites, up to a class of 0.5 allele frequency (the highest frequency a minor allele can 
 take by definition).
 
 We will use ANGSD to estimate the SFS using the methods described [here](http://www.ncbi.nlm.nih.gov/pubmed/22911679).
@@ -67,7 +67,7 @@ The general workflow is
 
 ![stats1](../files/stats1.png)
 
-We will estimate the unfolded SFS for the PANY population. To do this first we need to estimate the likelihood of sampling *k* derived alleles for k=0, k=1, k=2, ...,k=2N at 
+We will estimate the unfolded SFS for the PANY population. To do this first we need to estimate the likelihood of sampling *k* derived alleles for *k*=0, *k*=1, *k*=2, ...,*k*=2*n* at 
 every site. This is accomplished using `-doSaf`. We will start with BAMs as input and as usual we will use `-GL` to calculate genotype likelihoods, which we can use to estimate the allele frequency likelihoods.
 
 `-doSaf`
