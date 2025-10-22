@@ -670,5 +670,5 @@ The "weighted" estimate of F<sub>ST</sub> is calculated in the way described abo
 where the "region" is the whole genome. The weighted estimate is a better estimator than the unweighted estimate. Therefore, we would say that genome-wide F<sub>ST</sub> between 
 the PANY and MAQU populations is 0.086872.
 
-This concludes the SFS part of the tutorial. You should now know how to estimate the SFS and joint SFS and use it to estimate diversity and neutrality
-statistics and population divergence.
+This concludes the SFS part of the tutorial. You should now know how to estimate the SFS and joint SFS, and use these to calculate diversity and neutrality
+statistics, and estimate population divergence.
