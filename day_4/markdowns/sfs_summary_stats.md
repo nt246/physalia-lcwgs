@@ -666,8 +666,9 @@ After running the command you should observe
 ```bash
 -> FST.Unweight[nObs:1271361]:0.026882 Fst.Weight:0.086872
 ```
-The "weighted" estimate of F<sub>ST</sub> is calculated in the way that was explained for a region using the variance components, but here the "region" is the whole genome 
-and is a better estimate than the unweighted estimate. Therefore, we would say that genome-wide F<sub>ST</sub> between the PANY and MAQU populations is 0.086872.
+The "weighted" estimate of F<sub>ST</sub> is calculated in the way described above, \sum *a<sub>s</sub>*/\sum *c<sub>s</sub>*, but here 
+the "region" is the whole genome and is regarded as a better estimator than the unweighted estimate. Therefore, we would say that genome-wide F<sub>ST</sub> between 
+the PANY and MAQU populations is 0.086872.
 
 This concludes the SFS part of the tutorial. You should now know how to estimate the SFS and joint SFS and use it to estimate diversity and neutrality
 statistics and population divergence.
