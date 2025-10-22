@@ -56,7 +56,7 @@ The "unfolded" SFS characterizes the frequency of derived alleles and requires s
 ancestral and which is derived. It's common to use an outgroup sequence for this. The SFS can also be folded, in which case it characterizes the 
 distribution of minor allele frequencies in a population. The folded SFS consists of allele frequency classes of 1/2*n* to 0.5 (where *n* is the diploid sample size). 
 To fold the spectrum, sites with derived allele frequencies of (2*n*-1)/2*n* are in the same class as 1/2*n* sites, (2*n*-2)/2*n* sites are in the same class as 2/2*n* 
-sites, (2*n*-3)/2N sites are in the same class as 3/2*n* sites, up to a class of 0.5 allele frequency (the highest frequency a minor allele can 
+sites, (2*n*-3)/2*n* sites are in the same class as 3/2*n* sites, up to a class of 0.5 allele frequency (the highest frequency a minor allele can 
 take by definition).
 
 We will use ANGSD to estimate the SFS using the methods described [here](http://www.ncbi.nlm.nih.gov/pubmed/22911679).
