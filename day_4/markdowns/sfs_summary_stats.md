@@ -592,7 +592,7 @@ less -S $RESDIR/PANY.thetasWindow.gz.pestPG | less -S
 
 In this part of the tutorial you will learn how to estimate the joint site frequency spectrum. In this case we're 
 calculating the joint SFS between two populations, which is generally called the 2D-SFS. Note that ANGSD can estimate 
-the joint SFS for more than two populations, which is useful for inferring branch-specific divergence with Population Branch Length statistics (PBS), which we won't 
+the joint SFS for more than two populations, which is useful for inferring population-specific divergence with the population branch statistic (PBS), which we won't 
 be covering here. More information about calculating multidimensional frequency spectra with ANGSD can be found [here](http://www.popgen.dk/angsd/index.php/2d_SFS_Estimation). 
 Information about calculating F<sub>ST</sub> and and PBS can be found [here](http://www.popgen.dk/angsd/index.php/Fst)
 
