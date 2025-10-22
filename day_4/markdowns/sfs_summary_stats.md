@@ -619,13 +619,17 @@ Let's have a look at the output:
 less -S $RESDIR/PANY_vs_MAQU.2dsfs
 ```
 
-Now we have a prior for the joint probability of observing *i* alleles in PANY and *j* alleles in MAQU. One way common way to visualize the 2D-SFS is with a 
-with a heatmap. We're going to use these probabilities of jointly observing combinations of allele frequencies in our two example populations to calculate 
-F<sub>ST</sub> between them. F<sub>ST</sub> is a commonly used measure of genetic differentiation based on allele frequencies that spans from 0 when the allele frequencies are the same 
-in both populations to 1 when the populations are fixed for different alleles. F<sub>ST</sub> can be expressed in terms of the genetic variance within subpopulations 
-(denoted here as *b<sub>s</sub>*) and between subpopulations (denoted here as *a<sub>s</sub>*) and between subpopulations: F<sub>ST</sub> = a<sub>s</sub> / (a<sub>s</sub> + b<sub>s</sub>).
+Now we have a prior for the probability of jointly observing *i* alleles in PANY and *j* alleles in MAQU. One common way to visualize the 2D-SFS is with a 
+with a heatmap. We're going to use these probabilities of jointly observing allele frequencies for our two example populations to calculate 
+F<sub>ST</sub> between them. F<sub>ST</sub> is an allelic fixation index commonly used to measure genetic differentiation between or among populations based on allele frequencies, and 
+ranges from 0 when the allele frequencies are the same in both populations to 1 when the populations are fixed for different alleles. F<sub>ST</sub> can be expressed in as the 
+ratio of genetic variance within subpopulations, *b<sub>s</sub>*, and the total genetic variance, *c<sub>s</sub>*. The total genetic variance is equal to the sum of the 
+within population genetic variance and the between population genetic variance, *b<sub>s</sub>*, i.e. *c<sub>s</sub>* = (*a<sub>s</sub>* + *b<sub>s</sub>*).
 
-UPDATE: `realSFS fst print` now prints the between population genetic variance (a<sub>s</sub>) in column 3 and the total population variance (c<sub>s</sub> = a<sub>s</sub> + b<sub>s</sub>) 
+terms of the genetic variance within subpopulations (denoted here as *b<sub>s</sub>*) and between subpopulations (denoted here as *a<sub>s</sub>*): 
+F<sub>ST</sub> = a<sub>s</sub> / (a<sub>s</sub> + b<sub>s</sub>). The total population variance, 
+
+`realSFS fst print` now prints the between population genetic variance (a<sub>s</sub>) in column 3 and the total population variance (c<sub>s</sub> = a<sub>s</sub> + b<sub>s</sub>) 
 in column 4 such that F<sub>ST</sub> = a<sub>s</sub> / c<sub>s</sub>, i.e. column 3 value divided by column 4 value.
 
 We can calculate these genetic variances with `realSFS` for our two example populations like so:
