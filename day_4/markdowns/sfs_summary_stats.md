@@ -530,7 +530,7 @@ Mme_chr24:2558528-4558528	48	-1.376662	-0.822030	-15.112546	-1.061792	-0.934742
 Mme_chr24:2558528-4558528	49	-6.602776	-7.355811	-5.716146	-9.435287	-7.931179
 Mme_chr24:2558528-4558528	50	-6.688341	-7.495606	-5.759189	-9.691919	-8.083302
 ```
-The columns are (1) chromosome name, (2) position, (3) Watterson's &theta, (4) nucleotide diversity, (5) theta based only on singletons, (6) theta H, (7) theta L.
+The columns are (1) chromosome name, (2) position, (3) Watterson's theta, (4) nucleotide diversity, (5) theta based only on singletons, (6) theta H, (7) theta L.
 The estimates of theta are linear functions of the SFS, so if you wanted to estimate theta for a region you simply sum the estimates over all sites in the region.
 
 There is an easy way in ANGSD however to calculate genome-wide estimates of theta for each chromosome along with some statistics commonly used to 
