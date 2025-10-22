@@ -50,7 +50,7 @@ The test dataset spans one breakpoint of this inversion (1Mb up and downstream).
 
 ### The Site Frequency Spectrum (SFS)
 
-The SFS characterizes the distribution of allele frequencies in a population. Specifically, the SFS records the number (or proportion) of sites in different allele 
+The SFS characterizes the distribution of sample allele frequencies. Specifically, the SFS records the number (or proportion) of sites in different allele 
 frequency categories. This summary of allele frequencies has many uses including assessing data quality, inferring demography, and detecting selection.
 The "unfolded" SFS characterizes the frequency of derived alleles and requires some way to "polarize" alleles, i.e. decide which allelic state is 
 ancestral and which is derived. It's common to use an outgroup sequence for this. The SFS can also be folded, in which case it characterizes the 
