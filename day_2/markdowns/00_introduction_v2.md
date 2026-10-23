@@ -37,8 +37,13 @@ DIR=/home/ubuntu/Share/physalia-lcwgs/data
 DATA=$DIR/BAMS
 REF=$DIR/Ref.fa
 ANC=$DIR/outgrp_ref.fa
-angsd=/home/ubuntu/angsd/angsd
 
+```
+
+If you have not already, load the lcwgs conda environment so that you have access to the necessary programs.
+
+```
+conda activate lcwgs
 ```
 
 The **workflow** is roughly divided into four steps:
