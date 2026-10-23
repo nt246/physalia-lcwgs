@@ -1,7 +1,13 @@
 
 ## 2. Genotype likelihoods
 
-Before getting started, if this is a new session, set evironment variables
+If you have not already, load the lcwgs conda environment.
+
+```
+conda activate lcwgs
+```
+
+Before getting started, if this is a new session, set environment variables.
 
 ```
 RESDIR=~/day2/Results
@@ -10,10 +16,8 @@ DIR=/home/ubuntu/Share/physalia-lcwgs/data
 DATA=$DIR/BAMS
 REF=$DIR/Ref.fa
 ANC=$DIR/outgrp_ref.fa
-angsd=/home/ubuntu/angsd/angsd
 
 cd ~/day2
-
 ```
 
 Many of the calculations that you perform with ANGSD are based on **genotype likelihoods** (GL)s, which improves accuracy over hard-called genotypes when depth is low 
@@ -22,9 +26,12 @@ We will now calculate GLs for each individual at all sites in our dataset.
 
 To do so you need to specify which genotype likelihood model to use.
 ```
-$angsd -GL
-...
--GL=0: 
+angsd -GL
+```
+
+```
+abcGL.cpp:
+	-GL=0: 
 	1: SAMtools
 	2: GATK
 	3: SOAPsnp
@@ -43,7 +50,9 @@ Filedumping:
 	2: beagle likelihood file	.beagle.gz
 	3: binary 3 times likelihood	.glf.gz
 	4: text version (10 log likes)	.glf.gz
+	5: binary saf files (usefull for realSFS)	.glf.gz
 ```
+
 A brief description of these different models can be found [here](http://www.popgen.dk/angsd/index.php/Genotype_likelihoods).
 The GATK model is based on the one from the first GATK paper, SAMtools uses a more sophisticated error model (does not assume errors are independent), 
 SOAPsnp requires a reference sequence for recalibration of quality scores, SYK is error-type specific.
@@ -53,7 +62,7 @@ Let's first work with only the PANY samples.
 A possible command to calculate genotype likelihoods is
 
 ```
-$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
+angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
         -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
         -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
         -GL 1 -doGlf 4
@@ -154,7 +163,7 @@ Look at the file sizes of text vs binary format. Which one is smaller?
 Use `-doGlf 1` to output genotype likelihoods in binary. So the full command would be
 
 ```
-$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_binary \
+angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_binary \
         -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
         -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
         -GL 1 -doGlf 1

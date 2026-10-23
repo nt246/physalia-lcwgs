@@ -1,6 +1,12 @@
 ## 3. Allele frequencies and SNP calling
 
-Before getting started, if this is a new session, set evironment variables
+If you have not already, load the lcwgs conda environment.
+
+```
+conda activate lcwgs
+```
+
+Before getting started, if this is a new session, set environment variables.
 
 ```
 RESDIR=~/day2/Results
@@ -9,17 +15,15 @@ DIR=/home/ubuntu/Share/physalia-lcwgs/data
 DATA=$DIR/BAMS
 REF=$DIR/Ref.fa
 ANC=$DIR/outgrp_ref.fa
-angsd=/home/ubuntu/angsd/angsd
 
 cd ~/day2
-
 ```
 
 #### Allele Frequency Estimation
 
 Now you will estimate allele frequencies using the GLs that you just calculated as input.
 
-We can get some information about how to estimate allele frequencies with `$angsd -doMaf`.
+We can get some information about how to estimate allele frequencies with `angsd -doMaf`.
 
 ```
 ------------------------
@@ -49,7 +53,7 @@ Extras:
 NB These frequency estimators requires major/minor -doMajorMinor
 ```
 
-It's also useful to know how ANGSD identifies major and minor alleles, `$angsd -doMajorMinor`
+It's also useful to know how ANGSD identifies major and minor alleles, `angsd -doMajorMinor`
 
 ```
 -------------------
@@ -66,14 +70,14 @@ abcMajorMinor.cpp:
 
 You can estimate minor allele frequences (MAFs) using the GLs that we calculated from the last section as input. When supplying a glf file as input we also
 need to provide the number of individuals in the file with `-nInd` and the reference index file with `-fai`. However, the reference index parser does not 
-like that we have a colon in the chromosome name so we'll use bams as input which means the likelihoods are recalculated on the fly and is less efficient but 
-is how we must proceed for this tutorial.
+like that we have a colon in the chromosome name so we'll use bams as input which means the likelihoods are recalculated on the fly and is less efficient but works 
+just fine.
 
 Here's an example for how you would use the precomputed genotype likelihoods as input (if you try to run this you will get an error because of the way the example chromosome is named).
 
 ```bash
-# $angsd -glf10_text $RESDIR/PANY.glf.gz -out $RESDIR/PANY \
-#   -nInd 15 -fai $DIR/Ref.fa.fai -doMajorMinor 1 -doMaf 1 -minInd 5
+# angsd -glf10_text $RESDIR/PANY.glf.gz -out $RESDIR/PANY \
+#    -nInd 15 -fai $DIR/Ref.fa.fai -doMajorMinor 1 -doMaf 1 -minInd 5
 ```
 
 Run the command below to estimate allele frequencies. Note that when using the bams as input for downstream analyses that rely on genotype likelihods (as we are doing) you 
@@ -81,14 +85,14 @@ need to calculate the genotype likelihoods on the fly with `-GL`.
 
 ```bash
 
-$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
+angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
    -GL 1 -doMajorMinor 1 -doMaf 1
 
 ```
 
-In general, `-GL 1`, `-doMaf 1/2`, and `-doMajorMinor 1` should be the preferred choice when data uncertainty is high.
+In general, `-GL 1`, `-doMaf 1` or `-doMaf 2`, and `-doMajorMinor 1` should be the preferred choice when data uncertainty is high.
 
 Take a look at the MAF file with `less $RESDIR/PANY.mafs.gz`. The first 20 lines of the file should look like
 
@@ -115,8 +119,8 @@ Mme_chr24:2558528-4558528	48	C	G	C	0.430705	7
 Mme_chr24:2558528-4558528	49	T	A	T	0.000004	6
 ```
 
-The columns are (1) chromosome/ref sequence name, (2) position, (3) the major allele, (4) the minor allele, (5) the allele frequency, 
-(6) the number of indivdiuals with data used in the calculation of allele frequency. The number of individuals in the last 
+The columns are (1) chromosome/ref sequence name, (2) position, (3) the major allele, (4) the minor allele, (5) the frequency of the allele listed in the 
+"minor" column, (6) the number of indivdiuals used to calculate the allele frequency. The number of individuals in the last 
 column should never be below 5 since you specified `-minInd 5`.
 
 You'll notice that many sites have very low frequency suggesting that they are likely monomorphic. You can probably start guessing 
@@ -140,7 +144,7 @@ for biallelic sites by setting the major allele to the reference allele with `-d
 ```
 # estimate PANY alternate allele frequencies (-ref is required for -doMajorMinor 4)
 
-#$angsd -b $DIR/PANY_bams.txt -ref $REF -out PANY_refmajor \
+# angsd -b $DIR/PANY_bams.txt -ref $REF -out PANY_refmajor \
 #   -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
 #   -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 -skipTriallelic 1\
 #   -GL 1 -doMajorMinor 4 -doMaf 1
@@ -149,7 +153,7 @@ for biallelic sites by setting the major allele to the reference allele with `-d
 ```
 # estimate MAQU alternate allele frequencies (-ref is required for -doMajorMinor 4)
 
-#$angsd -b $DIR/MAQU_bams.txt -ref $REF -out MAQU_refmajor \
+# angsd -b $DIR/MAQU_bams.txt -ref $REF -out MAQU_refmajor \
 #   -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
 #   -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 -skipTriallelic 1\
 #   -GL 1 -doMajorMinor 4 -doMaf 1
@@ -158,8 +162,8 @@ for biallelic sites by setting the major allele to the reference allele with `-d
 Now use the MAF files with the alternate allele frequencies with dxyWindow
 
 ```
-#dxyWindow -winsize 10000 -stepsize 5000 -fixedsite 0 -sizefile Ref_chr_lengths.txt -skip_missing 1 \
-#PANY.mafs.gz MAQU.mafs.gz > dxy.txt
+# dxyWindow -winsize 10000 -stepsize 5000 -fixedsite 0 -sizefile Ref_chr_lengths.txt -skip_missing 1 \
+# PANY.mafs.gz MAQU.mafs.gz > dxy.txt
 ```
 
 <details>
@@ -206,10 +210,20 @@ putative regions of introgression (low divergence).
 
 You can statistically test for whether a site is variable in ANGSD using a likelihood ratio (LR) test, which compares the likelihood that the 
 minor allele frequency (MAF) is zero (the null) to the likelihood of the estimated MAF (with `-doMaf`). Under the null, -2log(LR statistic) 
-is chi-square distributed with one degree of freedom, and so we can calculate a p-value for whether the estimated MAF is statistically 
+is chi-square distributed with one degree of freedom, and so we can calculate a *p*-value for whether the estimated MAF is statistically 
 different from zero, in which case the site is a SNP.
 
-Let's call biallelic PANY SNPs at four different significance levels:
+Let's call biallelic PANY SNPs at four different significance levels. The ANGSD part of the command that you will run is
+
+```
+# angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_$PV \
+#   -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
+#   -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
+#   -GL 1 -doMajorMinor 1 -doMaf 1 -rmTriallelic 0.05 -SNP_pval $PV &> /dev/null
+
+```
+
+Now, run the loop for calling SNPs at maximum *p*-value cutoffs of 0.05, 0.01, 0.0001, and 0.000001.
 
 ```bash
 for PV in 0.05 0.01 1e-4 1e-6
@@ -226,7 +240,7 @@ done
 Sites that may have more than two alleles are purged using `-rmTriallelic` in our example above.
 
 Have a look at the outputs, e.g. `less $RESDIR/PANY_0.05.mafs.gz`. You'll notice two additional columns in the MAF file. 
-There is now a field, 'ref', with the reference allele, and a "pK-EM" field, which shows the p-value for the likelihood 
+There is now a field, 'ref', with the reference allele, and a "pK-EM" field, which shows the *p*-value for the likelihood 
 ratio test of whether the site is variable.
 
 **QUESTION**
@@ -247,7 +261,7 @@ SNP_pval Number_SNPs
 
 Here's a representative image of what happens to the distribution of allele frequencies as you become more stringent in calling SNPs.
 Note that sites with MAF below a certain cutoff can be discarded with `-minMaf`. This can be useful for PCA, admixture, or GWAS-type analyses where a 
-minimum MAF (e.g. 5%) can help reduce noise and improve inference.
+minimum MAF can help reduce noise and improve inference.
 
 
 ![snp_call_comparison](../files/snp_call_comparison.png)
@@ -259,7 +273,7 @@ It's generally advisable to call SNPs among all individuals jointly to avoid bia
 
 ```bash
 
-$angsd -b $DIR/ALL_bams.txt -ref $REF -out $RESDIR/ALL \
+angsd -b $DIR/ALL_bams.txt -ref $REF -out $RESDIR/ALL \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 20 -setMinDepthInd 1 -setMinDepth 28 -setMaxDepth 120 -doCounts 1 \
    -GL 1 -doMajorMinor 1 -doMaf 1 -rmTriallelic 0.05 -SNP_pval 1e-6
@@ -294,7 +308,7 @@ zcat $RESDIR/ALL.mafs.gz | cut -f1,2 | tail -n+2 > $RESDIR/biallelic_snps.pos
 
 # index the sites file
 
-$angsd sites index $RESDIR/biallelic_snps.pos
+angsd sites index $RESDIR/biallelic_snps.pos
 
 ```
 
@@ -303,7 +317,7 @@ Now you can calculate allele frequencies that are comparable between populations
 ```bash
 # Calculate derived allele frequencies for PANY
 
-$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_derived \
+angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_derived \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -minMapQ 20 -minQ 20 \
    -GL 1 -doMajorMinor 5 -anc $ANC -doMaf 1 -sites $RESDIR/biallelic_snps.pos
 
@@ -312,7 +326,7 @@ $angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_derived \
 ```bash
 # Calculate derived allele frequencies for JIGA
 
-$angsd -b $DIR/JIGA_bams.txt -ref $REF -out $RESDIR/JIGA_derived \
+angsd -b $DIR/JIGA_bams.txt -ref $REF -out $RESDIR/JIGA_derived \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -minMapQ 20 -minQ 20 \
    -GL 1 -doMajorMinor 5 -anc $ANC -doMaf 1 -sites $RESDIR/biallelic_snps.pos
 

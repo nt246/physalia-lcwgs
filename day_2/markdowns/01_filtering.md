@@ -7,7 +7,7 @@ If you have not already, load the lcwgs conda environment.
 conda activate lcwgs
 ```
 
-Before getting started, if this is a new session, set evironment variables
+Before getting started, if this is a new session, set environment variables.
 
 ```
 RESDIR=~/day2/Results
@@ -18,7 +18,6 @@ REF=$DIR/Ref.fa
 ANC=$DIR/outgrp_ref.fa
 
 cd ~/day2
-
 ```
 
 First, we will learn **how to build a command line in ANGSD**.
@@ -137,12 +136,11 @@ Examples for region specification:
 ```
 
 Let's build an ANGSD run. Arguments can be supplied in any order. The order presented here is arbitrary. 
-We do not actually run the intermediate code preceded with ```#```, which is only presented to highlight  
-specific commands.
+We do not actually run the intermediate code preceded with ```#```, which is only presented to highlight specific commands.
 
 Define input and output files.
 ```
-# angsd -b $DIR/ALL_bams.txt -out ./Results/ALL \
+# angsd -b $DIR/ALL_bams.txt -out ./Results/ALL
 ```
 We provide a list of bam files (with their full paths) with `-b`, while `-out` states the prefix for all output files that will be generated.
 
@@ -151,9 +149,9 @@ Next we specify some basic read filtering criteria.
 # angsd -b $DIR/ALL_bams.txt -ref $REF -out ./Results/ALL \
 # -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
 ```
-These filters will retain only uniquely mapped reads (`uniqueOnly`) that map as a proper pair (`only_proper_pairs`) and are not tagged with a SAM 
-flag above 255 (`remove_bads`).No bases are trimmed from the ends of reads `-trim 0` and we downgrade mapping and base qualities in problematic mapping 
-regions (`-C` and `-baq`).`-C INT` downgrades mapping quality when a read has excessive mismatches to the reference based on sqrt((INT-*q*)/INT)*INT, 
+These filters will retain only uniquely mapped reads (`-uniqueOnly`) that map as a proper pair (`-only_proper_pairs`) and are not tagged with a SAM 
+flag above 255 (`-remove_bads`). No bases are trimmed from the ends of reads `-trim 0` and we downgrade mapping and base qualities in problematic mapping 
+regions (`-C` and `-baq`). `-C INT` downgrades mapping quality when a read has excessive mismatches to the reference based on sqrt((INT-*q*)/INT)*INT, 
 where *q* relates to the base qualities, while `-baq 1` adjusts base qualities around INDELS 
 ([BAQ](https://academic.oup.com/bioinformatics/article/27/8/1157/227268?login=false)).
 
