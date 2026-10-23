@@ -19,7 +19,6 @@ Create a folder for this session in your home directory and enter it.
 ```
 mkdir ~/day2
 cd ~/day2
-
 ```
 You should now be in `~/day2`. You can confirm this with `pwd`, which will print your location in the filesystem.
 
@@ -27,8 +26,8 @@ Now create two folders in your home user directory, one for your results and one
 ```
 mkdir ~/day2/Results
 mkdir ~/day2/Data
-
 ```
+
 Set environment variables to point to these directories, files that we'll use, and software.
 ```
 RESDIR=~/day2/Results
@@ -37,7 +36,6 @@ DIR=/home/ubuntu/Share/physalia-lcwgs/data
 DATA=$DIR/BAMS
 REF=$DIR/Ref.fa
 ANC=$DIR/outgrp_ref.fa
-
 ```
 
 If you have not already, load the lcwgs conda environment so that you have access to the necessary programs.
@@ -46,7 +44,7 @@ If you have not already, load the lcwgs conda environment so that you have acces
 conda activate lcwgs
 ```
 
-The **workflow** is roughly divided into four steps:
+The workflow is roughly divided into four steps:
 
 [1. Data filtering options and I/O](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/01_filtering.md)
 
