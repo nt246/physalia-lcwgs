@@ -50,13 +50,13 @@ The test dataset spans one breakpoint of this inversion (1Mb up and downstream).
 
 ### The Site Frequency Spectrum (SFS)
 
-The SFS characterizes the distribution of allele frequencies in a population. Specifically, the SFS records the number (or proportion) of sites in different allele 
+The SFS characterizes the distribution of sample allele frequencies. Specifically, the SFS records the number (or proportion) of sites in different allele 
 frequency categories. This summary of allele frequencies has many uses including assessing data quality, inferring demography, and detecting selection.
 The "unfolded" SFS characterizes the frequency of derived alleles and requires some way to "polarize" alleles, i.e. decide which allelic state is 
 ancestral and which is derived. It's common to use an outgroup sequence for this. The SFS can also be folded, in which case it characterizes the 
-distribution of minor allele frequencies in a population. The folded SFS consists of allele frequency classes of 1/2N to 0.5 (where N is the diploid sample size). 
-To fold the spectrum, sites with derived allele frequencies of (2N-1)/2N are in the same class as 1/2N sites, (2N-2)/2N sites are in the same class as a 2/2N 
-site, (2N-3)/2N sites are in the same class as 3/2N sites, up to a class of 0.5 allele frequency (the highest frequency a minor allele can 
+distribution of minor allele frequencies in a population. The folded SFS consists of allele frequency classes of 1/2*n* to 0.5 (where *n* is the diploid sample size). 
+To fold the spectrum, sites with derived allele frequencies of (2*n*-1)/2*n* are in the same class as 1/2*n* sites, (2*n*-2)/2*n* sites are in the same class as 2/2*n* 
+sites, (2*n*-3)/2*n* sites are in the same class as 3/2*n* sites, up to a class of 0.5 allele frequency (the highest frequency a minor allele can 
 take by definition).
 
 We will use ANGSD to estimate the SFS using the methods described [here](http://www.ncbi.nlm.nih.gov/pubmed/22911679).
@@ -67,10 +67,11 @@ The general workflow is
 
 ![stats1](../files/stats1.png)
 
-We will estimate the unfolded SFS for the PANY population. To do this first we need to estimate the likelihood of sampling *k* derived alleles for k=0, k=1, k=2, ...,k=2N at 
-every site. This is accomplished using `-doSaf`. We will start with BAMs as input and as usual we will use `-GL` to calculate genotype likelihoods, which we can use to estimate the allele frequency likelihoods.
+We will estimate the unfolded SFS for the PANY population. To do this first we need to estimate the likelihood of sampling *k*=0, *k*=1, *k*=2, ...,*k*=2*n* derived alleles at 
+every site. Note *k* represents the number of derived alleles at a site. This is accomplished using `-doSaf`. We will start with BAMs as input and as usual we will use `-GL` 
+to calculate genotype likelihoods.
 
-`-doSaf`
+`$ANGSD -doSaf`
 
 ```bash
 ...
@@ -111,7 +112,7 @@ $REALSFS print $RESDIR/PANY.saf.idx | less -S
 ```
 
 The columns are (1) chromosome, (2) position, (3) likelihood of 0 derived alleles, (4) likelihood of 1 derived allele, 
-(5), likelihood of 2 derived alleles, ..., (2N+2) likelihood of having 2N derived alleles. Note that the likelihoods 
+(5), likelihood of 2 derived alleles,..., (2*n*+3) likelihood of 2*n* derived alleles. Note that the likelihoods 
 are scaled to the highest likelihood and log transformed (such that the most likely allele frequency will have a 
 value of 0).
 
@@ -142,6 +143,8 @@ What is the most likely number of derived alleles at position chr24:61?
 </details>
 
 Help information for the `realSFS` program can be seen by calling `realSFS` without arguments.
+
+`$REALSFS`
 
 ```bash
 Usage:
@@ -213,7 +216,7 @@ You should observe the following vector of 2N+1 values (you'll need to scroll ri
 ```
 
 
-These are the *expected* number of sites in the PANY sample with 0 (value 1), 1 (value 2), 3 (value 3), ..., 2N (value 2N+1) derived alleles.
+These are the **expected** number of sites in the PANY sample with 0 (1st value), 1 (2nd value), 2 (3rd value), ..., 2*n* (2*n*+1th value) derived alleles.
 
 Let's plot the SFS as a barplot:
 
@@ -266,7 +269,7 @@ invisible(dev.off())
 
 </details>
 
-This will dump a PANY_SFS.pdf file containing the plot that you can scp onto your local machine to look at or view with e.g. `evince` remotely. 
+This will dump a $RESDIR/PANY_SFS.pdf file containing the plot that you can scp onto your local machine to look at or view with e.g. `evince` remotely. 
 The SFS barplot is shown below for convenience.
 
 ![PANY_SFS](../files/PANY_SFS.png)
@@ -350,7 +353,7 @@ if (plottype == "bar") {
 
 </details>
 
-This will dump pdf files containing the images as before, which are also shown below.
+This will dump pdf files ($RESDIR/PANY_SFS_compare_barplot.pdf & $RESDIR/PANY_SFS_compare_scatter.pdf) containing the images, which are also shown below.
 
 ![PANY_SFS_compare_barplot](../files/PANY_SFS_compare_barplot.png)
 
@@ -360,7 +363,7 @@ This will dump pdf files containing the images as before, which are also shown b
 
 What if we did not have an outgroup to polarize alleles with? In this case we could calculate the folded SFS. Let's try it.
 
-First we'll calculate the allele frequency likelihoods with `-doSaf 1`, which requires us to supply `-anc` for which we will supply 
+First we'll calculate the allele frequency likelihoods with `-doSaf 1`, which requires us to use `-anc` for which we will supply 
 the reference FASTA in the case of folding (remember, we are pretending that we don't have a reliable ancestral fasta to polarize with):
 
 
@@ -389,17 +392,17 @@ Now your vector of expected counts should look like this (scroll to see all valu
 1403715.239733 6987.037568 2279.638485 2180.218338 1813.594151 1117.329380 697.428766 652.617721 797.370326 889.151374 744.767130 541.466942 478.770881 458.365587 405.231595 187.772023 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 ```
 
-The folded SFS is represented by the first 1 through N values. These are the expected number of sites with minor allele counts of 0, 1, 2, ..., N. `realSFS` still prints 2N+1 values but 
-the N+1 to 2N+1 values should all be `0.000000` and can be ignored when using `-fold 1` because these categories don't really exist in the folded SFS.
+The folded SFS is represented by the first 1, ..., *n* values. These are the expected number of sites with minor allele counts of 0, 1, 2, ..., *n*. `realSFS` still prints 2*n*+1 values but 
+the *n*+1 to 2*n*+1 values should all be `0.000000` and can be ignored when using `-fold 1` because these categories don't really exist in the folded SFS.
 
 ### Allele frequency posterior probabilities
 
 Since you were able to calculate allele frequency likelihoods with `-doSaf` you may be wondering if you can use these to calculate the posterior probabilities of the possible 
-allele frequencies at each site. You can! In order to do this you can use the site frequency spectrum calculated with `realSFS` as a prior on the allele frequencies since it tells 
-you the probability of randomly drawing a site with a given number of derived (or minor if folded) alleles in the population.
+allele frequencies at each site. You can! In order to do this you can use the site frequency spectrum calculated with `realSFS` as a prior for the allele frequencies since it tells 
+you the probability of randomly drawing a site with a given number of derived (or minor if folded) alleles in the sample.
 
 Let's calculate derived allele frequency posterior probabilities for the PANY population. This is achieved by running the per site allele frequency likelihood calculation (`-doSaf`) while supplying 
-the SFS are a prior with '-pest':
+the SFS are a prior with `-pest`:
 
 ```bash
 $ANGSD -b $DIR/PANY_bams.txt -ref $REF -anc $ANC -out $RESDIR/PANY_post \
@@ -414,7 +417,7 @@ Have a look at the output:
 ```bash
 $REALSFS print $RESDIR/PANY_post.saf.idx 2>/dev/null | less -S
 ```
-The columns are (1) chromosome, (2) position, and then the posterior probability of having 0, 1, 2, 3, ..., 2N derived alleles in each of the subsequent columns. The posterior 
+The columns are (1) chromosome, (2) position, and then the posterior probability of having 0, 1, 2, 3, ..., 2*n* derived alleles in each of the subsequent columns. The posterior 
 probablities are log transformed.
 
 **QUESTION**
@@ -456,7 +459,7 @@ What is the probability that the following sites are variable?
 
 <summary> Click for answer </summary>
 
-The probability that a site is variable is given by, P(variable) = 1 - P(0 derived alleles) + P(2N derived alleles). This is because sites with either 0 or 2N derived 
+The probability that a site is variable is given by, P(variable) = 1 - P(0 derived alleles) + P(2*n* derived alleles). This is because sites with either 0 or 2*n* derived 
 alleles are fixed.
 
 
@@ -466,7 +469,7 @@ P(chr24:48 is variable) = 1 - (exp(-Inf) + exp(-Inf)) = 1
 </br>
 P(chr24:61 is variable) = 1 - (exp(-0.638232) + exp(-Inf)) = 0.4717745
 
-Alternatively, you could take the sum over P(*x* derived alleles) for *x*=1 to *x*=2N-1. This would give the same answers.
+Alternatively, you could take the sum over P(*k* derived alleles) for *k*=1 to *k*=2*n*-1. This would give the same answers.
 
 </details>
 
@@ -490,8 +493,8 @@ Various population genetic summary statistics, including commonly used measures 
 Here we'll learn how to estimate some of these different measures of genetic diversity using the PANY population as an example. 
 The methods are described [here](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-14-289).
 Since these statistics are estimated from the SFS we supply `realSFS` with the allele frequency likelihoods at all sites (.saf.idx file) as well as the 
-ML estimate of the SFS (.sfs file). The program can then calculate posterior probabilities for different allele frequencies accross all sites 
-and, ultimately, the posterior expectated SFS. This SFS is then used to calculate diversity statistics. Here we are not using the folded SFS 
+ML estimate of the SFS (.sfs file) as the prior for the allele frequencies. The program can then calculate posterior probabilities for different allele frequencies across all sites 
+and, ultimately, the posterior expected SFS. This SFS is then used to calculate diversity statistics. Here we are not using the folded SFS, 
 but if you were, you would supply the `-fold 1` argument at this stage. 
 
 ```bash
@@ -527,7 +530,7 @@ Mme_chr24:2558528-4558528	48	-1.376662	-0.822030	-15.112546	-1.061792	-0.934742
 Mme_chr24:2558528-4558528	49	-6.602776	-7.355811	-5.716146	-9.435287	-7.931179
 Mme_chr24:2558528-4558528	50	-6.688341	-7.495606	-5.759189	-9.691919	-8.083302
 ```
-The columns are (1) Chromosome, (2) position, (3) Watterson's theta, (4) nucleotide diversity, (5) theta based only on singletons, (6) theta H, (7) theta L.
+The columns are (1) chromosome name, (2) position, (3) Watterson's theta, (4) nucleotide diversity, (5) theta based only on singletons, (6) theta H, (7) theta L.
 The estimates of theta are linear functions of the SFS, so if you wanted to estimate theta for a region you simply sum the estimates over all sites in the region.
 
 There is an easy way in ANGSD however to calculate genome-wide estimates of theta for each chromosome along with some statistics commonly used to 
@@ -562,13 +565,13 @@ The output is:
 (0,1351769)(27,1999989)(0,1999989)	Mme_chr24:2558528-4558528	999994	4233.873378	3712.268273	5440.874692	4406.047859	4059.158069	-0.483002	-0.758499	-0.698366	-0.142861	-0.037702	1351769
 ```
 
-The total number of sites used in the statistic calculations are given in the last column, and is equal to 1351769.
+The number of sites used in the statistic calculations is given in the last column, and is equal to 1351769.
 
 The per site estimate for Watterson's theta (column "tW") is 4233.873378 / 1351769 = 0.003132098.
 
 The per site estimate of nucleotide diversity (column "tP") is 3712.268273 / 1351769 = 0.00274623.
 
-Tajima's D is given in column 9 ("Tajima") and is equal to -0.483002.
+Tajima's *D* is given in column 9 ("Tajima") and is equal to -0.483002.
 
 </details>
 
@@ -589,9 +592,9 @@ less -S $RESDIR/PANY.thetasWindow.gz.pestPG | less -S
 
 In this part of the tutorial you will learn how to estimate the joint site frequency spectrum. In this case we're 
 calculating the joint SFS between two populations, which is generally called the 2D-SFS. Note that ANGSD can estimate 
-the joint SFS for more than two populations, which is useful for inferring branch-specific divergence with Population Branch Length statistics (PBS), which we won't 
+the joint SFS for more than two populations, which is useful for inferring population-specific divergence with the population branch statistic (PBS), which we won't 
 be covering here. More information about calculating multidimensional frequency spectra with ANGSD can be found [here](http://www.popgen.dk/angsd/index.php/2d_SFS_Estimation). 
-Information about calculating F<sub>ST</sub> and and PBS can be found [here](http://www.popgen.dk/angsd/index.php/Fst)
+Information about calculating F<sub>ST</sub> and and PBS can be found [here](http://www.popgen.dk/angsd/index.php/Fst).
 
 We'll calculate the 2D-SFS between the PANY and MAQU populations. The first step is to estimate allele frequency likelihoods across all sites for each population 
 separately. We've already done this for the PANY population, so let's do this calculation for the MAQU population:
@@ -604,8 +607,8 @@ $ANGSD -b $DIR/MAQU_bams.txt -ref $REF -anc $ANC -out $RESDIR/MAQU \
 
 ```
 
-Then we can use each population's respective allele frequency likelihoods to obtain a maximum likelihood estimate of the 
-joint allele frequency likelihoods:
+Then we can use each population's respective allele frequency likelihoods together to obtain a maximum likelihood estimate of the 
+joint allele frequency likelihoods. To do this, we provide the .saf.idx files of both populations to `realSFS`:
 
 ```bash
 $REALSFS $RESDIR/PANY.saf.idx $RESDIR/MAQU.saf.idx > $RESDIR/PANY_vs_MAQU.2dsfs
@@ -616,16 +619,14 @@ Let's have a look at the output:
 less -S $RESDIR/PANY_vs_MAQU.2dsfs
 ```
 
-Now we have a prior for the joint probability of observing *i* alleles in PANY and *j* alleles in MAQU. One way common way to visualize the 2D-SFS is with a 
-with a heatmap. We're going to use these probabilities of jointly observing combinations of allele frequencies in our two example populations to calculate 
-F<sub>ST</sub> between them. F<sub>ST</sub> is a commonly used measure of genetic differentiation based on allele frequencies that spans from 0 when the allele frequencies are the same 
-in both populations to 1 when the populations are fixed for different alleles. F<sub>ST</sub> can be expressed in terms of the genetic variance within subpopulations 
-(denoted here as *b<sub>s</sub>*) and between subpopulations (denoted here as *a<sub>s</sub>*) and between subpopulations: F<sub>ST</sub> = a<sub>s</sub> / (a<sub>s</sub> + b<sub>s</sub>).
+Now we have a prior for the probability of jointly observing a site with *i* derived alleles in PANY and *j* derived alleles in MAQU. One common way to visualize the 2D-SFS is with a 
+heatmap. We're going to use these probabilities of jointly observing allele frequencies for our two example populations to calculate 
+F<sub>ST</sub> between them. F<sub>ST</sub> is an allelic fixation index commonly used to measure genetic differentiation between populations based on allele frequencies, and 
+ranges from 0 when the allele frequencies are the same in all populations to 1 when the populations are fixed for different alleles. F<sub>ST</sub> can be expressed as the 
+ratio of genetic variance between subpopulations, *a<sub>s</sub>*, to the total genetic variance, *c<sub>s</sub>*. The total genetic variance is equal to the sum of the 
+between-population genetic variance and the within-population genetic variance, *b<sub>s</sub>*, i.e., *c<sub>s</sub>* = (*a<sub>s</sub>* + *b<sub>s</sub>*).
 
-UPDATE: `realSFS fst print` now prints the between population genetic variance (a<sub>s</sub>) in column 3 and the total population variance (c<sub>s</sub> = a<sub>s</sub> + b<sub>s</sub>) 
-in column 4 such that F<sub>ST</sub> = a<sub>s</sub> / c<sub>s</sub>, i.e. column 3 value divided by column 4 value.
-
-We can calculate these genetic variances with `realSFS` for our two example populations like so:
+We can calculate these genetic variance components with `realSFS` for our two example populations like so:
 
 ```bash
 $REALSFS fst index $RESDIR/PANY.saf.idx $RESDIR/MAQU.saf.idx -sfs $RESDIR/PANY_vs_MAQU.2dsfs -fstout $RESDIR/PANY_vs_MAQU
@@ -635,7 +636,7 @@ We can view the genetic variance components at each site with `realSFS`:
 ```bash
 $REALSFS fst print $RESDIR/PANY_vs_MAQU.fst.idx | less -S
 ```
-The columns are (1) Chromomsome, (2) position, (3) a<sub>s</sub> (between population genetic variance), (4) c<sub>s</sub> (total population variance).
+The columns are (1) chromosome name, (2) position, (3) a<sub>s</sub> (between population genetic variance), (4) c<sub>s</sub> (total population genetic variance).
 
 **QUESTION**
 
@@ -665,8 +666,9 @@ After running the command you should observe
 ```bash
 -> FST.Unweight[nObs:1271361]:0.026882 Fst.Weight:0.086872
 ```
-The "weighted" estimate of F<sub>ST</sub> is calculated in the way that was explained for a region using the variance components, but here the "region" is the whole genome 
-and is a better estimate than the unweighted estimate. Therefore, we would say that genome-wide F<sub>ST</sub> between the PANY and MAQU populations is 0.086872.
+The "weighted" estimate of F<sub>ST</sub> is calculated in the way described above: $`\sum a_s \big/ \sum c_s`$<br>
+where the "region" is the whole genome. The weighted estimate is a better estimator than the unweighted estimate. Therefore, we would say that genome-wide F<sub>ST</sub> between 
+the PANY and MAQU populations is 0.086872.
 
-This concludes the SFS part of the tutorial. You should now know how to estimate the SFS and joint SFS and use it to estimate diversity and neutrality
-statistics and population divergence.
+This concludes the SFS part of the tutorial. You should now know how to estimate the SFS and joint SFS, and use these to calculate diversity and neutrality
+statistics, and estimate population divergence.

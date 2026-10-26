@@ -1,6 +1,12 @@
 ## 3. Genotype calling
 
-Before getting started, if this is a new session, set evironment variables
+If you have not already, load the lcwgs conda environment.
+
+```
+conda activate lcwgs
+```
+
+Before getting started, if this is a new session, set environment variables.
 
 ```
 RESDIR=~/day2/Results
@@ -9,23 +15,23 @@ DIR=/home/ubuntu/Share/physalia-lcwgs/data
 DATA=$DIR/BAMS
 REF=$DIR/Ref.fa
 ANC=$DIR/outgrp_ref.fa
-angsd=/home/ubuntu/angsd/angsd
 
 cd ~/day2
-
 ```
 
 
-Now that you know how to calculate allele frequencies we'll use these estimates to obtain prior probabilities 
-for genotypes, which allows us to calculate genotype posterior probabilities and call genotypes. *Generally hard calling 
-genotypes should be avoided when working with low coverage data, but this tutorial will show you how to at least improve 
-accuracy for genotype calling when necessary*.
+Now that you know how to calculate allele frequencies, we'll use these estimates to obtain prior probabilities 
+for genotypes, which allows us to calculate genotype posterior probabilities and call genotypes. Generally, *hard calling 
+genotypes should be avoided when working with low coverage data*, but this tutorial will show you how to at least improve 
+accuracy for genotype calling when necessary.
 
 In ANGSD, the option to call genotypes is `-doGeno`:
 
-```bash
+```
 angsd -doGeno
-...
+```
+
+```
 -doGeno 0
         1: write major and minor
         2: write the called genotype encoded as -1,0,1,2, -1=not called
@@ -51,16 +57,18 @@ the called genotype as 0, 1, or 2 *and* the probability of that genotype, we cou
 print the major and minor allele we would use `-doGeno 19` (2 + 16 + 1).
 
 To calculate the posterior probability of genotypes we need to specify a prior probability.
+
 ```
 angsd -doPost
-...
+```
+
+```
 -doPost 0       (Calculate posterior prob 3xgprob)
         1: Using frequency as prior
         2: Using uniform prior
         3: Using SFS as prior (still in development)
         4: Using reference panel as prior (still in development), requires a site file with chr pos major minor af ac an
 ...
-
 ```
 
 **Genotype posterior probabilities**
@@ -72,7 +80,7 @@ to recalculate GLs with `-GL`). You could also use pre-calculated genotype likel
 We'll use many of the same quality controls that we've been using throughout.
 
 ```
-$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
+angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
    -GL 1 -doMajorMinor 1 -doMaf 1 -SNP_pval 1e-6 -rmTriallelic 0.05 -doPost 1 -doGeno 8
@@ -155,7 +163,7 @@ Uniform genotype probabilities mean the individual had missing data (you don't k
 Calculate the posterior probabilities for the PANY samples again, but this time use a uniform genotype prior, note `-doPost 2`.
 
 ```bash
-$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_unif \
+angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_unif \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
    -GL 1 -doMajorMinor 1 -doMaf 1 -SNP_pval 1e-6 -rmTriallelic 0.05 -doPost 2 -doGeno 8
@@ -189,7 +197,7 @@ can set the genotype for an indivdiual to missing (-1) if the maximum posterior 
 In this example we'll use a cutoff of 0.95. We'll also write the major and minor alleles as well.
 
 ```bash
-$angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_call \
+angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_call \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
    -GL 1 -doMajorMinor 1 -doMaf 1 -SNP_pval 1e-6 -rmTriallelic 0.05 -doPost 1 -doGeno 3 -postCutoff 0.95
@@ -237,7 +245,7 @@ done
 
 </details>
 
-Now try calling genotypes using a minimum posterior probability cutoff of 0.90 (and maybe some other cutoffs - have fun!). 
+If you want, you can try calling genotypes using a minimum posterior probability cutoff of 0.90 (and maybe some other cutoffs). 
 How many sites are in the file now? 
 
 Calculate a spectrum for the number of individuals with uncalled genotypes as above. What do you make of this?

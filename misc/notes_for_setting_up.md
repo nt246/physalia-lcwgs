@@ -49,6 +49,7 @@ The `gatk` command is then available in the `gatk-3.7` conda environment
 mamba create -c bioconda -c conda-forge -c genomedk -n ngsLD gcc zlib gsl pandas graph-tool r-optparse r-ggplot2 r-reshape2 r-plyr r-gtools r-ldheatmap
 ## the installation step had problems finding these following paths, so I had to specify them. Note that the last two lines need to be run first before running ngsLD after each login.
 ## also note that the exact path may differ depending on how conda is setup. For 2025, the path was /opt/miniconda3/envs/ngsLD
+## for LD_LIBRARY_PATH, run "sudo find / -name libicui18n.so.58 2>/dev/null", and use the path that contains libicui18n.so.58
 export CPATH=/home/ubuntu/src/conda/envs/ngsLD/include/
 export PKG_CONFIG_PATH=/home/ubuntu/src/conda/envs/ngsLD/lib/pkgconfig/:$LD_LIBRARY_PATH
 export LIBRARY_PATH=/home/ubuntu/src/conda/envs/ngsLD/lib/
@@ -71,24 +72,9 @@ map_property_values(G.ep["weight"], drop_weight, lambda x: x >= float(args.min_w
 G.set_edge_filter(drop_weight)
 ```
 
-#### NGSAdmix
+#### ANGSD, PCAngsd, and NGSAdmix
 
-NGSAdmix is included in ANGSD, so it can be invoked from wherever ANGSD installed, or by having ANGSD in a conda environment. We took the former approach this year, with `NGSADMIX=/home/ubuntu/angsd/misc/NGSadmix`
-
-#### PCAngsd
-
-Use the following code to install PCANngsd in a conda environment.
-
-```bash
-cd Share/
-git clone https://github.com/Rosemeis/pcangsd.git
-cd pcangsd
-mamba env create -f environment.yml
-conda activate pcangsd
-python setup.py build_ext --inplace
-pip3 install -e . ## if you run into issues pertaining to ssl certificates, try "pip3 install --trusted-host pypi.org -e ." instead
-conda deactivate
-```
+Use the following [yaml file](angsd.yaml) to install ANGSD and PCAngsd in a conda environment named `angsd`.
 
 ## Directory setup
 
