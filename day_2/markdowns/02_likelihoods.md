@@ -140,7 +140,8 @@ So this individual is at row 4 in the bam list. Now we can extract their likelih
 ```bash
 zcat $RESDIR/PANY.glf.gz | grep -m 1 $'^Mme_chr24:2558528-4558528\t34213\t' | cut -f 3- | perl -se '$start=($n-1)*10; @arr = split(/\t/,<>); print "@arr[$start .. $start+9]\n"' -- -n=$INDNUM
 ```
-For PANY_04 the 5th likelihood is zero, corresponding to the genotype 'CC'.
+
+For PANY_04 the 5th likelihood is zero, meaning that it is the most likely genotype, and corresponds to the genotype 'CC'.
 
 </details>
 
