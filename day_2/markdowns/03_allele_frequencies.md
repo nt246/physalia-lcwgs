@@ -269,7 +269,7 @@ SNP_pval Number_SNPs
 ```
 
 Here's a representative image of what happens to the distribution of allele frequencies as you become more stringent in calling SNPs.
-Note that sites with MAF below a certain cutoff can be discarded with `-minMaf`. This can be useful for PCA, admixture, or GWAS-type analyses where a 
+Note that sites with MAF below a certain cutoff can be discarded with `-minMaf`. This can be useful for PCA, admixture, or GWAS analyses where a 
 minimum MAF can help reduce noise and improve inference.
 
 
