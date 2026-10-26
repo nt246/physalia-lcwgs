@@ -94,7 +94,15 @@ angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
 
 In general, `-GL 1`, `-doMaf 1` or `-doMaf 2`, and `-doMajorMinor 1` should be the preferred choice when data uncertainty is high.
 
-Take a look at the MAF file with `less $RESDIR/PANY.mafs.gz`. The first 20 lines of the file should look like
+Take a look at the MAF file 
+
+```
+less $RESDIR/PANY.mafs.gz`.
+```
+
+<details>
+
+<summary> Click here to see what the first 20 lines of the MAFs file looks like  </summary>
 
 ```
 chromo	position	major	minor	ref	knownEM	nInd
@@ -119,12 +127,15 @@ Mme_chr24:2558528-4558528	48	C	G	C	0.430705	7
 Mme_chr24:2558528-4558528	49	T	A	T	0.000004	6
 ```
 
+<details>
+
 The columns are (1) chromosome/ref sequence name, (2) position, (3) the major allele, (4) the minor allele, (5) the frequency of the allele listed in the 
 "minor" column, (6) the number of indivdiuals used to calculate the allele frequency. The number of individuals in the last 
 column should never be below 5 since you specified `-minInd 5`.
 
 You'll notice that many sites have very low frequency suggesting that they are likely monomorphic. You can probably start guessing 
-how you can use these frequencies to call SNPs, so we'll do that next.
+how you can use these frequencies to call SNPs, so we'll do that next. You could also directly use the allele frequency estimates 
+to calculate various quantities of interest as shown in the bonus text below (do not perform the Dxy calculations, it's just an example).
 
 <details>
 
@@ -213,19 +224,10 @@ minor allele frequency (MAF) is zero (the null) to the likelihood of the estimat
 is chi-square distributed with one degree of freedom, and so we can calculate a *p*-value for whether the estimated MAF is statistically 
 different from zero, in which case the site is a SNP.
 
-Let's call biallelic PANY SNPs at four different significance levels. The ANGSD part of the command that you will run is
+Let's call biallelic PANY SNPs at four different significance levels by running a loop for calling SNPs at maximum *p*-value 
+cutoffs of 0.05, 0.01, 0.0001, and 0.000001.
 
 ```
-# angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_$PV \
-#   -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
-#   -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
-#   -GL 1 -doMajorMinor 1 -doMaf 1 -rmTriallelic 0.05 -SNP_pval $PV &> /dev/null
-
-```
-
-Now, run the loop for calling SNPs at maximum *p*-value cutoffs of 0.05, 0.01, 0.0001, and 0.000001.
-
-```bash
 for PV in 0.05 0.01 1e-4 1e-6
 do
    if [ $PV == 0.05 ]; then echo SNP_pval Number_SNPs; fi
@@ -235,6 +237,15 @@ do
       -GL 1 -doMajorMinor 1 -doMaf 1 -rmTriallelic 0.05 -SNP_pval $PV &> /dev/null
    echo $PV `zcat $RESDIR/PANY_$PV.mafs.gz | tail -n+2 | wc -l`
 done
+```
+
+The ANGSD part of the above command is
+
+```
+# angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_$PV \
+#   -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
+#   -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
+#   -GL 1 -doMajorMinor 1 -doMaf 1 -rmTriallelic 0.05 -SNP_pval $PV &> /dev/null
 ```
 
 Sites that may have more than two alleles are purged using `-rmTriallelic` in our example above.
@@ -271,8 +282,7 @@ minimum MAF can help reduce noise and improve inference.
 
 It's generally advisable to call SNPs among all individuals jointly to avoid biasing downstream inferences. Let's do that:
 
-```bash
-
+```
 angsd -b $DIR/ALL_bams.txt -ref $REF -out $RESDIR/ALL \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 20 -setMinDepthInd 1 -setMinDepth 28 -setMaxDepth 120 -doCounts 1 \
