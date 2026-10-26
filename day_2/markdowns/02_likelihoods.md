@@ -77,7 +77,7 @@ Note that you can usually speed up computation with `-nThreads INT` when working
 The `-C` option adjusts mapping quality for reads with excessive mismatches. The [samtools](http://www.htslib.org/doc/samtools-mpileup.html)
 documentation recommends setting this to 50 for reads mapped with BWA. The `-C` and `-baq` (not used here) options require that 
 you supply the reference genome with `-ref`. You can use `-baq` (base alignment quality) to adjust the base quality scores around INDELS.
-<br>
+<br><br>
 `-minInd X` in conjunction with `-minIndDepth Y` requires at least *X* individuals to be covered by at least *Y* (default 1) reads to keep a site. 
 `-setMinDepth` and `-setMaxDepth` set minimum and maximum total site depth (depth summed across all individuals) limits, respectively.
 
