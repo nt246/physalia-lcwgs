@@ -75,7 +75,7 @@ where we specify:
 Note that you can usually speed up computation with `-nThreads INT` when working with real data.
 
 The `-C` option adjusts mapping quality for reads with excessive mismatches. The [samtools](http://www.htslib.org/doc/samtools-mpileup.html)
-documentation recommends setting this to 50 for reads mapped with BWA. The `-C` and `-baq` (not used here, but see below) options require that 
+documentation recommends setting this to 50 for reads mapped with BWA. The `-C` and `-baq` (not used here) options require that 
 you supply the reference genome with `-ref`. You can use `-baq` (base alignment quality) to adjust the base quality scores around INDELS.
 <br>
 `-minInd X` in conjunction with `-minIndDepth Y` requires at least *X* individuals to be covered by at least *Y* (default 1) reads to keep a site. 
