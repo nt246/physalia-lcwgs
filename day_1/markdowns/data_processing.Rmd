@@ -850,9 +850,6 @@ After all the filtering steps, we want to know what final depth of coverage we h
 First, **on the Amazon Cloud system**, run `samtools depth` to get depth per sample per position.
 
 ```{bash eval=F}
-## remember to activate the lcwgs conda environment if you tried the GATK code before
-conda deactivate
-conda activate lcwgs
 
 BAMLIST=$BASEDIR/sample_lists/merged_bam_list.txt # Path to a list of unique sample prefixes for merged bam files.  
 REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files  
@@ -880,7 +877,7 @@ KEY=~/Downloads/c2.pem ## Replace this with the path to where you have saved you
 mkdir $BASEDIR
 cd $BASEDIR
 ## Download the depth files and the bam list
-scp -i $KEY -r ${USER}@${IP}:~/day1/depth_files/*depth.gz ./
+scp -i $KEY -r ${USER}@${IP}:~/day1/bam/*depth.gz ./
 scp -i $KEY -r ${USER}@${IP}:~/day1/sample_lists/merged_bam_list.txt ./
 ```
 

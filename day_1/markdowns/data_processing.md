@@ -496,11 +496,10 @@ done
 If the program ran, you should now see the output (in html format and a
 zip file with various files) in your `day1/fastqc` directory. To view
 the .html, use `scp` (as described
-[here](Connection%20to%20the%20Amazon%20EC2%20service-3-2.pdf) or
-FileZilla (connection instructions also described
-[here](Connection%20to%20the%20Amazon%20EC2%20service-3-2.pdf)) to
-transfer the html output files to your local machine and open them in a
-web browser.
+[here](Connection_to_the_Amazon_EC2_service-3-2.pdf) or FileZilla
+(connection instructions also described
+[here](Connection_to_the_Amazon_EC2_service-3-2.pdf)) to transfer the
+html output files to your local machine and open them in a web browser.
 
 If you’re not able to download your own files, you can have a look at
 ours
@@ -1207,9 +1206,6 @@ First, **on the Amazon Cloud system**, run `samtools depth` to get depth
 per sample per position.
 
 ``` bash
-## remember to activate the lcwgs conda environment if you tried the GATK code before
-conda deactivate
-conda activate lcwgs
 
 BAMLIST=$BASEDIR/sample_lists/merged_bam_list.txt # Path to a list of unique sample prefixes for merged bam files.  
 REFNAME=mme_physalia_testdata_chr24 # Reference name to add to output files  
@@ -1225,7 +1221,7 @@ done
 
 **On your local computer**, use FileZila if you have that installed
 (configuration instructions
-[here](https://github.com/nt246/physalia-lcwgs/blob/main/Connection%20to%20the%20Amazon%20EC2%20service-3-2.pdf)
+[here](https://github.com/nt246/physalia-lcwgs/blob/main/Connection_to_the_Amazon_EC2_service-3-2.pdf)
 or `scp` from a new Terminal window (where you’re not logged into the
 server) to download the bam list and the depth files. For example:
 
@@ -1240,7 +1236,7 @@ KEY=~/Downloads/c2.pem ## Replace this with the path to where you have saved you
 mkdir $BASEDIR
 cd $BASEDIR
 ## Download the depth files and the bam list
-scp -i $KEY -r ${USER}@${IP}:~/day1/depth_files/*depth.gz ./
+scp -i $KEY -r ${USER}@${IP}:~/day1/bam/*depth.gz ./
 scp -i $KEY -r ${USER}@${IP}:~/day1/sample_lists/merged_bam_list.txt ./
 ```
 
