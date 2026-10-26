@@ -119,8 +119,8 @@ their most likely genotype? If you need help you can click below.
 <summary> click for help extracting GL info </summary>
 
 There are multiple ways that you could extract this information, and so the code below is just one example. Don't get hung up 
-trying to understand the exact lines of code. The point of this exercise is just to help familiarize you with the ANGSD output 
-files and how to navigate them.
+trying to understand the exact lines of code, though you can always use it as a reference for the logic. The point of this exercise is 
+just to help familiarize you with the ANGSD output files and how to navigate them.
 
 ```bash
 # Count number of columns and subtract 2 (chromosome and position fields) to get the number of likelihood values
@@ -141,7 +141,7 @@ So this individual is at row 4 in the bam list. Now we can extract their likelih
 zcat $RESDIR/PANY.glf.gz | grep -m 1 $'^Mme_chr24:2558528-4558528\t34213\t' | cut -f 3- | perl -se '$start=($n-1)*10; @arr = split(/\t/,<>); print "@arr[$start .. $start+9]\n"' -- -n=$INDNUM
 ```
 
-For PANY_04 the 5th likelihood is zero, meaning that it is the most likely genotype, and corresponds to the genotype 'CC'.
+For PANY_04 the 5th likelihood is zero, meaning that 'CC' is the most likely genotype.
 
 </details>
 
