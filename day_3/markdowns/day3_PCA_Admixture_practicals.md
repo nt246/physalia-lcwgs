@@ -47,7 +47,7 @@ BASEDIR=~/day3/    # Edit if this is not the path to your day3 directory. Rememb
 Activate the conda environment in which `angsd`, `NGSadmix`, and `pcangsd` are installed:
 
 ```
-conda activate angsd
+conda activate lcwgs
 ```
 
 And then we set all the rest of the paths:
@@ -149,13 +149,12 @@ We can look at the covariance matrix in R, where we will also perform the PCA us
 We have to load the covariance matrix into R and then we can optionally provide population assignments for each individual (rows in same order as input bam file list `-b $DIR/ALL_bams.txt`). We can start R in the server by typing `/usr/bin/R` (end the session by typing `quit()`)
 
 ```bash
-/usr/bin/R
+R
 ```
 
 In R, run the following: 
 
 ```r
-library(tidyverse)
 #Load the covariance matrix. Don't forget to change the file path if you have downloaded the data to your own computer.
 cov <- as.matrix(read.table("~/day3/Results/MME_ANGSD_PCA_LDpruned.covMat", header = F))
 
@@ -170,12 +169,38 @@ mme.pca <- eigen(cov) #perform the pca using the eigen function.
 
 We can then extract the eigenvectors from the pca object and format them into a dataframe for plotting, e.g. using `ggplot()`.
 ```
-eigenvectors = mme.pca$vectors #extract eigenvectors 
-pca.vectors = as_tibble(cbind(pop, data.frame(eigenvectors))) #combine with our population assignments
+# Extract eigenvectors
+eigenvectors <- mme.pca$vectors
 
-pca = ggplot(data = pca.vectors, aes(x=X1, y=X2, colour = pop)) + geom_point()
+# Combine with population assignments
+pca.vectors <- data.frame(
+  pop = pop,
+  eigenvectors,
+  stringsAsFactors = FALSE
+)
 
-ggsave(filename = "~/day3/Results/pca_LDpruned_plot.pdf", plot = pca) #change file path if data on your own computer
+# Create PCA plot
+pdf("~/day3/Results/pca_LDpruned_plot.pdf")  # change path as needed
+
+cols <- as.factor(pca.vectors$pop)
+plot(
+  pca.vectors[, 2],   # PC1 (first eigenvector column)
+  pca.vectors[, 3],   # PC2 (second eigenvector column)
+  col = as.numeric(cols),
+  pch = 19,
+  xlab = "PC1",
+  ylab = "PC2"
+)
+
+legend(
+  "topright",
+  legend = levels(cols),
+  col = seq_along(levels(cols)),
+  pch = 19,
+  bty = "n"
+)
+
+dev.off()
 ```
 
 Additionally, we can extract the eigenvalues for each eigenvector, and can then estimate the variance explained for each eigenvector (e.g. here for PC1 to PC4): 
@@ -185,6 +210,16 @@ varPC1 <- (mme.pca$values[1]/pca.eigenval.sum)*100 #Variance explained by PC1
 varPC2 <- (mme.pca$values[2]/pca.eigenval.sum)*100 #Variance explained by PC2
 varPC3 <- (mme.pca$values[3]/pca.eigenval.sum)*100 #Variance explained by PC3
 varPC4 <- (mme.pca$values[4]/pca.eigenval.sum)*100 #Variance explained by PC4
+
+#Combine into a single dataframe:
+varPCA = as.data.frame(rbind(varPC1,varPC2,varPC3,varPC4))
+
+#Plot variance for PC1 to 4:
+pdf("~/day3/Results/pca_LDpruned_varPCA_plot.pdf")  # change path as needed
+
+plot(varPCA$V1)
+
+dev.off()
 ```
 
 You can quit R using by typing `q()` and you can open the plot on your own computer by downloading it as we did before.  
@@ -215,14 +250,12 @@ pcangsd -b ~/day3/Results/MME_ANGSD_PCA_LDpruned.beagle.gz -o ~/day3/Results/PCA
 We can perform the principal components analysis and plot PC1 vs PC2 the same way we did before.
 
 ```bash
-/usr/bin/R
+R
 ```
 
 In R, run the following: 
 
 ```r
-library(tidyverse)
-
 #Load the covariance matrix
 cov <- as.matrix(read.table("~/day3/Results/PCAngsd_LDpruned_covmat.cov", header = F))
 
@@ -231,21 +264,57 @@ pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","
          ,"PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY"
          ,"MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS"
          ,"MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU")
-         
+
 mme.pca <- eigen(cov) #perform the pca using the eigen function. 
+         
+# Extract eigenvectors
+eigenvectors <- mme.pca$vectors
 
-eigenvectors = mme.pca$vectors #extract eigenvectors 
-pca.vectors = as_tibble(cbind(pop, data.frame(eigenvectors))) #combine with our population assignments
+# Combine with population assignments
+pca.vectors <- data.frame(
+  pop = pop,
+  eigenvectors,
+  stringsAsFactors = FALSE
+)
 
-pca = ggplot(data = pca.vectors, aes(x=X1, y=X2, colour = pop)) + geom_point()
+# Create PCA plot
+pdf("~/day3/Results/pca_LDpruned_pcangsd_plot.pdf")  # change path as needed
 
-ggsave(filename = "~/day3/Results/pca_LDpruned_pcangsd_plot.pdf", plot = pca) #change file path if data on your own computer
+cols <- as.factor(pca.vectors$pop)
+plot(
+  pca.vectors[, 2],   # PC1 (first eigenvector column)
+  pca.vectors[, 3],   # PC2 (second eigenvector column)
+  col = as.numeric(cols),
+  pch = 19,
+  xlab = "PC1",
+  ylab = "PC2"
+)
+
+legend(
+  "topright",
+  legend = levels(cols),
+  col = seq_along(levels(cols)),
+  pch = 19,
+  bty = "n"
+)
+
+dev.off()
 
 pca.eigenval.sum = sum(mme.pca$values) #sum of eigenvalues
 varPC1 <- (mme.pca$values[1]/pca.eigenval.sum)*100 #Variance explained by PC1
 varPC2 <- (mme.pca$values[2]/pca.eigenval.sum)*100 #Variance explained by PC2
 varPC3 <- (mme.pca$values[3]/pca.eigenval.sum)*100 #Variance explained by PC3
 varPC4 <- (mme.pca$values[4]/pca.eigenval.sum)*100 #Variance explained by PC4
+
+varPCA = as.data.frame(rbind(varPC1,varPC2,varPC3,varPC4))
+
+pdf("~/day3/Results/pca_LDpruned_pcangsd_varPCA_plot.pdf")  # change path as needed
+
+plot(varPCA$V1)
+
+dev.off()
+
+
 ```
 
 <br>
