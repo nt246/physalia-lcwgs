@@ -70,7 +70,7 @@ angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
 
 where we specify:
 * -GL 1: genotype likelihood model as in SAMtools
-* -doGlf 4: output in text format
+* -doGlf 4: output genotype likelihoods in text format
 
 Note that you can usually speed up computation with `-nThreads INT` when working with real data.
 
