@@ -244,11 +244,11 @@ done
 
 ```
 
-</details>
-
 **BONUS TASK**. If you want, try calling genotypes using a minimum posterior probability cutoff of 0.90 (and maybe some other cutoffs). 
-How many sites are in the file now? Calculate a spectrum for the number of individuals with uncalled genotypes as above. 
+How many sites are in the file now? Calculate a spectrum for the number of individuals with uncalled genotypes as above.
 What do you make of this?
+
+</details>
 
 In general, the `postCutoff` threshold you choose will depend on the sequencing depth of your data and 
 how much genotyping inaccuracy is permissible for accurate inference. There is often a balance between the number of individuals 
