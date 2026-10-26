@@ -100,7 +100,7 @@ less $RESDIR/PANY.mafs.gz`.
 
 <details>
 
-<summary> Click here to see what the first 20 lines of the MAFs file looks like  </summary>
+<summary> Click here to see what the first 20 lines of the MAF file looks like  </summary>
 
 ```
 chromo	position	major	minor	ref	knownEM	nInd
