@@ -250,7 +250,7 @@ What do you make of this?
 
 </details>
 
-In general, the `postCutoff` threshold you choose will depend on the sequencing depth of your data and 
+In general, the `-postCutoff` threshold you choose will depend on the sequencing depth of your data and 
 how much genotyping inaccuracy is permissible for accurate inference. There is often a balance between the number of individuals 
 providing genotypic information and the reliability of the information that each individual provides.
 
