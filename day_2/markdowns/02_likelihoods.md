@@ -59,7 +59,7 @@ SOAPsnp requires a reference sequence for recalibration of quality scores, SYK i
 In most cases, GATK and SAMtools models should give similar results.
 
 Let's first work with only the PANY samples.
-Calculate genotype likelihoods is using the code below.
+Calculate genotype likelihoods for each individual using the code below.
 
 ```
 angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
@@ -75,8 +75,8 @@ where we specify:
 Note that you can usually speed up computation with `-nThreads INT` when working with real data.
 
 The `-C` option adjusts mapping quality for reads with excessive mismatches. The [samtools](http://www.htslib.org/doc/samtools-mpileup.html)
-documentation recommends setting this to 50 for reads mapped with BWA. `-C` and `-baq` (not used here, but see below) require that you supply the reference genome with `-ref`.
-`-baq` (base alignment quality) is another option to consider in order to adjust the base quality scores around INDELS.
+documentation recommends setting this to 50 for reads mapped with BWA. The `-C` and `-baq` (not used here, but see below) options require that 
+you supply the reference genome with `-ref`. You can use `-baq` (base alignment quality) to adjust the base quality scores around INDELS.
 <br>
 `-minInd X` in conjunction with `-minIndDepth Y` requires at least *X* individuals to be covered by at least *Y* (default 1) reads to keep a site. 
 `-setMinDepth` and `-setMaxDepth` set minimum and maximum total site depth (depth summed across all individuals) limits, respectively.
