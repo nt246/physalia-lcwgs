@@ -75,7 +75,7 @@ just fine.
 
 Here's an example for how you would use the precomputed genotype likelihoods as input (if you try to run this you will get an error because of the way the example chromosome is named).
 
-```bash
+```
 # angsd -glf10_text $RESDIR/PANY.glf.gz -out $RESDIR/PANY \
 #    -nInd 15 -fai $DIR/Ref.fa.fai -doMajorMinor 1 -doMaf 1 -minInd 5
 ```
@@ -83,13 +83,11 @@ Here's an example for how you would use the precomputed genotype likelihoods as 
 Run the command below to estimate allele frequencies. Note that when using the bams as input for downstream analyses that rely on genotype likelihods (as we are doing) you 
 need to calculate the genotype likelihoods on the fly with `-GL`.
 
-```bash
-
+```
 angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
    -GL 1 -doMajorMinor 1 -doMaf 1
-
 ```
 
 In general, `-GL 1`, `-doMaf 1` or `-doMaf 2`, and `-doMajorMinor 1` should be the preferred choice when data uncertainty is high.
@@ -127,7 +125,7 @@ Mme_chr24:2558528-4558528	48	C	G	C	0.430705	7
 Mme_chr24:2558528-4558528	49	T	A	T	0.000004	6
 ```
 
-<details>
+</details>
 
 The columns are (1) chromosome/ref sequence name, (2) position, (3) the major allele, (4) the minor allele, (5) the frequency of the allele listed in the 
 "minor" column, (6) the number of indivdiuals used to calculate the allele frequency. The number of individuals in the last 
@@ -324,22 +322,20 @@ angsd sites index $RESDIR/biallelic_snps.pos
 
 Now you can calculate allele frequencies that are comparable between populations.
 
-```bash
+```
 # Calculate derived allele frequencies for PANY
 
 angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_derived \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -minMapQ 20 -minQ 20 \
    -GL 1 -doMajorMinor 5 -anc $ANC -doMaf 1 -sites $RESDIR/biallelic_snps.pos
-
 ```
 
-```bash
+```
 # Calculate derived allele frequencies for JIGA
 
 angsd -b $DIR/JIGA_bams.txt -ref $REF -out $RESDIR/JIGA_derived \
    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -minMapQ 20 -minQ 20 \
    -GL 1 -doMajorMinor 5 -anc $ANC -doMaf 1 -sites $RESDIR/biallelic_snps.pos
-
 ```
 
 Are you able to describe what the commands above are doing?
@@ -347,13 +343,12 @@ Are you able to describe what the commands above are doing?
 Have a look at the first 20 SNPs in the output. Note that the "minor" or in this case the derived allele 
 identity is arbitrary when its frequency is zero or very small (effectively zero).
 
-```bash
+```
 # PANY derived allele frequencies
 zcat $RESDIR/PANY_derived.mafs.gz | head -n 21
 
 # JIGA derived allele frequencies
 zcat $RESDIR/JIGA_derived.mafs.gz | head -n 21
-
 ```
 
 </details>
