@@ -295,7 +295,7 @@ allele. We can do this with `-doMajorMinor 3, 4, or 5`.
 
 **QUESTION**
 
-How do you compare the **derived** allele frequencies between PANY and JIGA at sites segregating among all populations? Try doing this.
+How do you compare **derived** allele frequencies between PANY and JIGA at sites segregating among all populations? Try doing this.
 
 Hint: You can have ANGSD analyze a subset of sites using the `-sites` argument. You can read about it [here](http://www.popgen.dk/angsd/index.php/Sites)
 
