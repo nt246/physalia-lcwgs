@@ -157,7 +157,7 @@ where *q* relates to the base qualities, while `-baq 1` adjusts base qualities a
 ([BAQ](https://academic.oup.com/bioinformatics/article/27/8/1157/227268?login=false)).
 
 Low read mapping qualities as well as exceptionally low or high sequencing depth generally signal regions of the genome that are refractory 
-to short read mapping and must be handled with care. In this scenario, you may want to discard reads with low map quality (`-minMapQ`) or discard these sites 
+to short read mapping and must be handled with care. In this scenario, you may want to discard reads with low map quality using `-minMapQ` or discard these sites 
 altogether to avoid erroneous inference. You may also want to remove bases with exceptionally low base quality with `-minQ`.
 
 Some useful arguments for filtering sites based on the amount of data within and across individuals are presented in the following table:
