@@ -160,7 +160,8 @@ Uniform genotype probabilities mean the individual had missing data (you don't k
 
 **Genotype posterior probabilities with an uninformative prior**
 
-Calculate the posterior probabilities for the PANY samples again, but this time use a uniform genotype prior, note `-doPost 2`.
+Calculate the posterior probabilities for the PANY samples again, but this time use a uniform genotype prior, note `-doPost 2`. This basically 
+just rescales the genotype likelihoods so that they sum to 1.
 
 ```bash
 angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_unif \
