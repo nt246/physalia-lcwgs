@@ -297,7 +297,7 @@ allele. We can do this with `-doMajorMinor 3, 4, or 5`.
 
 How do you compare **derived** allele frequencies between PANY and JIGA at sites segregating among all populations? Try doing this.
 
-Hint: You can have ANGSD analyze a subset of sites using the `-sites` argument. You can read about it [here](http://www.popgen.dk/angsd/index.php/Sites)
+Hint: You can have ANGSD analyze a subset of sites using the `-sites` argument, which you can read about [here](http://www.popgen.dk/angsd/index.php/Sites).
 
 <details>
 
@@ -353,7 +353,7 @@ zcat $RESDIR/JIGA_derived.mafs.gz | head -n 21
 
 </details>
 
-Now you know how to estimate allele frequencies and call SNPs based on these frequencies. Next you'll learn how to call genotypes.
+Now you know how to estimate allele frequencies and call SNPs. Next you'll learn how to call genotypes.
 
 
 [click here](https://github.com/nt246/physalia-lcwgs/blob/main/day_2/markdowns/04_genotype.md) to move to the next session.
