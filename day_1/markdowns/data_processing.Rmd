@@ -320,7 +320,7 @@ RAWFASTQSUFFIX1=_1.fastq.gz # Suffix to raw fastq files. We'll only look at the 
 
 for SAMPLE in `cat $SAMPLELIST | head -n 3`; do  # The head -n 3 is taking just the first three elements of our fastq list to loop over
 
-  $FASTQC $BASEDIR'/raw_fastq/'$SAMPLE$RAWFASTQSUFFIX1 -o $BASEDIR'/fastqc/'
+  $FASTQC $BASEDIR'/raw_fastq/'$SAMPLE$RAWFASTQSUFFIX1 --outdir $BASEDIR'/fastqc/'
   
 done
 
@@ -329,7 +329,7 @@ done
 <br>
 
 
-If the program ran, you should now see the output (in html format and a zip file with various files) in your `day1/fastqc` directory. To view the .html, use `scp` (as described [here](https://github.com/nt246/physalia-lcwgs/blob/main/Connection_to_the_Amazon_EC2_service.pdf) or FileZilla (connection instructions also described [here](https://github.com/nt246/physalia-lcwgs/blob/main/Connection_to_the_Amazon_EC2_service.pdf)) to transfer the html output files to your local machine and open them in a web browser.
+If the program ran, you should now see the output (in html format and a zip file with various files) in your `day1/fastqc` directory. To view the .html, use `scp` (as described [here](Connection to the Amazon EC2 service-3-2.pdf) or FileZilla (connection instructions also described [here](Connection to the Amazon EC2 service-3-2.pdf)) to transfer the html output files to your local machine and open them in a web browser.
 
 If you're not able to download your own files, you can have a look at ours [here](https://github.com/nt246/physalia-lcwgs/tree/main/day_1/fastqc). We are keeping them in our GitHub repo, but GitHub doesn't render .html files, so to view the output, click on the output.html file you want to view, copy its URL and paste it into [this handy viewer](https://htmlpreview.github.io/) to see it in rendered html format.
 
@@ -399,10 +399,10 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
   # For definitions of these options, see http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf
   
   if [ $DATATYPE = pe ]; then
-    $TRIMMOMATIC PE -threads 1 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $RAWFASTQ_ID$RAWFASTQSUFFIX2 $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_f_unpaired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_unpaired.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10:1:true MINLENGTH:40' 
+    $TRIMMOMATIC PE -threads 1 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $RAWFASTQ_ID$RAWFASTQSUFFIX2 $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_f_unpaired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_unpaired.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10:1:true' MINLENGTH:40 
   
   elif [ $DATATYPE = se ]; then
-    $TRIMMOMATIC SE -threads 1 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $SAMPLEADAPT'_adapter_clipped_se.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10 MINLENGTH:40'
+    $TRIMMOMATIC SE -threads 1 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $SAMPLEADAPT'_adapter_clipped_se.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10' MINLENGTH:40
   fi
   
 done
@@ -503,6 +503,7 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
   SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
   LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
   SAMPLE_UNIQ_ID=$SAMPLE_ID'_'$POP_ID'_'$SEQ_ID'_'$LANE_ID  # When a sample has been sequenced in multiple lanes, we need to be able to identify the files from each run uniquely
+  LIBRARY_ID="${SAMPLE_ID}_${SEQ_ID}" # Distinguishes separate libraries prepared from the same individual
   
   ## Extract data type from the sample table
   DATATYPE=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 6`
@@ -523,7 +524,7 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
   # Map the paired-end reads
   if [ $DATATYPE = pe ]; then 
   # We ignore the reads that get orphaned during adapter clipping because that is typically a very small proportion of reads. If a large proportion of reads get orphaned (loose their mate so they become single-end), these can be mapped in a separate step and the resulting bam files merged with the paired-end mapped reads.
-  $BOWTIE -q --phred33 --$MAPPINGPRESET -p 1 -I 0 -X 1500 --fr --rg-id $SAMPLE_UNIQ_ID --rg SM:$SAMPLE_ID --rg LB:$SAMPLE_ID --rg PU:$PU --rg PL:ILLUMINA -x $REFBASENAME -1 $SAMPLETOMAP$FASTQSUFFIX1 -2 $SAMPLETOMAP$FASTQSUFFIX2 -S $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam'
+  $BOWTIE -q --phred33 --$MAPPINGPRESET -p 1 -I 0 -X 1500 --fr --rg-id $SAMPLE_UNIQ_ID --rg SM:$SAMPLE_ID --rg LB:$LIBRARY_ID --rg PU:$PU --rg PL:ILLUMINA -x $REFBASENAME -1 $SAMPLETOMAP$FASTQSUFFIX1 -2 $SAMPLETOMAP$FASTQSUFFIX2 -S $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam'
   
   # Map the single-end reads
   elif [ $DATATYPE = se ]; then
@@ -535,7 +536,7 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
   $SAMTOOLS view -bS -F 4 $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam' > $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.bam'
   rm -f $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam'
   
-  ## Filter the mapped reads (to onky retain reads with high mapping quality)
+  ## Filter the mapped reads (to only retain reads with high mapping quality)
   # Filter bam files to remove poorly mapped reads (non-unique mappings and mappings with a quality score < 20) -- do we want the quality score filter??
   $SAMTOOLS view -h -q 20 $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.bam' | $SAMTOOLS view -buS - | $SAMTOOLS sort -o $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'_minq20_sorted.bam'
   
@@ -610,7 +611,7 @@ $SAMTOOLS merge output.bam input1.bam input2.bam   # We replace the output.bam w
 
 ```
 
-We could write a for loop to get the separate fastq files for each individual merged. But in this case, we will instead run a shell script that has a line that calls `samtools merge` for each individual. You can find the script `merge_bams.sh` in the `scripts` folder. Have a look at it.
+We could write a for loop to get the separate fastq files for each individual merged. But in this case, we will instead run a shell script that has a line that calls `samtools merge` for each individual. You can find the script `merge_bam.sh` in the `scripts` folder. Have a look at it.
 
 With just three samples, we could quickly copy and edit these three lines to construct this shell script manually. But if we had hundreds of samples, that approach would become error-prone so we want to use a script to automate it. In the interest of time, let's move forward with the merging script we have already generated, but we provide R-code below that generates this script from the your fastq-level sample table and list, so you don't need to do this manually if you're working with your own samples. 
 
@@ -786,10 +787,9 @@ Use `head` to look at the top lines of the dupstat report for each sample (in `$
 <br>
 <br>
 
-## Indel realignment (optional)
+## Indel realignment (optional - we will not do this as part of the course)
 
-Unlike other variant detector programs (like the [GATK Haplotype Caller](https://gatk.broadinstitute.org/hc/en-us/articles/360037225632-HaplotypeCaller) or [Freebayes](https://github.com/ekg/freebayes)), [ANGSD](http://www.popgen.dk/angsd/index.php/ANGSD) does not realign reads during its analysis. Because it can be difficult to distinguish indels from SNPs at the end of reads if each alignment is considered separately, indels may interfere with genotype likelihood estimation. We therefore recommend running your bam files through a program that realigns reads around indels prior to running `ANGSD`. The [GATK IndelRealigner](https://github.com/broadinstitute/gatk-docs/blob/master/gatk3-tutorials/(howto)_Perform_local_realignment_around_indels.md) takes all the aligned sequences from all samples in to account to validate the indels discovered from the mapping process and then realigns each read locally. This is not a mandatory step and tends to be very time-consuming if you have a large dataset, but the code is provided here if you want to give it a try (it takes ~3 minutes for our small sample dataset). We will not use this output for the rest of this course though.
-
+Unlike other variant detector programs (like the [GATK Haplotype Caller](https://gatk.broadinstitute.org/hc/en-us/articles/360037225632-HaplotypeCaller) or [Freebayes](https://github.com/ekg/freebayes)), [ANGSD](http://www.popgen.dk/angsd/index.php/ANGSD) does not realign reads during its analysis. Because it can be difficult to distinguish indels from SNPs at the end of reads if each alignment is considered separately, indels may interfere with genotype likelihood estimation. We therefore recommend running your bam files through a program that realigns reads around indels prior to running `ANGSD`. The [GATK IndelRealigner](https://github.com/broadinstitute/gatk-docs/blob/master/gatk3-tutorials/(howto)_Perform_local_realignment_around_indels.md) takes all the aligned sequences from all samples in to account to validate the indels discovered from the mapping process and then realigns each read locally. This is not a mandatory step and tends to be very time-consuming if you have a large dataset. GATK is not installed on the Amazon server we're working on for the course and we will not run this step today. However, we provide the code if you want to run it on your own system later (it takes ~3 minutes for our small sample dataset). For the course, please skip to the next step.
 
 <details>
   <summary>Click here to see the GATK IndelRealigner code</summary>
@@ -867,7 +867,7 @@ done
 
 <br>  
 
-**On your local computer**, use FileZila if you have that installed (configuration instructions [here](https://github.com/nt246/physalia-lcwgs/blob/main/Connection_to_the_Amazon_EC2_service.pdf) or `scp` from a new Terminal window (where you're not logged into the server) to download the bam list and the depth files. For example:
+**On your local computer**, use FileZila if you have that installed (configuration instructions [here](https://github.com/nt246/physalia-lcwgs/blob/main/Connection to the Amazon EC2 service-3-2.pdf) or `scp` from a new Terminal window (where you're not logged into the server) to download the bam list and the depth files. For example:
 
 ```{bash eval=FALSE}
 ## Edit the follow variables

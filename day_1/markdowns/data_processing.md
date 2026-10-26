@@ -28,7 +28,8 @@ Tutorial 1: Data processing - from .fastq to .bam
     batches](#merge-samples-that-were-sequenced-in-multiple-batches)
   - [Deduplicate and clip overlapping read
     pairs](#deduplicate-and-clip-overlapping-read-pairs)
-  - [Indel realignment (optional)](#indel-realignment-optional)
+  - [Indel realignment (optional - we will not do this as part of the
+    course)](#indel-realignment-optional---we-will-not-do-this-as-part-of-the-course)
   - [Estimate read depth in your bam
     files](#estimate-read-depth-in-your-bam-files)
   - [END OF DAY 1](#end-of-day-1)
@@ -66,7 +67,7 @@ from the MAQU and PANY populations shown in this map:
 
 <br>
 
-<img src="../img/Silverside_Sample_Map.png" width="49%" height="20%" />
+<img src="../img/Silverside_Sample_Map.png" alt="" width="49%" height="20%" />
 
 <br>
 
@@ -485,7 +486,7 @@ RAWFASTQSUFFIX1=_1.fastq.gz # Suffix to raw fastq files. We'll only look at the 
 
 for SAMPLE in `cat $SAMPLELIST | head -n 3`; do  # The head -n 3 is taking just the first three elements of our fastq list to loop over
 
-  $FASTQC $BASEDIR'/raw_fastq/'$SAMPLE$RAWFASTQSUFFIX1 -o $BASEDIR'/fastqc/'
+  $FASTQC $BASEDIR'/raw_fastq/'$SAMPLE$RAWFASTQSUFFIX1 --outdir $BASEDIR'/fastqc/'
   
 done
 ```
@@ -495,11 +496,11 @@ done
 If the program ran, you should now see the output (in html format and a
 zip file with various files) in your `day1/fastqc` directory. To view
 the .html, use `scp` (as described
-[here](https://github.com/nt246/physalia-lcwgs/blob/main/Connection_to_the_Amazon_EC2_service.pdf)
-or FileZilla (connection instructions also described
-[here](https://github.com/nt246/physalia-lcwgs/blob/main/Connection_to_the_Amazon_EC2_service.pdf))
-to transfer the html output files to your local machine and open them in
-a web browser.
+[here](Connection%20to%20the%20Amazon%20EC2%20service-3-2.pdf) or
+FileZilla (connection instructions also described
+[here](Connection%20to%20the%20Amazon%20EC2%20service-3-2.pdf)) to
+transfer the html output files to your local machine and open them in a
+web browser.
 
 If you’re not able to download your own files, you can have a look at
 ours
@@ -525,7 +526,7 @@ Which sample do you think came from which batch?
 
 <br>
 
-<img src="../img/Bioanalyzer_Batch1.png" width="49%" height="20%" style="display: block; margin: auto;" /><img src="../img/Bioanalyzer_Batch2.png" width="49%" height="20%" style="display: block; margin: auto;" />
+<img src="../img/Bioanalyzer_Batch1.png" alt="" width="49%" height="20%" style="display: block; margin: auto;" /><img src="../img/Bioanalyzer_Batch2.png" alt="" width="49%" height="20%" style="display: block; margin: auto;" />
 
 <br> <br>
 
@@ -596,10 +597,10 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
   # For definitions of these options, see http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf
   
   if [ $DATATYPE = pe ]; then
-    $TRIMMOMATIC PE -threads 1 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $RAWFASTQ_ID$RAWFASTQSUFFIX2 $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_f_unpaired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_unpaired.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10:1:true MINLENGTH:40' 
+    $TRIMMOMATIC PE -threads 1 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $RAWFASTQ_ID$RAWFASTQSUFFIX2 $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_f_unpaired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_unpaired.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10:1:true' MINLENGTH:40 
   
   elif [ $DATATYPE = se ]; then
-    $TRIMMOMATIC SE -threads 1 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $SAMPLEADAPT'_adapter_clipped_se.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10 MINLENGTH:40'
+    $TRIMMOMATIC SE -threads 1 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $SAMPLEADAPT'_adapter_clipped_se.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10' MINLENGTH:40
   fi
   
 done
@@ -746,6 +747,7 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
   SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
   LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
   SAMPLE_UNIQ_ID=$SAMPLE_ID'_'$POP_ID'_'$SEQ_ID'_'$LANE_ID  # When a sample has been sequenced in multiple lanes, we need to be able to identify the files from each run uniquely
+  LIBRARY_ID="${SAMPLE_ID}_${SEQ_ID}" # Distinguishes separate libraries prepared from the same individual
   
   ## Extract data type from the sample table
   DATATYPE=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 6`
@@ -766,7 +768,7 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
   # Map the paired-end reads
   if [ $DATATYPE = pe ]; then 
   # We ignore the reads that get orphaned during adapter clipping because that is typically a very small proportion of reads. If a large proportion of reads get orphaned (loose their mate so they become single-end), these can be mapped in a separate step and the resulting bam files merged with the paired-end mapped reads.
-  $BOWTIE -q --phred33 --$MAPPINGPRESET -p 1 -I 0 -X 1500 --fr --rg-id $SAMPLE_UNIQ_ID --rg SM:$SAMPLE_ID --rg LB:$SAMPLE_ID --rg PU:$PU --rg PL:ILLUMINA -x $REFBASENAME -1 $SAMPLETOMAP$FASTQSUFFIX1 -2 $SAMPLETOMAP$FASTQSUFFIX2 -S $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam'
+  $BOWTIE -q --phred33 --$MAPPINGPRESET -p 1 -I 0 -X 1500 --fr --rg-id $SAMPLE_UNIQ_ID --rg SM:$SAMPLE_ID --rg LB:$LIBRARY_ID --rg PU:$PU --rg PL:ILLUMINA -x $REFBASENAME -1 $SAMPLETOMAP$FASTQSUFFIX1 -2 $SAMPLETOMAP$FASTQSUFFIX2 -S $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam'
   
   # Map the single-end reads
   elif [ $DATATYPE = se ]; then
@@ -778,7 +780,7 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
   $SAMTOOLS view -bS -F 4 $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam' > $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.bam'
   rm -f $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam'
   
-  ## Filter the mapped reads (to onky retain reads with high mapping quality)
+  ## Filter the mapped reads (to only retain reads with high mapping quality)
   # Filter bam files to remove poorly mapped reads (non-unique mappings and mappings with a quality score < 20) -- do we want the quality score filter??
   $SAMTOOLS view -h -q 20 $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.bam' | $SAMTOOLS view -buS - | $SAMTOOLS sort -o $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'_minq20_sorted.bam'
   
@@ -892,7 +894,7 @@ $SAMTOOLS merge output.bam input1.bam input2.bam   # We replace the output.bam w
 We could write a for loop to get the separate fastq files for each
 individual merged. But in this case, we will instead run a shell script
 that has a line that calls `samtools merge` for each individual. You can
-find the script `merge_bams.sh` in the `scripts` folder. Have a look at
+find the script `merge_bam.sh` in the `scripts` folder. Have a look at
 it.
 
 With just three samples, we could quickly copy and edit these three
@@ -1060,7 +1062,7 @@ MarkDuplicates](https://gatk.broadinstitute.org/hc/en-us/articles/360037052812-M
 We also want to clip overlapping reads. We will use the [BamUtil
 clipOverlap](https://genome.sph.umich.edu/wiki/BamUtil:_clipOverlap)
 
-<img src="../img/clip_overlap.png" width="49%" height="20%" />
+<img src="../img/clip_overlap.png" alt="" width="49%" height="20%" />
 
 <br>
 
@@ -1109,7 +1111,7 @@ duplication rate is reported. Does it vary between our samples?
 
 <br> <br>
 
-## Indel realignment (optional)
+## Indel realignment (optional - we will not do this as part of the course)
 
 Unlike other variant detector programs (like the [GATK Haplotype
 Caller](https://gatk.broadinstitute.org/hc/en-us/articles/360037225632-HaplotypeCaller)
@@ -1124,10 +1126,11 @@ IndelRealigner](https://github.com/broadinstitute/gatk-docs/blob/master/gatk3-tu
 takes all the aligned sequences from all samples in to account to
 validate the indels discovered from the mapping process and then
 realigns each read locally. This is not a mandatory step and tends to be
-very time-consuming if you have a large dataset, but the code is
-provided here if you want to give it a try (it takes ~3 minutes for our
-small sample dataset). We will not use this output for the rest of this
-course though.
+very time-consuming if you have a large dataset. GATK is not installed
+on the Amazon server we’re working on for the course and we will not run
+this step today. However, we provide the code if you want to run it on
+your own system later (it takes ~3 minutes for our small sample
+dataset). For the course, please skip to the next step.
 
 <details>
 
@@ -1222,7 +1225,7 @@ done
 
 **On your local computer**, use FileZila if you have that installed
 (configuration instructions
-[here](https://github.com/nt246/physalia-lcwgs/blob/main/Connection_to_the_Amazon_EC2_service.pdf)
+[here](https://github.com/nt246/physalia-lcwgs/blob/main/Connection%20to%20the%20Amazon%20EC2%20service-3-2.pdf)
 or `scp` from a new Terminal window (where you’re not logged into the
 server) to download the bam list and the depth files. For example:
 
@@ -1241,7 +1244,7 @@ scp -i $KEY -r ${USER}@${IP}:~/day1/depth_files/*depth.gz ./
 scp -i $KEY -r ${USER}@${IP}:~/day1/sample_lists/merged_bam_list.txt ./
 ```
 
-<br>  
+<br>\
 <br>
 
 If you’re not able to your files downloaded from the server, you can
