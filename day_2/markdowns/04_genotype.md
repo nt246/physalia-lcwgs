@@ -246,7 +246,7 @@ done
 
 </details>
 
-If you want, you can try calling genotypes using a minimum posterior probability cutoff of 0.90 (and maybe some other cutoffs). 
+**BONUS TASK**. If you want, try calling genotypes using a minimum posterior probability cutoff of 0.90 (and maybe some other cutoffs). 
 How many sites are in the file now? Calculate a spectrum for the number of individuals with uncalled genotypes as above. 
 What do you make of this?
 
