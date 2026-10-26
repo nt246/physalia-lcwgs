@@ -511,7 +511,7 @@ In R, run the following:
 
 ```r
 #Load the covariance matrix
-admix = read_table("~/day3/Results/MME_LDpruned_ngsAdmix_K2_out.qopt", col_names = F)
+admix = read.table("~/day3/Results/MME_LDpruned_ngsAdmix_K2_out.qopt")
 
 #We will also add a column with population assingments
 pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA"
