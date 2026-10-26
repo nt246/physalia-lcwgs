@@ -313,8 +313,6 @@ pdf("~/day3/Results/pca_LDpruned_pcangsd_varPCA_plot.pdf")  # change path as nee
 plot(varPCA$V1)
 
 dev.off()
-
-
 ```
 
 <br>
@@ -350,31 +348,68 @@ angsd -b $DIR/ALL_bams.txt -anc $REF -out $BASEDIR'Results/MME_ANGSD_PCA' \
 
 Again, we perform the principal components analysis using the `eigen` function in R:
 ```bash
-/usr/bin/R
+R
 ```
 
 In R, run the following: 
 
 ```r
-library(tidyverse)
-
 #Load the covariance matrix
 cov <- as.matrix(read.table("~/day3/Results/MME_ANGSD_PCA.covMat", header = F))
 
-#We will also add a column with population assingments
 pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA"
          ,"PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY"
          ,"MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS"
          ,"MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU")
 
 mme.pca <- eigen(cov) #perform the pca using the eigen function. 
+         
+# Extract eigenvectors
+eigenvectors <- mme.pca$vectors
 
-eigenvectors = mme.pca$vectors #extract eigenvectors 
-pca.vectors = as_tibble(cbind(pop, data.frame(eigenvectors))) #combine with our population assignments
+# Combine with population assignments
+pca.vectors <- data.frame(
+  pop = pop,
+  eigenvectors,
+  stringsAsFactors = FALSE
+)
 
-pca = ggplot(data = pca.vectors, aes(x=X1, y=X2, colour = pop)) + geom_point()
+# Create PCA plot
+pdf("~/day3/Results/pca_allSNPs_plot.pdf")  # change path as needed
 
-ggsave(filename = "~/day3/Results/pca_allSNPs_plot.pdf", plot = pca) #change file path if data on your own computer
+cols <- as.factor(pca.vectors$pop)
+plot(
+  pca.vectors[, 2],   # PC1 (first eigenvector column)
+  pca.vectors[, 3],   # PC2 (second eigenvector column)
+  col = as.numeric(cols),
+  pch = 19,
+  xlab = "PC1",
+  ylab = "PC2"
+)
+
+legend(
+  "topright",
+  legend = levels(cols),
+  col = seq_along(levels(cols)),
+  pch = 19,
+  bty = "n"
+)
+
+dev.off()
+
+pca.eigenval.sum = sum(mme.pca$values) #sum of eigenvalues
+varPC1 <- (mme.pca$values[1]/pca.eigenval.sum)*100 #Variance explained by PC1
+varPC2 <- (mme.pca$values[2]/pca.eigenval.sum)*100 #Variance explained by PC2
+varPC3 <- (mme.pca$values[3]/pca.eigenval.sum)*100 #Variance explained by PC3
+varPC4 <- (mme.pca$values[4]/pca.eigenval.sum)*100 #Variance explained by PC4
+
+varPCA = as.data.frame(rbind(varPC1,varPC2,varPC3,varPC4))
+
+pdf("~/day3/Results/pca_allSNPs_varPCA_plot.pdf")  # change path as needed
+
+plot(varPCA$V1)
+
+dev.off()
 ```
 
 <br>
@@ -469,14 +504,12 @@ best like=-11324.127798 after 93 iterations
 
 Furthermore, we can plot admixture proportions in R:
 ```bash
-/usr/bin/R
+R
 ```
 
 In R, run the following: 
 
 ```r
-library(tidyverse) #load the tidyverse package for formatting and plotting
-
 #Load the covariance matrix
 admix = read_table("~/day3/Results/MME_LDpruned_ngsAdmix_K2_out.qopt", col_names = F)
 
