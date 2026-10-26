@@ -11,7 +11,7 @@ Nina Overgaard Therkildsen, Tyler Linderoth, and Arne Jacobs
 
 *Quick links*:
 
-* [Server log-in and data transfer](https://github.com/nt246/physalia-lcwgs/blob/main/Connection to the Amazon EC2 service-3-2.pdf)
+* [Server log-in and data transfer](https://github.com/nt246/physalia-lcwgs/blob/main/Connection_to_the_Amazon_EC2_service-3-2.pdf)
 
 * [Tutorial 1: Data processing](https://github.com/nt246/physalia-lcwgs/blob/main/day_1/markdowns/data_processing.md)
 

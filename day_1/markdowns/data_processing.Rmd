@@ -329,7 +329,7 @@ done
 <br>
 
 
-If the program ran, you should now see the output (in html format and a zip file with various files) in your `day1/fastqc` directory. To view the .html, use `scp` (as described [here](Connection to the Amazon EC2 service-3-2.pdf) or FileZilla (connection instructions also described [here](Connection to the Amazon EC2 service-3-2.pdf)) to transfer the html output files to your local machine and open them in a web browser.
+If the program ran, you should now see the output (in html format and a zip file with various files) in your `day1/fastqc` directory. To view the .html, use `scp` (as described [here](Connection_to_the_Amazon_EC2_service-3-2.pdf) or FileZilla (connection instructions also described [here](Connection_to_the_Amazon_EC2_service-3-2.pdf)) to transfer the html output files to your local machine and open them in a web browser.
 
 If you're not able to download your own files, you can have a look at ours [here](https://github.com/nt246/physalia-lcwgs/tree/main/day_1/fastqc). We are keeping them in our GitHub repo, but GitHub doesn't render .html files, so to view the output, click on the output.html file you want to view, copy its URL and paste it into [this handy viewer](https://htmlpreview.github.io/) to see it in rendered html format.
 
@@ -867,7 +867,7 @@ done
 
 <br>  
 
-**On your local computer**, use FileZila if you have that installed (configuration instructions [here](https://github.com/nt246/physalia-lcwgs/blob/main/Connection to the Amazon EC2 service-3-2.pdf) or `scp` from a new Terminal window (where you're not logged into the server) to download the bam list and the depth files. For example:
+**On your local computer**, use FileZila if you have that installed (configuration instructions [here](https://github.com/nt246/physalia-lcwgs/blob/main/Connection_to_the_Amazon_EC2_service-3-2.pdf) or `scp` from a new Terminal window (where you're not logged into the server) to download the bam list and the depth files. For example:
 
 ```{bash eval=FALSE}
 ## Edit the follow variables
