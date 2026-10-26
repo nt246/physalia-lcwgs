@@ -255,7 +255,7 @@ with our test dataset.
 ## remove the header line from LD estimates (because the python script had issues with it)
 tail -n +2 $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.ld > $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.no_header.ld
 ## run LD pruning script
-python $NGSLD/scripts/prune_ngsLD.py \
+python ~/day3/scripts/prune_ngsLD.py \
 --input $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.no_header.ld \
 --max_dist 2000000 \
 --min_weight 0.5 \
