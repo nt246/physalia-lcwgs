@@ -86,12 +86,12 @@ ls
 When running these scripts on the AWS server, run the following:
 
 ``` bash
-NGSLD=/home/ubuntu/ngsLD
+NGSLD=ngsLD
 ## launch the conda environment that contains the dependencies of ngsLD submodules
-conda activate ngsLD
+conda activate lcwgs
 ## add library paths
-export LIBRARY_PATH=/opt/miniconda3/envs/ngsLD/lib/
-export LD_LIBRARY_PATH=/opt/miniconda3/envs/ngsLD/lib/:/home/ubuntu/miniconda3/pkgs/icu-58.2-he6710b0_3/lib/
+export LIBRARY_PATH=/opt/conda-envs/lcwgs/lib/
+export LD_LIBRARY_PATH=/opt/conda-envs/lcwgs/lib/:/home/ubuntu/miniconda3/pkgs/icu-58.2-he6710b0_3/lib/
 ```
 
 <br>
@@ -167,7 +167,7 @@ Important ngsLD parameters (default values shown in square brackets):
 - `--out FILE`: output file name. \[stdout\]
 
 ``` bash
-$NGSLD/ngsLD \
+$NGSLD \
 --geno $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.beagle.gz \
 --pos $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.pos.gz \
 --probs \
@@ -255,7 +255,7 @@ with our test dataset.
 ## remove the header line from LD estimates (because the python script had issues with it)
 tail -n +2 $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.ld > $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.no_header.ld
 ## run LD pruning script
-python $NGSLD/scripts/prune_ngsLD.py \
+python ~/day3/scripts/prune_ngsLD.py \
 --input $BASEDIR/ngsld/MME_ANGSD_PCA_subsampled.no_header.ld \
 --max_dist 2000000 \
 --min_weight 0.5 \

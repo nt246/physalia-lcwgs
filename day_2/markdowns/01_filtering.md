@@ -136,7 +136,8 @@ Examples for region specification:
 ```
 
 Let's build an ANGSD run. Arguments can be supplied in any order. The order presented here is arbitrary. 
-We do not actually run the intermediate code preceded with ```#```, which is only presented to highlight specific commands.
+We do not actually run the code preceded with ```#``` that follows, which is only presented to highlight specific ANGSD 
+commands and options.
 
 Define input and output files.
 ```
@@ -147,7 +148,7 @@ We provide a list of bam files (with their full paths) with `-b`, while `-out` s
 Next we specify some basic read filtering criteria.
 ```
 # angsd -b $DIR/ALL_bams.txt -ref $REF -out ./Results/ALL \
-# -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
+#    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
 ```
 These filters will retain only uniquely mapped reads (`-uniqueOnly`) that map as a proper pair (`-only_proper_pairs`) and are not tagged with a SAM 
 flag above 255 (`-remove_bads`). No bases are trimmed from the ends of reads `-trim 0` and we downgrade mapping and base qualities in problematic mapping 
@@ -171,9 +172,9 @@ Parameter | Meaning |
 Putting all of this together, an ANGSD command that implements various quality controls will look something like
 
 ```
-# $angsd -b $DIR/ALL_bams.txt -ref $REF -out ./Results/ALL \
-#        -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
-#        -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1
+# angsd -b $DIR/ALL_bams.txt -ref $REF -out ./Results/ALL \
+#    -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 -baq 1 \
+#    -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1
 ```
 
 More sophisticated filtering can be performed, but this is outside the scope of this practical.
