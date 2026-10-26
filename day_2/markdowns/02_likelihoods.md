@@ -111,7 +111,7 @@ scaled to the most likely genotype, so the most likely genotype has a value of 0
 
 **QUESTION**
 We are analyzing 15 individuals so we should have 152 fields in the glf file. You should confirm this and try to print the likelihoods
-for the individual called PANY_04 at position chr24:34213 (each bam file is named according to individual, i.e. <idividual ID>.bam). What is 
+for the individual called PANY_04 at position chr24:34213 (each bam file is named according to individual, i.e. ID.bam). What is 
 their most likely genotype? If you need help you can click below.
 
 <details>
