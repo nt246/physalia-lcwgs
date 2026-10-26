@@ -59,7 +59,7 @@ SOAPsnp requires a reference sequence for recalibration of quality scores, SYK i
 In most cases, GATK and SAMtools models should give similar results.
 
 Let's first work with only the PANY samples.
-A possible command to calculate genotype likelihoods is
+Calculate genotype likelihoods is using the code below.
 
 ```
 angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
