@@ -1315,8 +1315,8 @@ report? Why?
 
 <br>
 
-If you’re interested, you can go back and compare the depth distribution
-to in the raw mapped files.
+If you’re interested, you can go back and compare to the depth
+distribution in the raw mapped files.
 
 <br> <br>
 
