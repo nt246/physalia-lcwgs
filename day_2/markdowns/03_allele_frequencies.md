@@ -229,7 +229,7 @@ cutoffs of 0.05, 0.01, 0.0001, and 0.000001.
 for PV in 0.05 0.01 1e-4 1e-6
 do
    if [ $PV == 0.05 ]; then echo SNP_pval Number_SNPs; fi
-   $angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_$PV \
+   angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_$PV \
       -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -trim 0 -C 50 \
       -minMapQ 20 -minQ 20 -minInd 5 -setMinDepthInd 1 -setMinDepth 7 -setMaxDepth 30 -doCounts 1 \
       -GL 1 -doMajorMinor 1 -doMaf 1 -rmTriallelic 0.05 -SNP_pval $PV &> /dev/null
