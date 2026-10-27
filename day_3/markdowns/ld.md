@@ -286,8 +286,6 @@ server**.
 To launch R on the AWS server, run the following command.
 
 ``` bash
-conda deactivate
-conda activate lcwgs
 R
 ```
 
