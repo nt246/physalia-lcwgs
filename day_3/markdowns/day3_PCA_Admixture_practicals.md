@@ -657,8 +657,8 @@ plot = barplot(t(as.matrix(subset(admix.id, select=q1:q2))), col=c("firebrick","
 dev.off() 
 ```
 Examine the pdf file that the script outputs. If you can not get the
-code to work, see the [Admixture plot for K=3 that we have
-generated](https://github.com/nt246/physalia-lcwgs/blob/main/day_3/angsd/PCangsd_LDpruned_K2_admix_plot.pdf).
+code to work, see the [Admixture plot that we have
+generated with PCangsd](https://github.com/nt246/physalia-lcwgs/blob/main/day_3/angsd/PCangsd_LDpruned_K2_admix_plot.pdf).
 
 
 
