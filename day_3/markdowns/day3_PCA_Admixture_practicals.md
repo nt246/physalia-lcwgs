@@ -227,6 +227,11 @@ You can quit R using by typing `q()` and you can open the plot on your own compu
 
 <br>
 
+Examine the pdf file that the script outputs. If you can not get the
+code to work, see the [PCA plot that we have
+generated](https://github.com/nt246/physalia-lcwgs/blob/main/day_3/angsd/pca_LDpruned_plot.pdf) and the [Variance plot](https://github.com/nt246/physalia-lcwgs/blob/main/day_3/angsd/pca_LDpruned_varPCA_plot.pdf).
+
+
 #### Question
 How strongly are the four different populations separated? And how much variation do the first to PCs explain? 
 
