@@ -213,7 +213,17 @@ following script, and run it on your local computer \[i.e. not in the
 Terminal window you are logged into the server with\].
 
 ``` bash
-## scp -i c1.pem user1@35.164.117.54:/home/user1/day3/ngsld/LD_blocks.r2.pdf ./
+## Edit the follow variables
+USER=user2 ## Replace this with your user name and the correct IP address
+IP=34.217.81.210 ## Replace this with today's IP address
+BASEDIR=~/Downloads/day1 ## Replace this with a directory on your computer where you want to store the downloaded files
+KEY=~/Downloads/c2.pem ## Replace this with the path to where you have saved your pem file on your local computer
+
+## Create $BASEDIR if it doesn't yet exist and 
+mkdir $BASEDIR
+cd $BASEDIR
+## Download the depth files and the bam list
+scp -i $KEY -r ${USER}@${IP}:~/day3/ngsld/LD_blocks.r2.pdf ./
 ```
 
 <br>
@@ -285,17 +295,42 @@ Once you have launched R, run the following script in R to generate the
 SNP list.
 
 ``` r
-library(tidyverse)
-basedir="~/day3/"
-## position of SNPs that survived LD pruning
-pruned_position <- read_lines(paste0(basedir, "ngsld/MME_ANGSD_PCA_subsampled_unlinked.id")) %>%
-  str_remove("Mme_chr24_2558528-4558528:") %>%
-  as.integer()
-## filter SNPs in the original SNP list to only include those that survived LD pruning
-pruned_snp_list <- read_tsv(paste0(basedir, "angsd/MME_ANGSD_PCA.mafs.gz")) %>%
-  dplyr::select(1:4) %>%
-  filter(position %in% pruned_position)
-write_tsv(pruned_snp_list, paste0(basedir, "ngsld/LDpruned_snps.list"), col_names = F)
+basedir <- "~/day3/"
+
+# Position of SNPs that survived LD pruning
+pruned_position <- readLines(
+  paste0(basedir, "ngsld/MME_ANGSD_PCA_subsampled_unlinked.id")
+)
+
+pruned_position <- as.integer(
+  sub("Mme_chr24_2558528-4558528:", "", pruned_position)
+)
+
+# Read original SNP list
+pruned_snp_list <- read.table(
+  gzfile(paste0(basedir, "angsd/MME_ANGSD_PCA.mafs.gz")),
+  header = TRUE,
+  sep = "\t",
+  stringsAsFactors = FALSE
+)
+
+# Keep only first four columns
+pruned_snp_list <- pruned_snp_list[, 1:4]
+
+# Filter to retained SNPs
+pruned_snp_list <- pruned_snp_list[
+  pruned_snp_list$position %in% pruned_position,
+]
+
+# Write output without column names
+write.table(
+  pruned_snp_list,
+  file = paste0(basedir, "ngsld/LDpruned_snps.list"),
+  sep = "\t",
+  quote = FALSE,
+  row.names = FALSE,
+  col.names = FALSE
+)
 ```
 
 Note that this is a simple example with only one chromosome. If multiple
