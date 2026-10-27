@@ -95,7 +95,7 @@ In general, `-GL 1`, `-doMaf 1` or `-doMaf 2`, and `-doMajorMinor 1` should be t
 Take a look at the MAF file 
 
 ```
-less $RESDIR/PANY.mafs.gz`.
+less $RESDIR/PANY.mafs.gz
 ```
 
 <details>
