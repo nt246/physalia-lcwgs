@@ -59,7 +59,7 @@ SOAPsnp requires a reference sequence for recalibration of quality scores, SYK i
 In most cases, GATK and SAMtools models should give similar results.
 
 Let's first work with only the PANY samples.
-A possible command to calculate genotype likelihoods is
+Calculate genotype likelihoods for each individual using the code below.
 
 ```
 angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
@@ -70,14 +70,14 @@ angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY \
 
 where we specify:
 * -GL 1: genotype likelihood model as in SAMtools
-* -doGlf 4: output in text format
+* -doGlf 4: output genotype likelihoods in text format
 
 Note that you can usually speed up computation with `-nThreads INT` when working with real data.
 
 The `-C` option adjusts mapping quality for reads with excessive mismatches. The [samtools](http://www.htslib.org/doc/samtools-mpileup.html)
-documentation recommends setting this to 50 for reads mapped with BWA. `-C` and `-baq` (not used here, but see below) require that you supply the reference genome with `-ref`.
-`-baq` (base alignment quality) is another option to consider in order to adjust the base quality scores around INDELS.
-<br>
+documentation recommends setting this to 50 for reads mapped with BWA. The `-C` and `-baq` (not used here) options require that 
+you supply the reference genome with `-ref`. You can use `-baq` (base alignment quality) to adjust the base quality scores around INDELS.
+<br><br>
 `-minInd X` in conjunction with `-minIndDepth Y` requires at least *X* individuals to be covered by at least *Y* (default 1) reads to keep a site. 
 `-setMinDepth` and `-setMaxDepth` set minimum and maximum total site depth (depth summed across all individuals) limits, respectively.
 
@@ -111,12 +111,16 @@ scaled to the most likely genotype, so the most likely genotype has a value of 0
 
 **QUESTION**
 We are analyzing 15 individuals so we should have 152 fields in the glf file. You should confirm this and try to print the likelihoods
-for the individual called PANY_04 at position chr24:34213 (each bam file is named by the individual, i.e. <idividual ID>.bam). What is 
+for the individual called PANY_04 at position chr24:34213 (each bam file is named according to individual, i.e. ID.bam). What is 
 their most likely genotype? If you need help you can click below.
 
 <details>
 
 <summary> click for help extracting GL info </summary>
+
+There are multiple ways that you could extract this information, and so the code below is just one example. Don't get hung up 
+trying to understand the exact lines of code, though you can always use it as a reference for the logic. The point of this exercise is 
+just to help familiarize you with the ANGSD output files and how to navigate them.
 
 ```bash
 # Count number of columns and subtract 2 (chromosome and position fields) to get the number of likelihood values
@@ -136,7 +140,8 @@ So this individual is at row 4 in the bam list. Now we can extract their likelih
 ```bash
 zcat $RESDIR/PANY.glf.gz | grep -m 1 $'^Mme_chr24:2558528-4558528\t34213\t' | cut -f 3- | perl -se '$start=($n-1)*10; @arr = split(/\t/,<>); print "@arr[$start .. $start+9]\n"' -- -n=$INDNUM
 ```
-For PANY_04 the 5th likelihood is zero, corresponding to the genotype 'CC'.
+
+For PANY_04 the 5th likelihood is zero, meaning that 'CC' is the most likely genotype.
 
 </details>
 

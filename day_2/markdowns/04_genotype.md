@@ -160,7 +160,8 @@ Uniform genotype probabilities mean the individual had missing data (you don't k
 
 **Genotype posterior probabilities with an uninformative prior**
 
-Calculate the posterior probabilities for the PANY samples again, but this time use a uniform genotype prior, note `-doPost 2`.
+Calculate the genotype posterior probabilities for the PANY samples again, but this time use a uniform genotype prior with `-doPost 2`. This basically 
+just rescales the genotype likelihoods so that they sum to 1.
 
 ```bash
 angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_unif \
@@ -194,7 +195,7 @@ based on the allele frequencies?
 
 Now we'll call genotypes based on their maximum posterior probability and output the genotype in 0, 1, 2 format. We 
 can set the genotype for an indivdiual to missing (-1) if the maximum posterior probability is less than a certain value. 
-In this example we'll use a cutoff of 0.95. We'll also write the major and minor alleles as well.
+In this example we'll use a minimum probability cutoff of 0.95. We'll also write the major and minor alleles as well.
 
 ```bash
 angsd -b $DIR/PANY_bams.txt -ref $REF -out $RESDIR/PANY_call \
@@ -243,13 +244,13 @@ done
 
 ```
 
-</details>
-
-If you want, you can try calling genotypes using a minimum posterior probability cutoff of 0.90 (and maybe some other cutoffs). 
-How many sites are in the file now? Calculate a spectrum for the number of individuals with uncalled genotypes as above. 
+**BONUS TASK**. If you want, try calling genotypes using a minimum posterior probability cutoff of 0.90 (and maybe some other cutoffs). 
+How many sites are in the file now? Calculate a spectrum for the number of individuals with uncalled genotypes as above.
 What do you make of this?
 
-In general, the `postCutoff` threshold you choose will depend on the sequencing depth of your data and 
+</details>
+
+In general, the `-postCutoff` threshold you choose will depend on the sequencing depth of your data and 
 how much genotyping inaccuracy is permissible for accurate inference. There is often a balance between the number of individuals 
 providing genotypic information and the reliability of the information that each individual provides.
 

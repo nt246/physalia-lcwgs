@@ -11,9 +11,7 @@ More information about the methods implemented in ANGSD can be found in its asso
 types from mapped reads to imputed genotype probabilities. Most methods take genotype uncertainty into account instead of basing the analysis on called genotypes. 
 This is especially useful for low and medium depth data.* (quoted from the ANGSD website).
 
-Please make sure to follow the preparatory instructions below before continuing with the exercises. 
-You need to set the path to the software and various data that will be used.
-You also need to create two folders in your home user directory; one for your results and one for your intermediate data.
+Please make sure to follow the preparatory instructions below before continuing with the exercises.
 
 Create a folder for this session in your home directory and enter it.
 ```
@@ -38,7 +36,7 @@ REF=$DIR/Ref.fa
 ANC=$DIR/outgrp_ref.fa
 ```
 
-If you have not already, load the lcwgs conda environment so that you have access to the necessary programs.
+Load the lcwgs conda environment so that you have access to the necessary programs.
 
 ```
 conda activate lcwgs
