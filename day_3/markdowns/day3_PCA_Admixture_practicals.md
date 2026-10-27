@@ -322,6 +322,10 @@ dev.off()
 
 <br>
 
+Examine the pdf file that the script outputs. If you can not get the
+code to work, see the [PCangsd PCA plot that we have
+generated](https://github.com/nt246/physalia-lcwgs/blob/main/day_3/angsd/pca_LDpruned_pcangsd_plot.pdf) and the [Variance plot](https://github.com/nt246/physalia-lcwgs/blob/main/day_3/angsd/pca_LDpruned_pcangsd_varPCA_plot.pdf).
+
 #### Question
 Do the inferred population structures differ between the two approaches? How different are the inferred variances explained by PC1 and PC2? 
 
@@ -418,6 +422,11 @@ dev.off()
 ```
 
 <br>
+
+Examine the pdf file that the script outputs. If you can not get the
+code to work, see the [PCA plot for all SNPs that we have
+generated](https://github.com/nt246/physalia-lcwgs/blob/main/day_3/angsd/pca_allSNPs_plot.pdf) and the [Variance plot](https://github.com/nt246/physalia-lcwgs/blob/main/day_3/angsd/pca_allSNPs_varPCA_plot.pdf).
+
 
 #### Question: 
 
