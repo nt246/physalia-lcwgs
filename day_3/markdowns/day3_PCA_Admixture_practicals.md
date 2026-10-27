@@ -541,6 +541,11 @@ plot = barplot(t(as.matrix(subset(admix.id, select=q1:q2))), col=c("firebrick","
 dev.off() 
 ```
 
+Examine the pdf file that the script outputs. If you can not get the
+code to work, see the [Admixture plot that we have
+generated](https://github.com/nt246/physalia-lcwgs/blob/main/day_3/angsd/NGSadmix_LDpruned_K2_plot.pdf).
+
+
 **Optional** If you want, you can try changing the value for `-K` and compare the inferred log likelihoods and admixture proportions. Which value of K has the stronger support?
 
 <br>
@@ -573,7 +578,40 @@ best like=-11077.337705 after 750 iterations
 
 </details>
 
+Plot the admixture proportions for K=3
+
+```bash
+R
+```
+
+In R, run the following: 
+
+```r
+#Load the covariance matrix
+admix = read.table("~/day3/Results/MME_LDpruned_ngsAdmix_K3_out.qopt")
+
+#We will also add a column with population assingments
+pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA"
+         ,"PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY"
+         ,"MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS"
+         ,"MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU")
+
+admix.id = as.data.frame(cbind(pop, admix))
+names(admix.id) = c("pop","q1","q2","q3")
+
+pdf("~/day3/Results/NGSadmix_LDpruned_K3_plot.pdf")
+plot = barplot(t(as.matrix(subset(admix.id, select=q1:q3))), col=c("firebrick","royalblue","forestgreen"), border=NA)
+dev.off() 
+```
+
+Examine the pdf file that the script outputs. If you can not get the
+code to work, see the [Admixture plot for K=3 that we have
+generated](https://github.com/nt246/physalia-lcwgs/blob/main/day_3/angsd/NGSadmix_LDpruned_K3_plot.pdf).
+
+
+
 <br>
+
 
 ### Alternative approach: PCAngsd
 
@@ -594,6 +632,33 @@ pcangsd -b ~/day3/Results/MME_ANGSD_PCA_LDpruned.beagle.gz --admix --admix-K 2 -
 
 **Optional**
 If you want to, you can plot these results as well and compare them to the estimates with NGSadmix.
+
+```bash
+R
+```
+
+In R, run the following: 
+
+```r
+#Load the covariance matrix
+admix = read.table("~/day3/Results/MME_PCAngsd_K2_out.admix.2.Q")
+
+#We will also add a column with population assingments
+pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA"
+         ,"PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY"
+         ,"MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS"
+         ,"MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU")
+
+admix.id = as.data.frame(cbind(pop, admix))
+names(admix.id) = c("pop","q1","q2")
+
+pdf("~/day3/Results/PCangsd_LDpruned_K2_admix_plot.pdf")
+plot = barplot(t(as.matrix(subset(admix.id, select=q1:q2))), col=c("firebrick","royalblue"), border=NA)
+dev.off() 
+```
+Examine the pdf file that the script outputs. If you can not get the
+code to work, see the [Admixture plot for K=3 that we have
+generated](https://github.com/nt246/physalia-lcwgs/blob/main/day_3/angsd/PCangsd_LDpruned_K2_admix_plot.pdf).
 
 
 
