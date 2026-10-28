@@ -652,7 +652,7 @@ angsd -b $DIR/MAQU_bams.txt -ref $REF -anc $ANC -out $RESDIR/MAQU \
 ```
 
 Then we can use each population's respective allele frequency likelihoods to obtain a maximum likelihood estimate of the 
-joint allele frequency likelihoods. !!! The `realSFS` command below make take a long time to run, so we have stored a copy 
+joint allele frequency likelihoods. !!! The `realSFS` command below may take a long time to run, so we have stored a copy 
 of the output for you to use. If you choose to use the 2D-SFS output provided (recommended), copy the file into your results 
 directory with `cp XX $RESDIR` and skip running the command immediately below !!!
 
