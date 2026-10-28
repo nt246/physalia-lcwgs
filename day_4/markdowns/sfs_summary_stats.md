@@ -667,7 +667,7 @@ Now we have a prior for the joint probability of observing *i* alleles in PANY a
 with a heatmap. We're going to use these probabilities of jointly observing combinations of allele frequencies in our two example populations to calculate 
 *F<sub>ST</sub>* between them. *F<sub>ST</sub>* is a commonly used measure of genetic differentiation based on allele frequencies that spans from 0 when the 
 allele frequencies are the same in both populations to 1 when the populations are fixed for different alleles. *F<sub>ST</sub>* can be estimated from the 
-following components of genetic variation: between population variance (denoted *a<sub>s</sub>*), within population variance (*b<sub>s</sub>*), 
+following components of genetic variance: between population variance (denoted *a<sub>s</sub>*), within population variance (*b<sub>s</sub>*), 
 and the total genetic variance (*c<sub>s</sub>*). *F<sub>ST</sub>* = $\frac{a_s}{c_s}$.
 
 
