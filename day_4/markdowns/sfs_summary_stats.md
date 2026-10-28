@@ -440,11 +440,11 @@ PANY_07?
 
 <details>
 
-<summary> Click for answer </summary>
+<summary> click for answer </summary>
 
 H = $\frac{1844.910022}{898842.635456 + 1844.910022 + 34621.454522} = 0.001972514$
 
-</detials>
+</details>
 
 ### Allele frequency posterior probabilities
 
