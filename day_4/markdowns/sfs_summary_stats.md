@@ -674,7 +674,8 @@ and the total genetic variance (*c<sub>s</sub>*). *F<sub>ST</sub>* = $\frac{a_s}
 We can calculate the genetic variances with `realSFS` for our two example populations like so:
 
 ```bash
-realSFS fst index $RESDIR/PANY.saf.idx $RESDIR/MAQU.saf.idx -sfs $RESDIR/PANY_vs_MAQU.2dsfs -fstout $RESDIR/PANY_vs_MAQU
+realSFS fst index $RESDIR/PANY.saf.idx $RESDIR/MAQU.saf.idx \
+-sfs $RESDIR/PANY_vs_MAQU.2dsfs -fstout $RESDIR/PANY_vs_MAQU
 ```
 We can view the genetic variance components at each site with `realSFS`:
 
