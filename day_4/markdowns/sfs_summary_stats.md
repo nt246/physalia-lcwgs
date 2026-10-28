@@ -410,7 +410,8 @@ so the SFS for a single individual provides the heterozygosity, *H*, of that ind
 
 ```
 angsd -i $DIR/BAMS/PANY_07.bam -out $RESDIR/PANY_07 -ref $REF -anc $ANC \
-   -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -C 50 -minMapQ 20 -minQ 20 -minInd 1 -setMinDepthInd 2 \
+   -uniqueOnly 1 -remove_bads 1 -only_proper_pairs 1 -C 50 \
+   -minMapQ 20 -minQ 20 -minInd 1 -setMinDepthInd 2 \
    -GL 1 -doSaf 1
 ```
 
