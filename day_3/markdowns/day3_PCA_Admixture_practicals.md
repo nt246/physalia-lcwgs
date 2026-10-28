@@ -237,6 +237,55 @@ How strongly are the four different populations separated? And how much variatio
 
 <br>
 
+#### Perform multi-dimensional scaling with IBS matrix
+```
+ibs.mat <- as.matrix(read.table("~/day3/Results/MME_ANGSD_PCA_LDpruned.ibsMat", header = F))
+
+#We will also add a column with population assingments
+pop <- c("JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA","JIGA"
+         ,"PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY","PANY"
+         ,"MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS","MBNS"
+         ,"MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU","MAQU")
+
+mds <- cmdscale(as.dist(ibs.mat))
+
+mds.df = as.data.frame(mds)
+
+# Combine with population assignments
+mds.df2 <- data.frame(
+  pop = pop,
+  mds.df,
+  stringsAsFactors = FALSE
+)
+
+# Create PCA plot
+pdf("~/day3/Results/mds_LDpruned_plot.pdf")  # change path as needed
+
+cols <- as.factor(mds.df2$pop)
+plot(
+  mds.df2[, 2],   # MDS1 
+  mds.df2[, 3],   # MDS2 
+  col = as.numeric(cols),
+  pch = 19,
+  xlab = "MDS1",
+  ylab = "MDS2"
+)
+
+legend(
+  "topright",
+  legend = levels(cols),
+  col = seq_along(levels(cols)),
+  pch = 19,
+  bty = "n"
+)
+
+dev.off()
+```
+
+You can find the [MDS plot here](https://github.com/nt246/physalia-lcwgs/blob/main/day_3/angsd/mds_LDpruned_plot.pdf)
+
+
+
 ## 2. Alternative approach: Covariance matrix estimation with PCAngsd
 
 The covariance matrix can also be inferred from genotype likelihoods using PCAangsd. PCAngsd takes as input genotype likelihoods in beagle format, which we generated in the step before using the `-doGLF 2` option.
