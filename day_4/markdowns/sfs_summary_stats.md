@@ -668,7 +668,7 @@ with a heatmap. We're going to use these probabilities of jointly observing comb
 *F<sub>ST</sub>* between them. *F<sub>ST</sub>* is a commonly used measure of genetic differentiation based on allele frequencies that spans from 0 when the 
 allele frequencies are the same in both populations to 1 when the populations are fixed for different alleles. *F<sub>ST</sub>* can be estimated from the 
 following components of genetic variation: between population variance (denoted *a<sub>s</sub>*), within population variance (*b<sub>s</sub>*), 
-and the total genetic variance (*c<sub>s</sub>*). *F<sub>ST</sub>* = *a<sub>s</sub>* / *c<sub>s</sub>}*.
+and the total genetic variance (*c<sub>s</sub>*). *F<sub>ST</sub>* = *a<sub>s</sub>* / *c<sub>s</sub>*. *F<sub>ST</sub>* = $\frac{a_s}{c_s}$.
 
 
 We can calculate the genetic variances with `realSFS` for our two example populations like so:
