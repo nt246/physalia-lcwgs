@@ -661,7 +661,7 @@ with a heatmap. We're going to use these probabilities of jointly observing comb
 *F<sub>ST</sub>* between them. *F<sub>ST</sub>* is a commonly used measure of genetic differentiation based on allele frequencies that spans from 0 when the 
 allele frequencies are the same in both populations to 1 when the populations are fixed for different alleles. *F<sub>ST</sub>* can be estimated from the 
 following components of genetic variation: between population variance (denoted *a<sub>s</sub>*), within population variance (*b<sub>s</sub>*), 
-and the total genetic variance (*c<sub>s</sub>*). *F<sub>ST</sub>* = \$frac{a_s_}{c_s_}$.
+and the total genetic variance (*c<sub>s</sub>*). *F<sub>ST</sub>* = *a<sub>s</sub>* / *c<sub>s</sub>}*.
 
 
 We can calculate the genetic variances with `realSFS` for our two example populations like so:
@@ -674,11 +674,11 @@ We can view the genetic variance components at each site with `realSFS`:
 ```bash
 realSFS fst print $RESDIR/PANY_vs_MAQU.fst.idx | less -S
 ```
-The columns are (1) Chromomsome, (2) position, (3) a<sub>s</sub> (between population genetic variance), (4) c<sub>s</sub> (total population variance).
+The columns are (1) Chromomsome, (2) position, (3) *a<sub>s</sub>* (between population genetic variance), (4) *c<sub>s</sub>* (total population variance).
 
 **QUESTION**
 
-What is the value of F<sub>ST</sub> at position chr24:365?
+What is the value of *F<sub>ST</sub>* at position chr24:365?
 
 <details>
 
@@ -692,9 +692,9 @@ F<sub>ST</sub> = a<sub>365</sub> / (c<sub>365</sub>) = 0.017935 / 0.224872 = 0.0
 
 </details>
 
-To calculate F<sub>ST</sub> for a region you sum all a<sub>s</sub> for the region, and then divide that by the sum of c<sub>s</sub> in that region.
+To calculate *F<sub>ST</sub>* for a region you sum all *a<sub>s</sub>* for the region, and then divide that by the sum of *c<sub>s</sub>* in that region.
 
-You can calculate the genome-wide F<sub>ST</sub> between the PANY and MAQU populations using `realSFS`:
+You can calculate the genome-wide *F<sub>ST</sub>* between the PANY and MAQU populations using `realSFS`:
 
 ```bash
 realSFS fst stats $RESDIR/PANY_vs_MAQU.fst.idx
