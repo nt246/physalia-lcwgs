@@ -421,7 +421,7 @@ angsd -i $DIR/BAMS/PANY_07.bam -out $RESDIR/PANY_07 -ref $REF -anc $ANC \
 realSFS $RESDIR/PANY_07.saf.idx > $RESDIR/PANY_07.sfs
 ```
 
-(3) Calculate a maximum likelihoods estimate of *H*.
+(3) Calculate a maximum likelihood estimate of *H*.
 
 First, lets look at the output of `realSFS`
 
