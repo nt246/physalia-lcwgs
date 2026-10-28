@@ -641,7 +641,7 @@ the joint SFS for more than two populations, which is useful for inferring branc
 be covering here. More information about calculating multidimensional frequency spectra with ANGSD can be found [here](http://www.popgen.dk/angsd/index.php/2d_SFS_Estimation). 
 Information about calculating F<sub>ST</sub> and and PBS can be found [here](http://www.popgen.dk/angsd/index.php/Fst)
 
-We'll calculate the 2D-SFS between the PANY and MAQU populations. The first step is to estimate allele frequency likelihoods across all sites for each population 
+We'll calculate the 2D-SFS between the PANY and MAQU populations. The first step is to estimate allele frequency likelihoods for all sites for each population 
 separately. We've already done this for the PANY population, so let's do this calculation for the MAQU population:
 
 ```bash
