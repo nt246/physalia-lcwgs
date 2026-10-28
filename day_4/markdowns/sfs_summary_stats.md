@@ -435,10 +435,16 @@ You should see:
 898842.635456 1844.910022 34621.454522
 ```
 meaning that there are 1844.910022 expected heterozygous sites for PANY_07. We can calculate *H* as 
-the number of heterozygous sites out of the total number of analyzed sites:
+the number of heterozygous sites out of the total number of analyzed sites. So, what is *H* for
+PANY_07?
+
+<details>
+
+<summary> Click for answer </summary>
 
 H = $\frac{1844.910022}{898842.635456 + 1844.910022 + 34621.454522} = 0.001972514$
 
+</detials>
 
 ### Allele frequency posterior probabilities
 
