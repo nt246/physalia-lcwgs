@@ -453,7 +453,7 @@ allele frequencies at each site. You can! In order to do this you can use the si
 you the probability of randomly drawing a site with a given number of derived (or minor if folded) alleles in the population.
 
 Let's calculate derived allele frequency posterior probabilities for the PANY population. This is achieved by running the per site allele frequency likelihood calculation (`-doSaf`) while supplying 
-the SFS are a prior with '-pest':
+the SFS are a prior with `-pest`:
 
 ```bash
 angsd -b $DIR/PANY_bams.txt -ref $REF -anc $ANC -out $RESDIR/PANY_post \
