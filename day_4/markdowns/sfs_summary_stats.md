@@ -665,7 +665,7 @@ less -S $RESDIR/PANY_vs_MAQU.2dsfs
 
 Now we have a prior for the joint probability of observing *i* alleles in PANY and *j* alleles in MAQU. One way common way to visualize the 2D-SFS is with a 
 with a heatmap. We're going to use these probabilities of jointly observing combinations of allele frequencies in our two example populations to calculate 
-*F<sub>ST</sub>* between them. *F<sub>ST</sub>* is a commonly used measure of genetic differentiation based on allele frequencies that spans from 0 when the 
+*F<sub>ST</sub>* between them. *F<sub>ST</sub>* is a commonly used measure of genetic differentiation based on allele frequencies that ranges from 0 when the 
 allele frequencies are the same in both populations to 1 when the populations are fixed for different alleles. *F<sub>ST</sub>* can be estimated from the 
 following components of genetic variance: between population variance (denoted *a<sub>s</sub>*), within population variance (*b<sub>s</sub>*), 
 and the total genetic variance (*c<sub>s</sub>*). *F<sub>ST</sub>* = $\frac{a_s}{c_s}$.
